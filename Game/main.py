@@ -95,6 +95,16 @@ class Player:
         self.facingRight = True
         self.isRunning = False
 
+    # Frame iteráló a duplikátumok minimalizálásáért
+    def iterateFrames(self, window, frames, f_count, m_frames):
+        if f_count < m_frames:
+            window.blit(frames[f_count], (self.x, self.y))
+            f_count += 1
+        else:
+            f_count = 0
+            window.blit(frames[f_count], (self.x, self.y))
+        return f_count
+
     def drawPlayer(self, window):
         # Játékos animációiért felelős
         if self.isJump:
@@ -104,34 +114,14 @@ class Player:
                 window.blit(mc_jump_left_frames[0], (self.x, self.y))
         elif self.isRunning:
             if self.facingRight:
-                if self.runningFrameCount < 12:
-                    window.blit(mc_run_right_frames[self.runningFrameCount], (self.x, self.y))
-                    self.runningFrameCount += 1
-                else:
-                    self.runningFrameCount = 0
-                    window.blit(mc_run_right_frames[self.runningFrameCount], (self.x, self.y))
+                self.runningFrameCount = self.iterateFrames(win, mc_run_right_frames, self.runningFrameCount, 12)
             else:
-                if self.runningFrameCount < 12:
-                    window.blit(mc_run_left_frames[self.runningFrameCount], (self.x, self.y))
-                    self.runningFrameCount += 1
-                else:
-                    self.runningFrameCount = 0
-                    window.blit(mc_run_left_frames[self.runningFrameCount], (self.x, self.y))
+                self.runningFrameCount = self.iterateFrames(win, mc_run_left_frames, self.runningFrameCount, 12)
         elif self.isIdle:
             if self.facingRight:
-                if self.idleFrameCount < 11:
-                    window.blit(mc_idle_right_frames[self.idleFrameCount], (self.x, self.y))
-                    self.idleFrameCount += 1
-                else:
-                    self.idleFrameCount = 0
-                    window.blit(mc_idle_right_frames[self.idleFrameCount], (self.x, self.y))
-            elif self.facingLeft:
-                if self.idleFrameCount < 11:
-                    window.blit(mc_idle_left_frames[self.idleFrameCount], (self.x, self.y))
-                    self.idleFrameCount += 1
-                else:
-                    self.idleFrameCount = 0
-                    window.blit(mc_idle_left_frames[self.idleFrameCount], (self.x, self.y))
+                self.idleFrameCount = self.iterateFrames(win, mc_idle_right_frames, self.idleFrameCount, 11)
+            else:
+                self.idleFrameCount = self.iterateFrames(win, mc_idle_left_frames, self.idleFrameCount, 11)
         self.hitbox = (self.x, self.y, 30, 40)
         pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
