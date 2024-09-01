@@ -14,9 +14,9 @@ mc_jump_left_sprite = pygame.transform.flip(mc_jump_right_sprite, True, False)
 level1_bg = pygame.image.load('Graphics/Background/Brown.png')
 
 
+# A háttér
+# len(mc_run_right_frames) a hosszért
 def redrawGameWindow():
-    # A háttér
-    # len(mc_run_right_frames) a hosszért
     win.fill((0, 0, 0))
     for row in range(tiles_down):
         for col in range(tiles_across):
@@ -40,8 +40,8 @@ def getSprite(sheet, f_width, f_height, x, y):
     return frame
 
 
+# Kiszedjük a frame-eket egy listába:
 def frameToList(width, height, rows, collums, spritesheet):
-    # Kiszedjük a frame-eket egy listába:
     frames = []
     for row in range(rows):
         for col in range(collums):
@@ -75,18 +75,21 @@ win = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption('MyGame')
 
 
+# Player visekedésének definálása
 class Player:
-    # Player visekedésének definálása
     def __init__(self, x, y, width, height):
+        self.hp = 1
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.hitbox = (self.x, self.y, 30, 40)
         self.vel = 5
+        self.projectileList = []
         self.jumpCount = 10
         self.idleFrameCount = 0
         self.runningFrameCount = 0
+        self.canShoot = False
         self.isFalling = False
         self.isJump = False
         self.isIdle = True
@@ -105,8 +108,8 @@ class Player:
             window.blit(frames[f_count], (self.x, self.y))
         return f_count
 
+    # Játékos animációiért felelős függvény
     def drawPlayer(self, window):
-        # Játékos animációiért felelős
         if self.isJump:
             if self.facingRight:
                 window.blit(mc_jump_right_frames[0], (self.x, self.y))
@@ -126,27 +129,58 @@ class Player:
         pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
 
+# Projectile-ok alapja öröklődés baráti és ellenséges projectile
 class Projectile:
-    # Projectile-ok alapja öröklődés baráti és ellenséges projectile
-    pass
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.hitbox = (self.x - 5, self.y - 5, 10, 10)
+        self.lifespan = 100
+        self.vel = 10
+        self.isFriendly = None
+
+    def draw(self, window, color):
+        self.hitbox = (self.x - 5, self.y - 5, 10, 10)
+        pygame.draw.circle(window, color, (self.x, self.y), 5)
+        pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
 
+class FriendlyProjectile(Projectile):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.isFriendly = True
+
+    def draw(self, window, color):
+        super().draw(window, color)
+
+
+class EnemyProjectile(Projectile):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.isFriendly = False
+
+    def draw(self, window, color):
+        super().draw(window, color)
+
+
+# Öröklődés különleges block-okból: ? blokk, törhetetlen
 class Block:
-    # Öröklődés különleges block-okból: ? blokk, törhetetlen
     pass
 
 
+# Az összes ellenfélnek az alapja mind öröklődik innen
 class Enemy:
-    # Az összes ellenfélnek az alapja mind öröklődik innen
     pass
 
 
+# A PowerUp-oknak alapja ebből öröklődik az összes
 class Powerup:
-    # A PowerUp-oknak alapja ebből öröklődik az összes
     pass
 
 
 mc = Player(255, 255, 20, 20)
+friendlyProjectiles = []
+enemyProjectiles = []
 run = True
 
 # Mainloop
@@ -194,7 +228,6 @@ while run:
         else:
             mc.isJump = False
             mc.jumpCount = 10
-
     redrawGameWindow()
 
 pygame.quit()
