@@ -211,7 +211,52 @@ class PlantEnemy(Enemy):
 
 # A PowerUp-oknak alapja ebből öröklődik az összes
 class Powerup:
-    pass
+    def __init__(self, x, y, width, height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.hitbox = (self.x, self.y, 30, 40)
+
+    def drawPowerup(self, window):
+        self.hitbox = (self.x, self.y, 30, 40)
+        pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+
+
+# Megnöveli 1-el az életerejét a karakternek
+class Apple(Powerup):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height)
+
+    def drawApple(self, window):
+        super().drawPowerup(window)
+
+
+# Elérhetővé teszi a lövés képességet a karakterünknek, elveszik miután eltalálják vagy meghal
+class Cherry(Powerup):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height)
+
+    def drawCherry(self, window):
+        super().drawPowerup(window)
+
+
+# Megnöveli az életek/újrapróbálkozások számát a Játékosnak
+class Pineapple(Powerup):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height)
+
+    def drawPineapple(self, window):
+        super().drawPowerup(window)
+
+
+# Halhatatlanná teszi a karaktert egy ideig és míg halhatatlan át tud menni különböző ellenfeleken
+class Strawberry(Powerup):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height)
+
+    def drawStrawberry(self, window):
+        super().drawPowerup(window)
 
 
 mc = Player(255, 255, 20, 20)
