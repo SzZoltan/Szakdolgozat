@@ -85,7 +85,6 @@ class Player:
         self.height = height
         self.hitbox = (self.x, self.y, 30, 40)
         self.vel = 5
-        self.projectileList = []
         self.jumpCount = 10
         self.idleFrameCount = 0
         self.runningFrameCount = 0
@@ -171,7 +170,43 @@ class Block:
 
 # Az összes ellenfélnek az alapja mind öröklődik innen
 class Enemy:
-    pass
+    def __init__(self, x, y, width, height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.vel = 5
+        self.health = 1
+        self.canShoot = True
+        self.canMove = True
+        self.hitbox = (self.x, self.y, 30, 40)
+
+    def drawEnemy(self, window):
+        self.hitbox = (self.x, self.y, 30, 40)
+        pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+
+
+# A goomba féle ellenfél aki nem csinál semmit csak oda vissza járkál
+class BunnyEnemy(Enemy):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height)
+        self.canShoot = False
+        self.canMove = True
+
+    def drawEnemy(self, window):
+        super().drawEnemy(window)
+
+
+# Az egyhelyben álló folyamatosan lövő ellenfél
+class PlantEnemy(Enemy):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height)
+        self.canShoot = True
+        self.canMove = False
+        self.shootCooldown = 0
+
+    def drawEnemy(self, window):
+        super().drawEnemy(window)
 
 
 # A PowerUp-oknak alapja ebből öröklődik az összes
@@ -196,6 +231,7 @@ while run:
     for proj in friendlyProjectiles:
         if window_width > proj.x > 0:
             proj.x += proj.vel
+            # hit check ide jön majd kell majd projectile hit method
         else:
             friendlyProjectiles.pop(friendlyProjectiles.index(proj))
 
