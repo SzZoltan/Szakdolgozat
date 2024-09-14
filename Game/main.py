@@ -12,6 +12,10 @@ mc_idle_left_sprite = pygame.transform.flip(mc_idle_right_sprite, True, False)
 mc_jump_right_sprite = pygame.image.load('Graphics/Main Characters/Pink Man/Jump (32x32).png')
 mc_jump_left_sprite = pygame.transform.flip(mc_jump_right_sprite, True, False)
 level1_bg = pygame.image.load('Graphics/Background/Brown.png')
+apple_sprite = pygame.image.load('Graphics/Items/Fruits/Apple.png')
+pineapple_sprite = pygame.image.load('Graphics/Items/Fruits/Pineapple.png')
+cherry_sprite = pygame.image.load('Graphics/Items/Fruits/Cherries.png')
+strawberry_sprite = pygame.image.load('Graphics/Items/Fruits/Strawberry.png')
 
 
 # A háttér
@@ -24,6 +28,10 @@ def redrawGameWindow():
             y_pos = row * level1_bg.get_height()
             win.blit(level1_bg, (x_pos, y_pos))
     mc.drawPlayer(win)
+    apple.drawApple(win)
+    pineapple.drawPineapple(win)
+    cherry.drawCherry(win)
+    strawberry.drawStrawberry(win)
     for fproj in friendlyProjectiles:
         fproj.draw(win, (0, 255, 0))
     pygame.display.update()
@@ -51,6 +59,17 @@ def frameToList(width, height, rows, collums, spritesheet):
     return frames
 
 
+# Frame iteráló
+def iterateFrames(self, window, frames, f_count, m_frames):
+    if f_count < m_frames:
+        window.blit(frames[f_count], (self.x, self.y))
+        f_count += 1
+    else:
+        f_count = 0
+        window.blit(frames[f_count], (self.x, self.y))
+    return f_count
+
+
 # Frame-ek
 
 mc_run_right_frames = frameToList(32, 32, 1, 12, mc_running_right_sprite)
@@ -59,6 +78,10 @@ mc_idle_right_frames = frameToList(32, 32, 1, 11, mc_idle_right_sprite)
 mc_idle_left_frames = frameToList(32, 32, 1, 11, mc_idle_left_sprite)
 mc_jump_right_frames = frameToList(32, 32, 1, 1, mc_jump_right_sprite)
 mc_jump_left_frames = frameToList(32, 32, 1, 1, mc_jump_left_sprite)
+apple_frames = frameToList(32, 32, 1, 17, apple_sprite)
+pineapple_frames = frameToList(32, 32, 1, 17, pineapple_sprite)
+cherry_frames = frameToList(32, 32, 1, 17, cherry_sprite)
+strawberry_frames = frameToList(32, 32, 1, 17, strawberry_sprite)
 
 
 # Terv: Az alapokat kifejelszteni: player, block, projectile,powerup, enemy, block alapú map editor elkészítése és
@@ -83,6 +106,7 @@ class Player:
         self.y = y
         self.width = width
         self.height = height
+        self.lifes = 3
         self.hitbox = (self.x, self.y, 30, 40)
         self.vel = 5
         self.jumpCount = 10
@@ -97,16 +121,6 @@ class Player:
         self.facingRight = True
         self.isRunning = False
 
-    # Frame iteráló a duplikátumok minimalizálásáért
-    def iterateFrames(self, window, frames, f_count, m_frames):
-        if f_count < m_frames:
-            window.blit(frames[f_count], (self.x, self.y))
-            f_count += 1
-        else:
-            f_count = 0
-            window.blit(frames[f_count], (self.x, self.y))
-        return f_count
-
     # Játékos animációiért felelős függvény
     def drawPlayer(self, window):
         if self.isJump:
@@ -116,14 +130,14 @@ class Player:
                 window.blit(mc_jump_left_frames[0], (self.x, self.y))
         elif self.isRunning:
             if self.facingRight:
-                self.runningFrameCount = self.iterateFrames(win, mc_run_right_frames, self.runningFrameCount, 12)
+                self.runningFrameCount = iterateFrames(self, win, mc_run_right_frames, self.runningFrameCount, 12)
             else:
-                self.runningFrameCount = self.iterateFrames(win, mc_run_left_frames, self.runningFrameCount, 12)
+                self.runningFrameCount = iterateFrames(self, win, mc_run_left_frames, self.runningFrameCount, 12)
         elif self.isIdle:
             if self.facingRight:
-                self.idleFrameCount = self.iterateFrames(win, mc_idle_right_frames, self.idleFrameCount, 11)
+                self.idleFrameCount = iterateFrames(self, win, mc_idle_right_frames, self.idleFrameCount, 11)
             else:
-                self.idleFrameCount = self.iterateFrames(win, mc_idle_left_frames, self.idleFrameCount, 11)
+                self.idleFrameCount = iterateFrames(self, win, mc_idle_left_frames, self.idleFrameCount, 11)
         self.hitbox = (self.x, self.y, 30, 40)
         pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
@@ -211,22 +225,25 @@ class PlantEnemy(Enemy):
 
 # A PowerUp-oknak alapja ebből öröklődik az összes
 class Powerup:
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, frames):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
-        self.hitbox = (self.x, self.y, 30, 40)
+        self.frameCount = 0
+        self.frames = frames
+        self.hitbox = (self.x+5, self.y+5, 20, 20)
 
     def drawPowerup(self, window):
-        self.hitbox = (self.x, self.y, 30, 40)
+        self.hitbox = (self.x+5, self.y+5, 20, 20)
+        self.frameCount = iterateFrames(self, window, self.frames, self.frameCount, 17)
         pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
 
 # Megnöveli 1-el az életerejét a karakternek
 class Apple(Powerup):
-    def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height)
+    def __init__(self, x, y, width, height, frames):
+        super().__init__(x, y, width, height, frames)
 
     def drawApple(self, window):
         super().drawPowerup(window)
@@ -234,8 +251,8 @@ class Apple(Powerup):
 
 # Elérhetővé teszi a lövés képességet a karakterünknek, elveszik miután eltalálják vagy meghal
 class Cherry(Powerup):
-    def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height)
+    def __init__(self, x, y, width, height, frames):
+        super().__init__(x, y, width, height, frames)
 
     def drawCherry(self, window):
         super().drawPowerup(window)
@@ -243,8 +260,8 @@ class Cherry(Powerup):
 
 # Megnöveli az életek/újrapróbálkozások számát a Játékosnak
 class Pineapple(Powerup):
-    def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height)
+    def __init__(self, x, y, width, height, frames):
+        super().__init__(x, y, width, height, frames)
 
     def drawPineapple(self, window):
         super().drawPowerup(window)
@@ -252,14 +269,18 @@ class Pineapple(Powerup):
 
 # Halhatatlanná teszi a karaktert egy ideig és míg halhatatlan át tud menni különböző ellenfeleken
 class Strawberry(Powerup):
-    def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height)
+    def __init__(self, x, y, width, height, frames):
+        super().__init__(x, y, width, height, frames)
 
     def drawStrawberry(self, window):
         super().drawPowerup(window)
 
 
-mc = Player(255, 255, 20, 20)
+mc = Player(0, 255, 32, 32)
+apple = Apple(200, 255, 32, 32, apple_frames)
+cherry = Cherry(250, 255, 32, 32, cherry_frames)
+pineapple = Pineapple(150, 255, 32, 32, pineapple_frames)
+strawberry = Strawberry(300, 255, 32, 32, strawberry_frames)
 friendlyProjectiles = []
 enemyProjectiles = []
 
@@ -312,11 +333,11 @@ while run:
         if mc.canShoot and shootLimit == 0:
             if len(friendlyProjectiles) < 5:
                 if mc.facingRight:
-                    friendlyProjectiles.append(FriendlyProjectile(round(mc.x + mc.width//2+5),
-                                                                  round(mc.y + mc.height//2+10), 1))
+                    friendlyProjectiles.append(FriendlyProjectile(round(mc.x + mc.width//2),
+                                                                  round(mc.y + mc.height//2), 1))
                 else:
-                    friendlyProjectiles.append(FriendlyProjectile(round(mc.x + mc.width//2+5),
-                                                                  round(mc.y + mc.height//2+10), -1))
+                    friendlyProjectiles.append(FriendlyProjectile(round(mc.x + mc.width//2),
+                                                                  round(mc.y + mc.height//2), -1))
                 shootLimit = 1
     # Ugrás viselkedés: Parabola megoldás
     if not mc.isJump:
