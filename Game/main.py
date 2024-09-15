@@ -106,13 +106,14 @@ class Player:
         self.y = y
         self.width = width
         self.height = height
-        self.lifes = 3
-        self.hitbox = (self.x, self.y, 30, 40)
+        self.lives = 3
+        self.isInvincible = False
+        self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
         self.vel = 5
         self.jumpCount = 10
         self.idleFrameCount = 0
         self.runningFrameCount = 0
-        self.canShoot = True
+        self.canShoot = False
         self.isFalling = False
         self.isJump = False
         self.isIdle = True
@@ -138,7 +139,7 @@ class Player:
                 self.idleFrameCount = iterateFrames(self, win, mc_idle_right_frames, self.idleFrameCount, 11)
             else:
                 self.idleFrameCount = iterateFrames(self, win, mc_idle_left_frames, self.idleFrameCount, 11)
-        self.hitbox = (self.x, self.y, 30, 40)
+        self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
         pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
 
@@ -148,13 +149,13 @@ class Projectile:
         self.x = x
         self.y = y
         self.dir = direction
-        self.hitbox = (self.x - 5, self.y - 5, 10, 10)
+        self.hitbox = pygame.Rect(self.x - 5, self.y - 5, 10, 10)
         # self.lifespan = 100
         self.vel = 10 * direction
         self.isFriendly = None
 
     def draw(self, window, color):
-        self.hitbox = (self.x - 5, self.y - 5, 10, 10)
+        self.hitbox = pygame.Rect(self.x - 5, self.y - 5, 10, 10)
         pygame.draw.circle(window, color, (self.x, self.y), 5)
         # pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
@@ -193,10 +194,10 @@ class Enemy:
         self.health = 1
         self.canShoot = True
         self.canMove = True
-        self.hitbox = (self.x, self.y, 30, 40)
+        self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
 
     def drawEnemy(self, window):
-        self.hitbox = (self.x, self.y, 30, 40)
+        self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
         pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
 
@@ -232,12 +233,19 @@ class Powerup:
         self.height = height
         self.frameCount = 0
         self.frames = frames
-        self.hitbox = (self.x+5, self.y+5, 20, 20)
+        self.isVisible = True
+        self.hitbox = pygame.Rect(self.x+5, self.y+5, 20, 20)
 
     def drawPowerup(self, window):
-        self.hitbox = (self.x+5, self.y+5, 20, 20)
-        self.frameCount = iterateFrames(self, window, self.frames, self.frameCount, 17)
-        pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+        if self.isVisible:
+            self.hitbox = pygame.Rect(self.x+5, self.y+5, 20, 20)
+            self.frameCount = iterateFrames(self, window, self.frames, self.frameCount, 17)
+            pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+
+    def pickUp(self, player):
+        if self.isVisible:
+            print('Item picked up')
+            self.isVisible = False
 
 
 # Megnöveli 1-el az életerejét a karakternek
@@ -248,6 +256,14 @@ class Apple(Powerup):
     def drawApple(self, window):
         super().drawPowerup(window)
 
+    def pickUp(self, player):
+        if self.isVisible:
+            self.isVisible = False
+            print('Apple picked up, health increased')
+            print(f'current: {player.hp} hp')
+            player.hp = player.hp + 1
+            print(f'current: {player.hp} hp')
+
 
 # Elérhetővé teszi a lövés képességet a karakterünknek, elveszik miután eltalálják vagy meghal
 class Cherry(Powerup):
@@ -256,6 +272,14 @@ class Cherry(Powerup):
 
     def drawCherry(self, window):
         super().drawPowerup(window)
+
+    def pickUp(self, player):
+        if self.isVisible:
+            self.isVisible = False
+            print('Cherry picked up, shooting unlocked')
+            print(f'current: {player.canShoot} ')
+            player.canShoot = True
+            print(f'current: {player.canShoot} ')
 
 
 # Megnöveli az életek/újrapróbálkozások számát a Játékosnak
@@ -266,6 +290,14 @@ class Pineapple(Powerup):
     def drawPineapple(self, window):
         super().drawPowerup(window)
 
+    def pickUp(self, player):
+        if self.isVisible:
+            self.isVisible = False
+            print('Pineapple picked up, number of lives increased')
+            print(f'current: {player.lives} lives')
+            player.lives = player.lives + 1
+            print(f'current: {player.lives} lives')
+
 
 # Halhatatlanná teszi a karaktert egy ideig és míg halhatatlan át tud menni különböző ellenfeleken
 class Strawberry(Powerup):
@@ -275,6 +307,12 @@ class Strawberry(Powerup):
     def drawStrawberry(self, window):
         super().drawPowerup(window)
 
+    def pickUp(self, player):
+        if self.isVisible:
+            self.isVisible = False
+            player.isInvincible = True
+            print('Strawberry picked up, invinciblity for 10 seconds')
+
 
 mc = Player(0, 255, 32, 32)
 apple = Apple(200, 255, 32, 32, apple_frames)
@@ -283,6 +321,7 @@ pineapple = Pineapple(150, 255, 32, 32, pineapple_frames)
 strawberry = Strawberry(300, 255, 32, 32, strawberry_frames)
 friendlyProjectiles = []
 enemyProjectiles = []
+invincibleTimer = 0
 
 # shootLimit azért hogy legyen egy kis delay a lövések között
 shootLimit = 0
@@ -339,6 +378,25 @@ while run:
                     friendlyProjectiles.append(FriendlyProjectile(round(mc.x + mc.width//2),
                                                                   round(mc.y + mc.height//2), -1))
                 shootLimit = 1
+
+    if mc.isInvincible:
+        if invincibleTimer > 0:
+            invincibleTimer -= 1
+            print(f'{invincibleTimer} seconds remaining')
+        else:
+            print('no longer invincible')
+            mc.isInvincible = False
+
+    if mc.hitbox.colliderect(pineapple.hitbox) and pineapple.isVisible:
+        pineapple.pickUp(mc)
+    if mc.hitbox.colliderect(apple.hitbox) and apple.isVisible:
+        apple.pickUp(mc)
+    if mc.hitbox.colliderect(cherry.hitbox) and cherry.isVisible:
+        cherry.pickUp(mc)
+    if mc.hitbox.colliderect(strawberry.hitbox) and strawberry.isVisible:
+        invincibleTimer = 200
+        strawberry.pickUp(mc)
+
     # Ugrás viselkedés: Parabola megoldás
     if not mc.isJump:
         if keys[pygame.K_UP]:
@@ -352,6 +410,7 @@ while run:
             mc.jumpCount -= 1
         else:
             mc.isJump = False
+            
             mc.jumpCount = 10
     redrawGameWindow()
 
