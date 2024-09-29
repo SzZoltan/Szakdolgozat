@@ -1,3 +1,4 @@
+from Game.Entity.Projectile import FriendlyProjectile
 from Game.Game_Graphics.Graphics_Loader import *
 
 
@@ -10,12 +11,13 @@ class Player:
         self.width = width
         self.height = height
         self.lives = 3
-        self.isInvincible = False
         self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
         self.vel = 5
         self.jumpCount = 10
         self.idleFrameCount = 0
         self.runningFrameCount = 0
+        self.iFrames = 0
+        self.isInvincible = False
         self.canShoot = False
         self.isFalling = False
         self.isJump = False
@@ -45,7 +47,7 @@ class Player:
         self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
         pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
-    def Move(self, direction):
+    def move(self, direction):
         if direction == 'left':
             self.isIdle = False
             self.facingLeft = True
@@ -59,7 +61,7 @@ class Player:
             self.isRunning = True
             self.x += self.vel
 
-    def Jump(self):
+    def jump(self):
         if self.jumpCount >= -10:
             neg = 1
             if self.jumpCount < 0:
@@ -69,3 +71,11 @@ class Player:
         else:
             self.isJump = False
             self.jumpCount = 10
+
+    def hit(self):
+        if not self.isInvincible:
+            self.hp = self.hp - 1
+            self.iFrames = 60
+
+    def shoot(self, direction):
+        FriendlyProjectile(round(self.x + self.width // 2), round(self.y + self.height // 2), direction)

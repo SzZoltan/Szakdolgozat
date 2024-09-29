@@ -83,10 +83,10 @@ while run:
         mc.isIdle = True
 
     if keys[pygame.K_LEFT]:
-        mc.Move('left')
+        mc.move('left')
 
     if keys[pygame.K_RIGHT]:
-        mc.Move('right')
+        mc.move('right')
 
     if shootLimit > 0:
         shootLimit += 1
@@ -98,11 +98,9 @@ while run:
         if mc.canShoot and shootLimit == 0:
             if len(friendlyProjectiles) < 5:
                 if mc.facingRight:
-                    friendlyProjectiles.append(FriendlyProjectile(round(mc.x + mc.width//2),
-                                                                  round(mc.y + mc.height//2), 1))
+                    friendlyProjectiles.append(mc.shoot(1))
                 else:
-                    friendlyProjectiles.append(FriendlyProjectile(round(mc.x + mc.width//2),
-                                                                  round(mc.y + mc.height//2), -1))
+                    friendlyProjectiles.append(mc.shoot(-1))
                 shootLimit = 1
 
     if mc.isInvincible:
@@ -128,7 +126,7 @@ while run:
         if keys[pygame.K_UP]:
             mc.isJump = True
     else:
-        mc.Jump()
+        mc.jump()
     redrawGameWindow()
 
 pygame.quit()

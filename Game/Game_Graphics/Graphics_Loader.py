@@ -52,30 +52,42 @@ mc_jump_right_sprite = pygame.image.load(f'{graphics_path}/Main Characters/Pink 
 mc_jump_left_sprite = pygame.transform.flip(mc_jump_right_sprite, True, False)
 # Pálya
 level1_bg = pygame.image.load(f'{graphics_path}/Background/Brown.png')
-# Power Ups
+# Power Upok
 apple_sprite = pygame.image.load(f'{graphics_path}/Items/Fruits/Apple.png')
 pineapple_sprite = pygame.image.load(f'{graphics_path}/Items/Fruits/Pineapple.png')
 cherry_sprite = pygame.image.load(f'{graphics_path}/Items/Fruits/Cherries.png')
 strawberry_sprite = pygame.image.load(f'{graphics_path}/Items/Fruits/Strawberry.png')
-# Bunny Enemy
+# Bunny ellenfél
 bunny_run_left_sprite = pygame.image.load(f'{graphics_path}/Enemies/Bunny/Run (34x44).png')
 bunny_run_right_sprite = pygame.transform.flip(bunny_run_left_sprite, True, False)
 bunny_idle_left_sprite = pygame.image.load(f'{graphics_path}/Enemies/Bunny/Idle (34x44).png')
 bunny_idle_right_sprite = pygame.transform.flip(bunny_idle_left_sprite, True, False)
-# Plant Enemy
+# Plant ellenfél
 plant_idle_left_sprite = pygame.image.load(f'{graphics_path}/Enemies/Plant/Idle (44x42).png')
 plant_idle_right_sprite = pygame.transform.flip(plant_idle_left_sprite, True, False)
 plant_attack_left_sprite = pygame.image.load(f'{graphics_path}/Enemies/Plant/Attack (44x42).png')
 plant_attack_right_sprite = pygame.transform.flip(plant_attack_left_sprite, True, False)
 
 # Frame-ek
+# Főszereplő
 mc_run_right_frames = frameToList(32, 32, 1, 12, mc_running_right_sprite)
 mc_run_left_frames = frameToList(32, 32, 1, 12, mc_running_left_sprite)
 mc_idle_right_frames = frameToList(32, 32, 1, 11, mc_idle_right_sprite)
 mc_idle_left_frames = frameToList(32, 32, 1, 11, mc_idle_left_sprite)
 mc_jump_right_frames = frameToList(32, 32, 1, 1, mc_jump_right_sprite)
 mc_jump_left_frames = frameToList(32, 32, 1, 1, mc_jump_left_sprite)
+# Power Up
 apple_frames = frameToList(32, 32, 1, 17, apple_sprite)
 pineapple_frames = frameToList(32, 32, 1, 17, pineapple_sprite)
 cherry_frames = frameToList(32, 32, 1, 17, cherry_sprite)
 strawberry_frames = frameToList(32, 32, 1, 17, strawberry_sprite)
+# Bunny Ellenfél
+bunny_run_left_frames = frameToList(34, 44, 1, 12, bunny_run_left_sprite)
+bunny_run_right_frames = frameToList(34, 44, 1, 12, bunny_run_right_sprite)
+bunny_idle_left_frames = frameToList(34, 44, 1, 8, bunny_idle_left_sprite)
+bunny_idle_right_frames = frameToList(34, 44, 1, 8, bunny_idle_right_sprite)
+# Plant Ellenfél
+plane_idle_left_frames = frameToList(44, 42, 1, 11, plant_idle_left_sprite)
+plane_idle_right_frames = frameToList(44, 42, 1, 11, plant_idle_right_sprite)
+plane_attack_left_frames = frameToList(44, 42, 1, 8, plant_attack_left_sprite)
+plane_attack_right_frames = frameToList(44, 42, 1, 8, plant_attack_right_sprite)
