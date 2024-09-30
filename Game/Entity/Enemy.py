@@ -42,8 +42,8 @@ class Enemy:
                     self.idleFrameCount = iterateFrames(self, window, mc_idle_right_frames, self.idleFrameCount, 11)
                 else:
                     self.idleFrameCount = iterateFrames(self, window, mc_idle_left_frames, self.idleFrameCount, 11)
-                self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
-                pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+            self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
+            pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
     def hit(self):
         self.health = self.health - 1
@@ -91,16 +91,17 @@ class BunnyEnemy(Enemy):
                     self.idleFrameCount = iterateFrames(self, window, bunny_idle_right_frames,
                                                         self.idleFrameCount, 8)
                 else:
-                    self.idleFrameCount = iterateFrames(self, window, mc_idle_left_frames,
+                    self.idleFrameCount = iterateFrames(self, window, bunny_idle_left_frames,
                                                         self.idleFrameCount, 8)
-                self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
-                pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+            self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
+            pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
     def move(self, direction):
         super().move(direction)
 
     def hit(self):
         super().hit()
+        print("Enemy hit")
 
 
 # Az egyhelyben álló folyamatosan lövő ellenfél

@@ -63,9 +63,9 @@ class Player:
 
     def jump(self):
         if self.jumpCount >= -10:
-            neg = 1
+            neg = 0.7
             if self.jumpCount < 0:
-                neg = -1
+                neg = -0.7
             self.y -= (self.jumpCount ** 2) * 0.5 * neg
             self.jumpCount -= 1
         else:
@@ -75,7 +75,8 @@ class Player:
     def hit(self):
         if not self.isInvincible:
             self.hp = self.hp - 1
+            print("Player hit")
             self.iFrames = 60
 
     def shoot(self, direction):
-        FriendlyProjectile(round(self.x + self.width // 2), round(self.y + self.height // 2), direction)
+        return FriendlyProjectile(round(self.x + self.width // 2), round(self.y + self.height // 2), direction)

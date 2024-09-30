@@ -1,6 +1,6 @@
-from Game.Entity.Projectile import *
 from Game.Entity.PowerUp import *
 from Game.Entity.Player import Player
+from Game.Entity.Enemy import *
 import pygame
 
 pygame.init()
@@ -32,6 +32,7 @@ def redrawGameWindow():
     cherry.drawCherry(win)
     strawberry.drawStrawberry(win)
     drawProjectiles()
+    bunny.drawEnemy(win)
     pygame.display.update()
 
 # Terv: Az alapokat kifejelszteni: player, block, projectile,powerup, enemy, block alapú map editor elkészítése és
@@ -53,6 +54,7 @@ apple = Apple(200, 255, 32, 32, apple_frames)
 cherry = Cherry(250, 255, 32, 32, cherry_frames)
 pineapple = Pineapple(150, 255, 32, 32, pineapple_frames)
 strawberry = Strawberry(300, 255, 32, 32, strawberry_frames)
+bunny = BunnyEnemy(100, 255, 32, 32)
 friendlyProjectiles = []
 enemyProjectiles = []
 invincibleTimer = 0
@@ -120,6 +122,18 @@ while run:
     if mc.hitbox.colliderect(strawberry.hitbox) and strawberry.isVisible:
         invincibleTimer = 200
         strawberry.pickUp(mc)
+
+    if bunny.x >= 0:
+        bunny.move('left')
+
+    if mc.hitbox.colliderect(bunny.hitbox) and mc.isInvincible and bunny.isAlive:
+        bunny.hit()
+
+    if mc.hitbox.colliderect(bunny.hitbox) and bunny.isAlive and mc.hp > 0:
+        if mc.hitbox.bottom < bunny.hitbox.top + 15:
+            bunny.hit()
+        else:
+            mc.hit()
 
     # Ugrás viselkedés: Parabola megoldás
     if not mc.isJump:
