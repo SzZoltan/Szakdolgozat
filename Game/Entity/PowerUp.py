@@ -23,8 +23,8 @@ class Powerup:
                 self.hitbox = pygame.Rect(self.x+5, self.y+5, 20, 20)
                 self.frameCount = iterateFrames(self, window, self.frames, self.frameCount, 17)
                 # pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
-            else:
-                raise TypeError("Invalid Window argument for drawPowerup")
+        else:
+            raise TypeError("Invalid Window argument for drawPowerup")
 
     def pickUp(self, player):
         if isinstance(player, Player):

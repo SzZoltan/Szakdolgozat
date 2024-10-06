@@ -21,7 +21,7 @@ def drawBackground():
 
 def drawProjectiles():
     for fproj in friendlyProjectiles:
-        fproj.draw(win, (0, 255, 0))
+        fproj.draw(win)
 
 
 def redrawGameWindow():
