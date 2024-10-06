@@ -15,30 +15,42 @@ def getSprite(sheet, f_width, f_height, x, y):
     # x: x kezdő koordináta a frame-en
     # y: y kezdő koordináta a frame-en
 
-    frame = pygame.Surface((f_width, f_height), pygame.SRCALPHA)
-    frame.blit(sheet, (0, 0), (x*f_width, y*f_height, f_width, f_height))
-    return frame
+    if (isinstance(sheet, pygame.Surface) and isinstance(f_width, int) and isinstance(f_height, int) and
+            isinstance(x, int) and isinstance(y, int)):
+        frame = pygame.Surface((f_width, f_height), pygame.SRCALPHA)
+        frame.blit(sheet, (0, 0), (x*f_width, y*f_height, f_width, f_height))
+        return frame
+    else:
+        raise TypeError('Invalid Arguments for getSprite')
 
 
 # Kiszedjük a frame-eket egy listába:
 def frameToList(width, height, rows, collums, spritesheet):
-    frames = []
-    for row in range(rows):
-        for col in range(collums):
-            frame = getSprite(spritesheet, width, height, col, row)
-            frames.append(frame)
-    return frames
+    if (isinstance(width, int) and isinstance(height, int) and isinstance(rows, int) and isinstance(collums, int) and
+            isinstance(spritesheet, pygame.Surface)):
+        frames = []
+        for row in range(rows):
+            for col in range(collums):
+                frame = getSprite(spritesheet, width, height, col, row)
+                frames.append(frame)
+        return frames
+    else:
+        raise TypeError('Invalid Arguments for frameToList')
 
 
 # Frame iteráló
 def iterateFrames(self, window, frames, f_count, m_frames):
-    if f_count < m_frames:
-        window.blit(frames[f_count], (self.x, self.y))
-        f_count += 1
+    if (isinstance(window, pygame.Surface) and isinstance(frames, list) and isinstance(frames[0], pygame.Surface) and
+            isinstance(m_frames, int) and isinstance(f_count, int)):
+        if f_count < m_frames:
+            window.blit(frames[f_count], (self.x, self.y))
+            f_count += 1
+        else:
+            f_count = 0
+            window.blit(frames[f_count], (self.x, self.y))
+        return f_count
     else:
-        f_count = 0
-        window.blit(frames[f_count], (self.x, self.y))
-    return f_count
+        raise TypeError('Invalid Arguments for iterateFrames')
 
 
 # Java doc szerű doksit létrehozni, ha létezik

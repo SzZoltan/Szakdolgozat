@@ -9,6 +9,7 @@ pygame.init()
 clock = pygame.time.Clock()
 
 
+# Unit tesztelés extrém tesztesetek
 # A háttér
 def drawBackground():
     for row in range(tiles_down):
@@ -45,7 +46,6 @@ tiles_across = window_width // level1_bg.get_width()+1
 tiles_down = window_height // level1_bg.get_height()+1
 
 win = pygame.display.set_mode((window_width, window_height))
-
 pygame.display.set_caption('MyGame')
 
 

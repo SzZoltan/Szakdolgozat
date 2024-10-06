@@ -5,47 +5,53 @@ from Game.Game_Graphics.Graphics_Loader import *
 # Player visekedésének definálása
 class Player:
     def __init__(self, x, y, width, height):
-        self.hp = 1
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.lives = 3
-        self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
-        self.vel = 5
-        self.jumpCount = 10
-        self.idleFrameCount = 0
-        self.runningFrameCount = 0
-        self.iFrames = 0
-        self.isInvincible = False
-        self.canShoot = False
-        self.isFalling = False
-        self.isJump = False
-        self.isIdle = True
-        self.isFalling = False
-        self.facingLeft = False
-        self.facingRight = True
-        self.isRunning = False
+        if isinstance(x, int) and isinstance(y, int) and isinstance(width, int) and isinstance(height, int):
+            self.hp = 1
+            self.x = x
+            self.y = y
+            self.width = width
+            self.height = height
+            self.lives = 3
+            self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
+            self.vel = 5
+            self.jumpCount = 10
+            self.idleFrameCount = 0
+            self.runningFrameCount = 0
+            self.iFrames = 0
+            self.isInvincible = False
+            self.canShoot = False
+            self.isFalling = False
+            self.isJump = False
+            self.isIdle = True
+            self.isFalling = False
+            self.facingLeft = False
+            self.facingRight = True
+            self.isRunning = False
+        else:
+            raise TypeError('Invalid innit arguments for Player')
 
     # Játékos animációiért felelős függvény
     def drawPlayer(self, window):
-        if self.isJump:
-            if self.facingRight:
-                window.blit(mc_jump_right_frames[0], (self.x, self.y))
-            else:
-                window.blit(mc_jump_left_frames[0], (self.x, self.y))
-        elif self.isRunning:
-            if self.facingRight:
-                self.runningFrameCount = iterateFrames(self, window, mc_run_right_frames, self.runningFrameCount, 12)
-            else:
-                self.runningFrameCount = iterateFrames(self, window, mc_run_left_frames, self.runningFrameCount, 12)
-        elif self.isIdle:
-            if self.facingRight:
-                self.idleFrameCount = iterateFrames(self, window, mc_idle_right_frames, self.idleFrameCount, 11)
-            else:
-                self.idleFrameCount = iterateFrames(self, window, mc_idle_left_frames, self.idleFrameCount, 11)
-        self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
-        pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+        if isinstance(window, pygame.Surface):
+            if self.isJump:
+                if self.facingRight:
+                    window.blit(mc_jump_right_frames[0], (self.x, self.y))
+                else:
+                    window.blit(mc_jump_left_frames[0], (self.x, self.y))
+            elif self.isRunning:
+                if self.facingRight:
+                    self.runningFrameCount = iterateFrames(self, window, mc_run_right_frames, self.runningFrameCount, 12)
+                else:
+                    self.runningFrameCount = iterateFrames(self, window, mc_run_left_frames, self.runningFrameCount, 12)
+            elif self.isIdle:
+                if self.facingRight:
+                    self.idleFrameCount = iterateFrames(self, window, mc_idle_right_frames, self.idleFrameCount, 11)
+                else:
+                    self.idleFrameCount = iterateFrames(self, window, mc_idle_left_frames, self.idleFrameCount, 11)
+            self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
+            pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+        else:
+            raise TypeError('Invalid Window Argument for drawPlayer')
 
     def move(self, direction):
         if direction == 'left':
@@ -54,12 +60,14 @@ class Player:
             self.facingRight = False
             self.isRunning = True
             self.x -= self.vel
-        if direction == 'right':
+        elif direction == 'right':
             self.isIdle = False
             self.facingLeft = False
             self.facingRight = True
             self.isRunning = True
             self.x += self.vel
+        else:
+            raise ValueError('Invalid direction for Player move')
 
     def jump(self):
         if self.jumpCount >= -10:
@@ -79,4 +87,7 @@ class Player:
             self.iFrames = 60
 
     def shoot(self, direction):
-        return FriendlyProjectile(round(self.x + self.width // 2), round(self.y + self.height // 2), direction)
+        if direction == 1 or direction == -1:
+            return FriendlyProjectile(round(self.x + self.width // 2), round(self.y + self.height // 2), direction)
+        else:
+            raise ValueError('Invalid direction for Player shoot')
