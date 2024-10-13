@@ -7,29 +7,207 @@ from Game.Game_Graphics.Graphics_Loader import *
 
 # Az összes ellenfélnek az alapja mind öröklődik innen
 class Enemy:
-    def __init__(self, x, y, width, height):
-        if isinstance(x, int) and isinstance(y, int) and isinstance(width, int) and isinstance(height, int):
-            self.x = x
-            self.y = y
-            self.width = width
-            self.height = height
-            self.vel = 5
-            self.health = 1
-            self.canShoot = False
-            self.canMove = True
-            self.idleFrameCount = 0
-            self.movingFrameCount = 0
-            self.shootingFrameCount = 0
-            self.isShooting = False
-            self.isAlive = True
-            self.canBeJumped = True
-            self.isIdle = True
-            self.facingLeft = True
-            self.facingRight = False
-            self.isMoving = False
-            self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
-        else:
-            raise TypeError('Invalid innit arguments for Enemy')
+    def __init__(self, x: int, y: int, width: int, height: int):
+        self._x = x
+        self._y = y
+        self._width = width
+        self._height = height
+        self._vel = 5
+        self._health = 1
+        self._canShoot = False
+        self._canMove = True
+        self._idleFrameCount = 0
+        self._movingFrameCount = 0
+        self._shootingFrameCount = 0
+        self._isShooting = False
+        self._isAlive = True
+        self._canBeJumped = True
+        self._isIdle = True
+        self._facingLeft = True
+        self._facingRight = False
+        self._isMoving = False
+        self._hitbox = pygame.Rect(self.x, self.y, 30, 40)
+
+    # <editor-fold desc="Property-k és setterek">
+    @property
+    def x(self):
+        return self._x
+
+    @property
+    def y(self):
+        return self._y
+
+    @property
+    def width(self):
+        return self._width
+
+    @property
+    def height(self):
+        return self._height
+
+    @property
+    def vel(self):
+        return self._vel
+
+    @property
+    def health(self):
+        return self._health
+
+    @property
+    def idleFrameCount(self):
+        return self._idleFrameCount
+
+    @property
+    def movingFrameCount(self):
+        return self._movingFrameCount
+
+    @property
+    def canShoot(self):
+        return self._canShoot
+
+    @property
+    def canMove(self):
+        return self._canMove
+
+    @property
+    def canBeJumped(self):
+        return self._canBeJumped
+
+    @property
+    def isIdle(self):
+        return self._isIdle
+
+    @property
+    def shootingFrameCount(self):
+        return self._shootingFrameCount
+
+    @property
+    def isShooting(self):
+        return self._isShooting
+
+    @property
+    def isAlive(self):
+        return self._isAlive
+
+    @property
+    def facingLeft(self):
+        return self._facingLeft
+
+    @property
+    def facingRight(self):
+        return self._facingRight
+
+    @property
+    def isMoving(self):
+        return self._isMoving
+
+    @property
+    def hitbox(self):
+        return self._hitbox
+
+    @x.setter
+    def x(self, x):
+        if not isinstance(x, int):
+            raise TypeError("x must be an integer")
+        self._x = x
+
+    @y.setter
+    def y(self, y):
+        if not isinstance(y, int):
+            raise TypeError("y must be an integer")
+        self._y = y
+
+    @width.setter
+    def width(self, width):
+        if not isinstance(width, int):
+            raise TypeError("width must be an integer")
+        self._width = width
+
+    @height.setter
+    def height(self, height):
+        if not isinstance(height, int):
+            raise TypeError("height must be an integer")
+        self._height = height
+
+    @health.setter
+    def health(self, health):
+        if not isinstance(health, int):
+            raise TypeError("health must be an integer")
+        self._health = health
+
+    @idleFrameCount.setter
+    def idleFrameCount(self, idleFrameCount):
+        if not isinstance(idleFrameCount, int):
+            raise TypeError("idleFrameCount must be an integer")
+        self._idleFrameCount = idleFrameCount
+
+    @movingFrameCount.setter
+    def movingFrameCount(self, movingFrameCount):
+        if not isinstance(movingFrameCount, int):
+            raise TypeError("movingFrameCount must be an integer")
+        self._movingFrameCount = movingFrameCount
+
+    @shootingFrameCount.setter
+    def shootingFrameCount(self, shootingFrameCount):
+        if not isinstance(shootingFrameCount, int):
+            raise TypeError("shootingFrameCount must be an integer")
+        self._shootingFrameCount = shootingFrameCount
+
+    @isShooting.setter
+    def isShooting(self, isShooting):
+        if not isinstance(isShooting, bool):
+            raise TypeError("isShooting must be a bool")
+        self._isShooting = isShooting
+
+    @isAlive.setter
+    def isAlive(self, isAlive):
+        if not isinstance(isAlive, bool):
+            raise TypeError("isAlive must be a bool")
+        self._isAlive = isAlive
+
+    @facingLeft.setter
+    def facingLeft(self, facingLeft):
+        if not isinstance(facingLeft, bool):
+            raise TypeError("facingLeft must be a bool")
+        self._facingLeft = facingLeft
+
+    @facingRight.setter
+    def facingRight(self, facingRight):
+        if not isinstance(facingRight, bool):
+            raise TypeError("facingRight must be a bool")
+        self._facingRight = facingRight
+
+    @isIdle.setter
+    def isIdle(self, isIdle):
+        if not isinstance(isIdle, bool):
+            raise TypeError("isIdle must be a bool")
+        self._isIdle = isIdle
+
+    @isMoving.setter
+    def isMoving(self, isMoving):
+        if not isinstance(isMoving, bool):
+            raise TypeError("isMoving must be a bool")
+        self._isMoving = isMoving
+
+    @hitbox.setter
+    def hitbox(self, hitbox):
+        if not isinstance(hitbox, pygame.Rect):
+            raise TypeError("hitbox must be a pygame.Rect object")
+        self._hitbox = hitbox
+
+    @canShoot.setter
+    def canShoot(self, canShoot):
+        if not isinstance(canShoot, bool):
+            raise TypeError("canShoot must be a bool")
+        self._canShoot = canShoot
+
+    @canMove.setter
+    def canMove(self, canMove):
+        if not isinstance(canMove, bool):
+            raise TypeError("canMove must be a bool")
+        self._canMove = canMove
+
+    # </editor-fold>
 
     # Ez lesz a default Enemy animáció, a Főszereplő, de csak akkor ha nincs implementálva sajátja,
     # soha nem lesz hívva ha minden jól alakul
@@ -38,9 +216,11 @@ class Enemy:
             if self.isAlive:
                 if self.isMoving:
                     if self.facingRight:
-                        self.movingFrameCount = iterateFrames(self, window, mc_run_left_frames, self.movingFrameCount, 12)
+                        self.movingFrameCount = iterateFrames(self, window, mc_run_left_frames, self.movingFrameCount,
+                                                              12)
                     else:
-                        self.movingFrameCount = iterateFrames(self, window, mc_run_left_frames, self.movingFrameCount, 12)
+                        self.movingFrameCount = iterateFrames(self, window, mc_run_left_frames, self.movingFrameCount,
+                                                              12)
                 elif self.isIdle:
                     if self.facingRight:
                         self.idleFrameCount = iterateFrames(self, window, mc_idle_right_frames, self.idleFrameCount, 11)
@@ -128,7 +308,7 @@ class PlantEnemy(Enemy):
 
     def drawEnemy(self, window):
         super().drawEnemy(window)
-        
+
     def hit(self):
         super().hit()
 

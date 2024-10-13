@@ -59,6 +59,7 @@ friendlyProjectiles = []
 enemyProjectiles = []
 invincibleTimer = 0
 
+
 # shootLimit azért hogy legyen egy kis delay a lövések között
 shootLimit = 0
 run = True
