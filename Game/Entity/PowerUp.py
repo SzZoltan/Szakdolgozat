@@ -15,7 +15,7 @@ class Powerup:
         self._hitbox = pygame.Rect(self.x + 5, self.y + 5, 20, 20)
         for frame in frames:
             if not isinstance(frame, pygame.Surface):
-                raise TypeError("The frames list must contain pygame.Surface objects")
+                raise TypeError("The frames list must contain only pygame.Surface objects")
         self._frames = frames
 
     # <editor-fold desc="Property-k és setterek">
