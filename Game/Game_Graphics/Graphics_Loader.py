@@ -1,10 +1,12 @@
 import pygame
+import os
 import configparser
 
 # Grafikákat betöltő, majd egy property file-t ebbe a Graphics-ot referenciálva
 
 conf = configparser.ConfigParser()
-conf.read('properties.ini')
+conf.read(os.path.join('..', 'properties.ini'))
+
 
 graphics_path = conf.get('Graphics', 'G_path')
 

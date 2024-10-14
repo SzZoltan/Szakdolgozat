@@ -1,6 +1,5 @@
-
 import pytest
-from Game.Entity import Player
+from Game.Entity.Player import Player
 
 
 # teszt generálás Pycharmban, AI plugin telepítése
@@ -9,9 +8,9 @@ from Game.Entity import Player
 
 @pytest.fixture
 def player1():
-    return Player.Player(0, 0, 50, 50)
+    return Player(0, 0, 50, 50)
 
 
 def test_invalid_attribute():
     with pytest.raises(TypeError):
-        Player.Player('0', 0, 50, 50)
+        Player('not int', 0, 50, 50)
