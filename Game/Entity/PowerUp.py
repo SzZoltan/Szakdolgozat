@@ -1,11 +1,17 @@
-from Game.Entity.Player import *
+import pygame
+from Game.Game_Graphics.Graphics_Loader import (iterateFrames, apple_frames, pineapple_frames, cherry_frames,
+                                                strawberry_frames)
+from Game.Entity.Player import Player
 
 
 # A PowerUp-oknak alapja ebből öröklődik az összes
 
 
 class Powerup:
-    def __init__(self, x: int, y: int, width: int, height: int, frames: list):
+    def __init__(self, x: int, y: int, width: int, height: int):
+        if (not isinstance(x, int) or not isinstance(y, int) or not isinstance(width, int)
+                or not isinstance(height, int)):
+            raise TypeError('Invalid Argument type for PowerUp innit')
         self._x = x
         self._y = y
         self._width = width
@@ -13,10 +19,7 @@ class Powerup:
         self._frameCount = 0
         self._isVisible = True
         self._hitbox = pygame.Rect(self.x + 5, self.y + 5, 20, 20)
-        for frame in frames:
-            if not isinstance(frame, pygame.Surface):
-                raise TypeError("The frames list must contain only pygame.Surface objects")
-        self._frames = frames
+        self._frames = apple_frames
 
     # <editor-fold desc="Property-k és setterek">
     @property
@@ -52,50 +55,57 @@ class Powerup:
         return self._hitbox
 
     @x.setter
-    def x(self, x):
+    def x(self, x: int):
         if not isinstance(x, int):
             raise TypeError("x must be an integer")
         self._x = x
 
     @y.setter
-    def y(self, y):
+    def y(self, y: int):
         if not isinstance(y, int):
             raise TypeError("y must be an integer")
         self._y = y
 
     @width.setter
-    def width(self, width):
+    def width(self, width: int):
         if not isinstance(width, int):
             raise TypeError("width must be an integer")
         self._width = width
 
     @height.setter
-    def height(self, height):
+    def height(self, height: int):
         if not isinstance(height, int):
             raise TypeError("height must be an integer")
         self._height = height
 
     @frameCount.setter
-    def frameCount(self, frameCount):
+    def frameCount(self, frameCount: int):
         if not isinstance(frameCount, int):
             raise TypeError("frameCount must be an integer")
         self._frameCount = frameCount
 
     @hitbox.setter
-    def hitbox(self, hitbox):
+    def hitbox(self, hitbox: int):
         if not isinstance(hitbox, pygame.Rect):
             raise TypeError("hitbox must be an pygame.Rect object")
         self._hitbox = hitbox
 
     @isVisible.setter
-    def isVisible(self, isVisible):
+    def isVisible(self, isVisible: bool):
         if not isinstance(isVisible, bool):
             raise TypeError("isVisible must be bool")
         self._isVisible = isVisible
 
+    @frames.setter
+    def frames(self, frames: list):
+        for frame in frames:
+            if not isinstance(frame, pygame.Surface):
+                raise TypeError("frames must be a list containing pygame.Surface objects")
+        self._frames = frames
+
     # </editor-fold>
 
-    def drawPowerup(self, window):
+    def drawPowerup(self, window: pygame.Surface):
         if isinstance(window, pygame.Surface):
             if self.isVisible:
                 self.hitbox = pygame.Rect(self.x + 5, self.y + 5, 20, 20)
@@ -104,7 +114,7 @@ class Powerup:
         else:
             raise TypeError("Invalid Window argument for drawPowerup")
 
-    def pickUp(self, player):
+    def pickUp(self, player: Player):
         if isinstance(player, Player):
             if self.isVisible:
                 print('Item picked up')
@@ -115,13 +125,14 @@ class Powerup:
 
 # Megnöveli 1-el az életerejét a karakternek
 class Apple(Powerup):
-    def __init__(self, x, y, width, height, frames):
-        super().__init__(x, y, width, height, frames)
+    def __init__(self, x: int, y: int, width: int, height: int):
+        super().__init__(x, y, width, height)
+        self.frames = apple_frames
 
-    def drawApple(self, window):
+    def drawApple(self, window: pygame.Surface):
         super().drawPowerup(window)
 
-    def pickUp(self, player):
+    def pickUp(self, player: Player):
         if isinstance(player, Player):
             if self.isVisible:
                 self.isVisible = False
@@ -135,13 +146,14 @@ class Apple(Powerup):
 
 # Elérhetővé teszi a lövés képességet a karakterünknek, elveszik miután eltalálják vagy meghal
 class Cherry(Powerup):
-    def __init__(self, x, y, width, height, frames):
-        super().__init__(x, y, width, height, frames)
+    def __init__(self, x: int, y: int, width: int, height: int):
+        super().__init__(x, y, width, height)
+        self.frames = cherry_frames
 
-    def drawCherry(self, window):
+    def drawCherry(self, window: pygame.Surface):
         super().drawPowerup(window)
 
-    def pickUp(self, player):
+    def pickUp(self, player: Player):
         if isinstance(player, Player):
             if self.isVisible:
                 self.isVisible = False
@@ -155,13 +167,14 @@ class Cherry(Powerup):
 
 # Megnöveli az életek/újrapróbálkozások számát a Játékosnak
 class Pineapple(Powerup):
-    def __init__(self, x, y, width, height, frames):
-        super().__init__(x, y, width, height, frames)
+    def __init__(self, x: int, y: int, width: int, height: int):
+        super().__init__(x, y, width, height)
+        self.frames = pineapple_frames
 
-    def drawPineapple(self, window):
+    def drawPineapple(self, window: pygame.Surface):
         super().drawPowerup(window)
 
-    def pickUp(self, player):
+    def pickUp(self, player: Player):
         if isinstance(player, Player):
             if self.isVisible:
                 self.isVisible = False
@@ -175,13 +188,14 @@ class Pineapple(Powerup):
 
 # Halhatatlanná teszi a karaktert egy ideig és míg halhatatlan át tud menni különböző ellenfeleken
 class Strawberry(Powerup):
-    def __init__(self, x, y, width, height, frames):
-        super().__init__(x, y, width, height, frames)
+    def __init__(self, x: int, y: int, width: int, height: int):
+        super().__init__(x, y, width, height)
+        self.frames = strawberry_frames
 
-    def drawStrawberry(self, window):
+    def drawStrawberry(self, window: pygame.Surface):
         super().drawPowerup(window)
 
-    def pickUp(self, player):
+    def pickUp(self, player: Player):
         if isinstance(player, Player):
             if self.isVisible:
                 self.isVisible = False

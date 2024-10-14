@@ -16,6 +16,10 @@ def getSprite(sheet: pygame.Surface, f_width: int, f_height: int, x: int, y: int
     # x: x kezdő koordináta a frame-en
     # y: y kezdő koordináta a frame-en
 
+    if (not isinstance(sheet, pygame.Surface) or not isinstance(f_width, int) or
+            not isinstance(f_height, int) or not isinstance(x, int) or not isinstance(y, int)):
+        raise TypeError('Invalid Argument type for getSprite')
+
     frame = pygame.Surface((f_width, f_height), pygame.SRCALPHA)
     frame.blit(sheet, (0, 0), (x * f_width, y * f_height, f_width, f_height))
     return frame
@@ -23,6 +27,9 @@ def getSprite(sheet: pygame.Surface, f_width: int, f_height: int, x: int, y: int
 
 # Kiszedjük a frame-eket egy listába:
 def frameToList(width: int, height: int, rows: int, collums: int, spritesheet: pygame.Surface):
+    if (not isinstance(width, int) or not isinstance(height, int) or not isinstance(rows, int) or
+            not isinstance(collums, int) or not isinstance(spritesheet, pygame.Surface)):
+        raise TypeError('Invalid Argument type for frameToList')
     frames = []
     for row in range(rows):
         for col in range(collums):
@@ -33,6 +40,9 @@ def frameToList(width: int, height: int, rows: int, collums: int, spritesheet: p
 
 # Frame iteráló
 def iterateFrames(self, window: pygame.Surface, frames: list, f_count: int, m_frames: int):
+    if (not isinstance(window, pygame.Surface) or not isinstance(frames, list) or
+            not isinstance(f_count, int) or not isinstance(m_frames, int)):
+        raise TypeError('Invalid Argument type for iterateFrames')
     for frame in frames:
         if not isinstance(frame, pygame.Surface):
             raise TypeError("The frames list must contain only pygame.Surface objects")

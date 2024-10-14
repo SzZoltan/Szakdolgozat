@@ -1,7 +1,8 @@
-from Game.Entity.PowerUp import *
-from Game.Entity.Player import Player
-from Game.Entity.Enemy import *
 import pygame
+from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry)
+from Game.Entity.Player import Player
+from Game.Entity.Enemy import (BunnyEnemy)
+from Game.Game_Graphics.Graphics_Loader import level1_bg
 
 pygame.init()
 
@@ -50,15 +51,14 @@ pygame.display.set_caption('MyGame')
 
 
 mc = Player(0, 255, 32, 32)
-apple = Apple(200, 255, 32, 32, apple_frames)
-cherry = Cherry(250, 255, 32, 32, cherry_frames)
-pineapple = Pineapple(150, 255, 32, 32, pineapple_frames)
-strawberry = Strawberry(300, 255, 32, 32, strawberry_frames)
+apple = Apple(200, 255, 32, 32)
+cherry = Cherry(250, 255, 32, 32)
+pineapple = Pineapple(150, 255, 32, 32)
+strawberry = Strawberry(300, 255, 32, 32)
 bunny = BunnyEnemy(100, 255, 32, 32)
 friendlyProjectiles = []
 enemyProjectiles = []
 invincibleTimer = 0
-
 
 # shootLimit azért hogy legyen egy kis delay a lövések között
 shootLimit = 0

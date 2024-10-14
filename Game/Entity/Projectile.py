@@ -3,7 +3,9 @@ import pygame
 
 # Projectile-ok alapja öröklődés baráti és ellenséges projectile
 class Projectile:
-    def __init__(self, x: int, y: int, direction: int):
+    def __init__(self, x: int or float, y: int or float, direction: int):
+        if not isinstance(x, (int, float)) or not isinstance(y, (int, float)) or (direction != 1 and direction != -1):
+            raise TypeError('Invalid Argument types for Projectile innit')
         self._x = x
         self._y = y
         self._dir = direction
@@ -43,38 +45,38 @@ class Projectile:
         return self._vel
 
     @x.setter
-    def x(self, x):
+    def x(self, x: int):
         if not isinstance(x, int):
             raise TypeError("x must be an integer")
         self._x = x
 
     @y.setter
-    def y(self, y):
+    def y(self, y: int):
         if not isinstance(y, int):
             raise TypeError("y must be an integer")
         self._y = y
 
     @hitbox.setter
-    def hitbox(self, hitbox):
+    def hitbox(self, hitbox: pygame.Rect):
         if not isinstance(hitbox, pygame.Rect):
             raise TypeError("hitbox must be a pygame.Rect object")
         self._hitbox = hitbox
 
     @isFriendly.setter
-    def isFriendly(self, isFriendly):
+    def isFriendly(self, isFriendly: bool):
         if not isinstance(isFriendly, bool):
             raise TypeError("isFriendly must be a boolean")
         self._isFriendly = isFriendly
 
     @color.setter
-    def color(self, color):
+    def color(self, color: pygame.Color):
         if not isinstance(color, pygame.Color):
             raise TypeError("color must be a pygame.Color object")
         self._color = color
 
     # </editor-fold>
 
-    def draw(self, window):
+    def draw(self, window: pygame.Surface):
         if isinstance(window, pygame.Surface):
             self.hitbox = pygame.Rect(self.x - 5, self.y - 5, 10, 10)
             pygame.draw.circle(window, self.color, (self.x, self.y), 5)
@@ -84,20 +86,20 @@ class Projectile:
 
 
 class FriendlyProjectile(Projectile):
-    def __init__(self, x, y, direction):
+    def __init__(self, x: int or float, y: int or float, direction: int):
         super().__init__(x, y, direction)
         self.color = pygame.Color(0, 255, 0)
         self.isFriendly = True
 
-    def draw(self, window):
+    def draw(self, window: pygame.Surface):
         super().draw(window)
 
 
 class EnemyProjectile(Projectile):
-    def __init__(self, x, y, direction):
+    def __init__(self, x: int or float, y: int or float, direction: int):
         super().__init__(x, y, direction)
         self.color = pygame.Color(255, 0, 0)
         self.isFriendly = False
 
-    def draw(self, window):
+    def draw(self, window:pygame.Surface):
         super().draw(window)

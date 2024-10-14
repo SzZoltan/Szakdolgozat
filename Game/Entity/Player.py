@@ -1,10 +1,16 @@
+import pygame
 from Game.Entity.Projectile import FriendlyProjectile
-from Game.Game_Graphics.Graphics_Loader import *
+from Game.Game_Graphics.Graphics_Loader import (iterateFrames, mc_jump_left_frames, mc_jump_right_frames,
+                                                mc_run_right_frames, mc_run_left_frames, mc_idle_left_frames,
+                                                mc_idle_right_frames)
 
 
 # Player visekedésének definálása
 class Player:
     def __init__(self, x: int, y: int, width: int, height: int):
+        if (not isinstance(x, int) or not isinstance(y, int) or
+                not isinstance(width, int) or not isinstance(height, int)):
+            raise TypeError('Invalid argument type for Player innit')
         self._hp = 1
         self._x = x
         self._y = y
@@ -226,6 +232,8 @@ class Player:
 
     # Játékos animációiért felelős függvény
     def drawPlayer(self, window: pygame.Surface):
+        if not isinstance(window, pygame.Surface):
+            raise TypeError('Invalid window argument')
         if self.isJump:
             if self.facingRight:
                 window.blit(mc_jump_right_frames[0], (self.x, self.y))
@@ -245,7 +253,7 @@ class Player:
         self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
         pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
-    def move(self, direction):
+    def move(self, direction: str):
         if direction == 'left':
             self.isIdle = False
             self.facingLeft = True
@@ -278,7 +286,7 @@ class Player:
             print("Player hit")
             self.iFrames = 60
 
-    def shoot(self, direction):
+    def shoot(self, direction: int):
         if direction == 1 or direction == -1:
             return FriendlyProjectile(round(self.x + self.width // 2), round(self.y + self.height // 2), direction)
         else:
