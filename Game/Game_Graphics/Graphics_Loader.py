@@ -1,14 +1,12 @@
 import pygame
-import os
-import configparser
 
 # Grafikákat betöltő, majd egy property file-t ebbe a Graphics-ot referenciálva
 
-conf = configparser.ConfigParser()
-conf.read(os.path.join('..', 'properties.ini'))
+#conf = configparser.ConfigParser()
+#conf.read('properties.ini')
 
 
-graphics_path = conf.get('Graphics', 'G_path')
+#graphics_path = conf.get('Graphics', 'G_path')
 
 
 def getSprite(sheet: pygame.Surface, f_width: int, f_height: int, x: int, y: int):
@@ -60,28 +58,28 @@ def iterateFrames(self, window: pygame.Surface, frames: list, f_count: int, m_fr
 # Java doc szerű doksit létrehozni, ha létezik
 # Property fájlba kiszedni ezeket
 # Főszereplő
-mc_running_right_sprite = pygame.image.load(f'{graphics_path}/Main Characters/Pink Man/Run (32x32).png')
+mc_running_right_sprite = pygame.image.load(f'Graphics/Main Characters/Pink Man/Run (32x32).png')
 mc_running_left_sprite = pygame.transform.flip(mc_running_right_sprite, True, False)
-mc_idle_right_sprite = pygame.image.load(f'{graphics_path}/Main Characters/Pink Man/Idle (32x32).png')
+mc_idle_right_sprite = pygame.image.load(f'Graphics/Main Characters/Pink Man/Idle (32x32).png')
 mc_idle_left_sprite = pygame.transform.flip(mc_idle_right_sprite, True, False)
-mc_jump_right_sprite = pygame.image.load(f'{graphics_path}/Main Characters/Pink Man/Jump (32x32).png')
+mc_jump_right_sprite = pygame.image.load(f'Graphics/Main Characters/Pink Man/Jump (32x32).png')
 mc_jump_left_sprite = pygame.transform.flip(mc_jump_right_sprite, True, False)
 # Pálya
-level1_bg = pygame.image.load(f'{graphics_path}/Background/Brown.png')
+level1_bg = pygame.image.load(f'Graphics/Background/Brown.png')
 # Power Upok
-apple_sprite = pygame.image.load(f'{graphics_path}/Items/Fruits/Apple.png')
-pineapple_sprite = pygame.image.load(f'{graphics_path}/Items/Fruits/Pineapple.png')
-cherry_sprite = pygame.image.load(f'{graphics_path}/Items/Fruits/Cherries.png')
-strawberry_sprite = pygame.image.load(f'{graphics_path}/Items/Fruits/Strawberry.png')
+apple_sprite = pygame.image.load(f'Graphics/Items/Fruits/Apple.png')
+pineapple_sprite = pygame.image.load(f'Graphics/Items/Fruits/Pineapple.png')
+cherry_sprite = pygame.image.load(f'Graphics/Items/Fruits/Cherries.png')
+strawberry_sprite = pygame.image.load(f'Graphics/Items/Fruits/Strawberry.png')
 # Bunny ellenfél
-bunny_run_left_sprite = pygame.image.load(f'{graphics_path}/Enemies/Bunny/Run (34x44).png')
+bunny_run_left_sprite = pygame.image.load(f'Graphics/Enemies/Bunny/Run (34x44).png')
 bunny_run_right_sprite = pygame.transform.flip(bunny_run_left_sprite, True, False)
-bunny_idle_left_sprite = pygame.image.load(f'{graphics_path}/Enemies/Bunny/Idle (34x44).png')
+bunny_idle_left_sprite = pygame.image.load(f'Graphics/Enemies/Bunny/Idle (34x44).png')
 bunny_idle_right_sprite = pygame.transform.flip(bunny_idle_left_sprite, True, False)
 # Plant ellenfél
-plant_idle_left_sprite = pygame.image.load(f'{graphics_path}/Enemies/Plant/Idle (44x42).png')
+plant_idle_left_sprite = pygame.image.load(f'Graphics/Enemies/Plant/Idle (44x42).png')
 plant_idle_right_sprite = pygame.transform.flip(plant_idle_left_sprite, True, False)
-plant_attack_left_sprite = pygame.image.load(f'{graphics_path}/Enemies/Plant/Attack (44x42).png')
+plant_attack_left_sprite = pygame.image.load(f'Graphics/Enemies/Plant/Attack (44x42).png')
 plant_attack_right_sprite = pygame.transform.flip(plant_attack_left_sprite, True, False)
 
 # Frame-ek
