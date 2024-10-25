@@ -7,30 +7,27 @@ from Game.Game_Graphics.Graphics_Loader import (iterateFrames, mc_jump_left_fram
 
 # Player visekedésének definálása
 class Player:
-    def __init__(self, x: int, y: int, width: int, height: int):
-        if (not isinstance(x, int) or not isinstance(y, int) or
-                not isinstance(width, int) or not isinstance(height, int)):
-            raise TypeError('Invalid argument type for Player innit')
-        self._hp = 1
-        self._x = x
-        self._y = y
-        self._width = width
-        self._height = height
-        self._lives = 3
-        self._hitbox = pygame.Rect(self.x, self.y, 30, 40)
+    def __init__(self, x: int or float, y: int or float, width: int, height: int):
+        self.hp = 1
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.lives = 3
+        self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
         self._vel = 5
-        self._jumpCount = 10
-        self._idleFrameCount = 0
-        self._runningFrameCount = 0
-        self._iFrames = 0
-        self._isInvincible = False
-        self._canShoot = False
-        self._isFalling = False
-        self._isJump = False
-        self._isIdle = True
-        self._facingLeft = False
-        self._facingRight = True
-        self._isRunning = False
+        self.jumpCount = 10
+        self.idleFrameCount = 0
+        self.runningFrameCount = 0
+        self.iFrames = 0
+        self.isInvincible = False
+        self.canShoot = False
+        self.isFalling = False
+        self.isJump = False
+        self.isIdle = True
+        self.facingLeft = False
+        self.facingRight = True
+        self.isRunning = False
 
     # <editor-fold desc="Property-k és setterek">
     @property
@@ -117,115 +114,118 @@ class Player:
     @hp.setter
     def hp(self, value):
         if not isinstance(value, int):
-            raise ValueError("hp attribute must be an integer.")
-        self._hp = value
+            raise TypeError("hp attribute must be an integer.")
+        if value < 0:
+            self._hp = 0
+        else:
+            self._hp = value
 
     @x.setter
-    def x(self, value):
-        if not isinstance(value, int) and not isinstance(value, float):
-            raise ValueError("X coordinate must be an integer or float.")
+    def x(self, value: int or float):
+        if not isinstance(value, (int, float)):
+            raise TypeError("X coordinate must be an integer or float.")
         self._x = value
 
     @y.setter
-    def y(self, value):
-        if not isinstance(value, int) and not isinstance(value, float):
-            raise ValueError("Y coordinate must be an integer or float.")
+    def y(self, value: int or float):
+        if not isinstance(value, (int, float)):
+            raise TypeError("Y coordinate must be an integer or float.")
         self._y = value
 
     @width.setter
-    def width(self, value):
+    def width(self, value: int):
         if not isinstance(value, int):
-            raise ValueError("Width attribute must be an integer.")
+            raise TypeError("Width attribute must be an integer.")
         self._width = value
 
     @height.setter
-    def height(self, value):
+    def height(self, value: int):
         if not isinstance(value, int):
-            raise ValueError("Height attribute must be an integer.")
+            raise TypeError("Height attribute must be an integer.")
         self._height = value
 
     @lives.setter
-    def lives(self, value):
+    def lives(self, value: int):
         if not isinstance(value, int):
-            raise ValueError("Lives attribute must be an integer.")
+            raise TypeError("Lives attribute must be an integer.")
         self._lives = value
 
     @hitbox.setter
-    def hitbox(self, value):
+    def hitbox(self, value: pygame.Rect):
         if not isinstance(value, pygame.Rect):
-            raise ValueError("Hitbox attribute must be an pygame.Rect.")
+            raise TypeError("Hitbox attribute must be an pygame.Rect.")
         self._hitbox = value
 
     @jumpCount.setter
-    def jumpCount(self, value):
-        if not isinstance(value, int) and not isinstance(value, float):
-            raise ValueError("Jump count attribute must be an integer or float.")
+    def jumpCount(self, value: int or float):
+        if not isinstance(value, (int, float)):
+            raise TypeError("Jump count attribute must be an integer or float.")
         self._jumpCount = value
 
     @idleFrameCount.setter
-    def idleFrameCount(self, value):
+    def idleFrameCount(self, value: int):
         if not isinstance(value, int):
-            raise ValueError("Idle frame count attribute must be an integer.")
+            raise TypeError("Idle frame count attribute must be an integer.")
         self._idleFrameCount = value
 
     @runningFrameCount.setter
-    def runningFrameCount(self, value):
+    def runningFrameCount(self, value: int):
         if not isinstance(value, int):
-            raise ValueError("Running frame count attribute must be an integer.")
+            raise TypeError("Running frame count attribute must be an integer.")
         self._runningFrameCount = value
 
     @iFrames.setter
-    def iFrames(self, value):
+    def iFrames(self, value: int):
         if not isinstance(value, int):
-            raise ValueError("iFrames attribute must be an integer.")
+            raise TypeError("iFrames attribute must be an integer.")
         self._iFrames = value
 
     @isInvincible.setter
-    def isInvincible(self, value):
+    def isInvincible(self, value: bool):
         if not isinstance(value, bool):
-            raise ValueError("isInvincible attribute must be an boolean.")
+            raise TypeError("isInvincible attribute must be an boolean.")
         self._isInvincible = value
 
     @canShoot.setter
-    def canShoot(self, value):
+    def canShoot(self, value: bool):
         if not isinstance(value, bool):
-            raise ValueError("canShoot attribute must be an boolean.")
+            raise TypeError("canShoot attribute must be an boolean.")
         self._canShoot = value
 
     @isFalling.setter
-    def isFalling(self, value):
+    def isFalling(self, value: bool):
         if not isinstance(value, bool):
-            raise ValueError("isFalling attribute must be an boolean.")
+            raise TypeError("isFalling attribute must be an boolean.")
         self._isFalling = value
 
     @isJump.setter
-    def isJump(self, value):
+    def isJump(self, value: bool):
         if not isinstance(value, bool):
-            raise ValueError("isJump attribute must be an boolean.")
+            raise TypeError("isJump attribute must be an boolean.")
         self._isJump = value
 
     @isIdle.setter
-    def isIdle(self, value):
+    def isIdle(self, value: bool):
         if not isinstance(value, bool):
-            raise ValueError("isIdle attribute must be an boolean.")
+            raise TypeError("isIdle attribute must be an boolean.")
         self._isIdle = value
 
     @facingLeft.setter
-    def facingLeft(self, value):
+    def facingLeft(self, value: bool):
         if not isinstance(value, bool):
-            raise ValueError("facingLeft attribute must be an boolean.")
+            raise TypeError("facingLeft attribute must be an boolean.")
         self._facingLeft = value
 
     @facingRight.setter
-    def facingRight(self, value):
+    def facingRight(self, value: bool):
         if not isinstance(value, bool):
-            raise ValueError("facingRight attribute must be an boolean.")
+            raise TypeError("facingRight attribute must be an boolean.")
         self._facingRight = value
 
     @isRunning.setter
-    def isRunning(self, value):
+    def isRunning(self, value: bool):
         if not isinstance(value, bool):
-            raise ValueError("isRunning attribute must be an boolean.")
+            raise TypeError("isRunning attribute must be an boolean.")
         self._isRunning = value
 
     # </editor-fold>
@@ -288,6 +288,7 @@ class Player:
 
     def shoot(self, direction: int):
         if direction == 1 or direction == -1:
-            return FriendlyProjectile(round(self.x + self.width // 2), round(self.y + self.height // 2), direction)
+            if self.canShoot:
+                return FriendlyProjectile(round(self.x + self.width // 2), round(self.y + self.height // 2), direction)
         else:
             raise ValueError('Invalid direction for Player shoot')

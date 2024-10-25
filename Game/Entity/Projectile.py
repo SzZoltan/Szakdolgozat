@@ -4,14 +4,12 @@ import pygame
 # Projectile-ok alapja öröklődés baráti és ellenséges projectile
 class Projectile:
     def __init__(self, x: int or float, y: int or float, direction: int):
-        if not isinstance(x, (int, float)) or not isinstance(y, (int, float)) or (direction != 1 and direction != -1):
-            raise TypeError('Invalid Argument types for Projectile innit')
-        self._x = x
-        self._y = y
-        self._dir = direction
-        self._hitbox = pygame.Rect(self.x - 5, self.y - 5, 10, 10)
+        self.x = x
+        self.y = y
+        self.dir = direction
+        self.hitbox = pygame.Rect(self.x - 5, self.y - 5, 10, 10)
         # self._lifespan = 100
-        self._color = pygame.Color('blue')
+        self.color = pygame.Color('blue')
         self._vel = 10 * direction
         self._isFriendly = None
 
@@ -45,15 +43,15 @@ class Projectile:
         return self._vel
 
     @x.setter
-    def x(self, x: int):
-        if not isinstance(x, int):
-            raise TypeError("x must be an integer")
+    def x(self, x: int or float):
+        if not isinstance(x, (int, float)):
+            raise TypeError("x must be an integer or float")
         self._x = x
 
     @y.setter
-    def y(self, y: int):
-        if not isinstance(y, int):
-            raise TypeError("y must be an integer")
+    def y(self, y: int or float):
+        if not isinstance(y, (int, float)):
+            raise TypeError("y must be an integer or float")
         self._y = y
 
     @hitbox.setter
@@ -73,6 +71,16 @@ class Projectile:
         if not isinstance(color, pygame.Color):
             raise TypeError("color must be a pygame.Color object")
         self._color = color
+
+    @dir.setter
+    def dir(self, direc: int):
+        if isinstance(direc, int):
+            if direc == 1 or direc == -1:
+                self._dir = direc
+            else:
+                raise TypeError("dir must be an integer that is 1 or -1")
+        else:
+            raise TypeError("dir must be an integer that is 1 or -1")
 
     # </editor-fold>
 

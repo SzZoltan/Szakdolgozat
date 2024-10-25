@@ -10,27 +10,25 @@ from Game.Game_Graphics.Graphics_Loader import (iterateFrames, bunny_run_left_fr
 
 class Enemy:
     def __init__(self, x: int, y: int, width: int, height: int):
-        if not isinstance(x, int) or not isinstance(y, int) or not isinstance(width, int) or not isinstance(height, int):
-            raise TypeError('Invalid argument type for Enemy init')
-        self._x = x
-        self._y = y
-        self._width = width
-        self._height = height
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
         self._vel = 5
-        self._health = 1
-        self._canShoot = False
-        self._canMove = True
-        self._idleFrameCount = 0
-        self._movingFrameCount = 0
-        self._shootingFrameCount = 0
-        self._isShooting = False
-        self._isAlive = True
+        self.health = 1
+        self.canShoot = False
+        self.canMove = True
+        self.idleFrameCount = 0
+        self.movingFrameCount = 0
+        self.shootingFrameCount = 0
+        self.isShooting = False
+        self.isAlive = True
         self._canBeJumped = True
-        self._isIdle = True
-        self._facingLeft = True
-        self._facingRight = False
-        self._isMoving = False
-        self._hitbox = pygame.Rect(self.x, self.y, 30, 40)
+        self.isIdle = True
+        self.facingLeft = True
+        self.facingRight = False
+        self.isMoving = False
+        self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
 
     # <editor-fold desc="Property-k és setterek">
     @property

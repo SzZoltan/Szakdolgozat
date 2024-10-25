@@ -8,18 +8,15 @@ from Game.Entity.Player import Player
 
 
 class Powerup:
-    def __init__(self, x: int, y: int, width: int, height: int):
-        if (not isinstance(x, int) or not isinstance(y, int) or not isinstance(width, int)
-                or not isinstance(height, int)):
-            raise TypeError('Invalid Argument type for PowerUp innit')
-        self._x = x
-        self._y = y
-        self._width = width
-        self._height = height
-        self._frameCount = 0
-        self._isVisible = True
-        self._hitbox = pygame.Rect(self.x + 5, self.y + 5, 20, 20)
-        self._frames = apple_frames
+    def __init__(self, x: int or float, y: int or float, width: int, height: int):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.frameCount = 0
+        self.isVisible = True
+        self.hitbox = pygame.Rect(self.x + 5, self.y + 5, 20, 20)
+        self.frames = apple_frames
 
     # <editor-fold desc="Property-k és setterek">
     @property
@@ -55,15 +52,15 @@ class Powerup:
         return self._hitbox
 
     @x.setter
-    def x(self, x: int):
-        if not isinstance(x, int):
-            raise TypeError("x must be an integer")
+    def x(self, x: int or float):
+        if not isinstance(x, (int, float)):
+            raise TypeError("x must be an integer or float")
         self._x = x
 
     @y.setter
-    def y(self, y: int):
-        if not isinstance(y, int):
-            raise TypeError("y must be an integer")
+    def y(self, y: int or float):
+        if not isinstance(y, (int, float)):
+            raise TypeError("y must be an integer or float")
         self._y = y
 
     @width.setter
