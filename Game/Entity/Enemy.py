@@ -9,7 +9,7 @@ from Game.Game_Graphics.Graphics_Loader import (iterateFrames, bunny_run_left_fr
 # Az összes ellenfélnek az alapja mind öröklődik innen
 
 class Enemy:
-    def __init__(self, x: int, y: int, width: int, height: int):
+    def __init__(self, x: int or float, y: int or float, width: int, height: int):
         self.x = x
         self.y = y
         self.width = width
@@ -234,32 +234,35 @@ class Enemy:
             raise TypeError('Invalid window argument for drawEnemy')
 
     def hit(self):
-        self.health = self.health - 1
-        if self.health == 0:
-            self.isAlive = False
+        if self.isAlive:
+            self.health = self.health - 1
+            if self.health == 0:
+                self.isAlive = False
 
     def shoot(self, direction: int):
-        if direction == 1 or direction == -1:
-            if self.canShoot:
-                EnemyProjectile(round(self.x + self.width // 2), round(self.y + self.height // 2), direction)
-        else:
-            raise ValueError('Invalid direction argument for Enemy shoot')
+        if self.canShoot:
+            if direction == 1 or direction == -1:
+                if self.canShoot:
+                    return EnemyProjectile(round(self.x + self.width // 2), round(self.y + self.height // 2), direction)
+            else:
+                raise ValueError('Invalid direction argument for Enemy shoot')
 
     def move(self, direction: str):
-        if direction == 'left':
-            self.isIdle = False
-            self.facingLeft = True
-            self.facingRight = False
-            self.isMoving = True
-            self.x -= self.vel
-        elif direction == 'right':
-            self.isIdle = False
-            self.facingLeft = False
-            self.facingRight = True
-            self.isMoving = True
-            self.x += self.vel
-        else:
-            raise ValueError('Invalid direction argument for Enemy move')
+        if self.canMove:
+            if direction == 'left':
+                self.isIdle = False
+                self.facingLeft = True
+                self.facingRight = False
+                self.isMoving = True
+                self.x -= self.vel
+            elif direction == 'right':
+                self.isIdle = False
+                self.facingLeft = False
+                self.facingRight = True
+                self.isMoving = True
+                self.x += self.vel
+            else:
+                raise ValueError('Invalid direction argument for Enemy move')
 
 
 # A goomba féle ellenfél aki nem csinál semmit csak oda vissza járkál
@@ -317,7 +320,8 @@ class PlantEnemy(Enemy):
     # Hogy garantálom, hogy az animáció lejátszódjon mielőtt lő és utánna viszamegy idle-be?
     # self.shootingFrameCount = iterateFrames(self, window, plane_attack_left_frames, self.shootingFrameCount, 8)
     def shoot(self, direction: int):
-        if self.shootCooldown == 0:
-            self.isShooting = True
-            super().shoot(direction)
-        self.shootCooldown = 90
+        if self.canShoot:
+            if self.shootCooldown == 0:
+                self.isShooting = True
+                super().shoot(direction)
+            self.shootCooldown = 90
