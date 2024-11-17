@@ -1,5 +1,8 @@
 import pygame
-from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry)
+
+from Game.Entity import PowerUp
+from Game.Entity.Block import Block, Inside
+from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Powerup)
 from Game.Entity.Player import Player
 from Game.Entity.Enemy import (BunnyEnemy)
 from Game.Game_Graphics.Graphics_Loader import level1_bg
@@ -29,12 +32,11 @@ def redrawGameWindow():
     win.fill((0, 0, 0))
     drawBackground()
     mc.drawPlayer(win)
-    apple.drawApple(win)
-    pineapple.drawPineapple(win)
-    cherry.drawCherry(win)
-    strawberry.drawStrawberry(win)
+    for powerup in poweruplist:
+        powerup.drawPowerup(win)
     drawProjectiles()
     bunny.drawEnemy(win)
+    testblock.draw(win)
     pygame.display.update()
 
 # Terv: Az alapokat kifejelszteni: player, block, projectile,powerup, enemy, block alapú map editor elkészítése és
@@ -55,10 +57,13 @@ apple = Apple(200, 255, 32, 32)
 cherry = Cherry(250, 255, 32, 32)
 pineapple = Pineapple(150, 255, 32, 32)
 strawberry = Strawberry(300, 255, 32, 32)
+poweruplist = [apple, cherry, pineapple, strawberry]
 bunny = BunnyEnemy(100, 255, 32, 32)
 friendlyProjectiles = []
 enemyProjectiles = []
 invincibleTimer = 0
+testblock = Block(30, 200, Inside.APPLE)
+testblock.isContainer = True
 
 # shootLimit azért hogy legyen egy kis delay a lövések között
 shootLimit = 0
@@ -114,15 +119,14 @@ while run:
             print('no longer invincible')
             mc.isInvincible = False
 
-    if mc.hitbox.colliderect(pineapple.hitbox) and pineapple.isVisible:
-        pineapple.pickUp(mc)
-    if mc.hitbox.colliderect(apple.hitbox) and apple.isVisible:
-        apple.pickUp(mc)
-    if mc.hitbox.colliderect(cherry.hitbox) and cherry.isVisible:
-        cherry.pickUp(mc)
-    if mc.hitbox.colliderect(strawberry.hitbox) and strawberry.isVisible:
-        invincibleTimer = 200
-        strawberry.pickUp(mc)
+    for powerup in poweruplist:
+        if mc.hitbox.colliderect(powerup.hitbox) and isinstance(powerup, Strawberry):
+            invincibleTimer = 200
+            powerup.pickUp(mc)
+            poweruplist.remove(powerup)
+        if mc.hitbox.colliderect(powerup.hitbox) and not isinstance(powerup, Strawberry):
+            powerup.pickUp(mc)
+            poweruplist.remove(powerup)
 
     if bunny.x >= 0:
         bunny.move('left')
@@ -136,6 +140,10 @@ while run:
         else:
             mc.hit()
 
+    if mc.hitbox.colliderect(testblock.hitbox) and testblock.isVisible and testblock.isBreakable:
+        if mc.hitbox.bottom > testblock.hitbox.bottom:
+            poweruplist.append(testblock.destroy());
+            print('testblock destroyed')
     # Ugrás viselkedés: Parabola megoldás
     if not mc.isJump:
         if keys[pygame.K_UP]:
