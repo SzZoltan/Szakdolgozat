@@ -1,14 +1,5 @@
 import pygame
 
-# Grafikákat betöltő, majd egy property file-t ebbe a Graphics-ot referenciálva
-
-#conf = configparser.ConfigParser()
-#conf.read('properties.ini')
-
-
-#graphics_path = conf.get('Graphics', 'G_path')
-
-
 def getSprite(sheet: pygame.Surface, f_width: int, f_height: int, x: int, y: int):
     # kiszed 1 frame-et a sprite-sheetből
     # f_width: frame széle
@@ -64,7 +55,7 @@ mc_idle_right_sprite = pygame.image.load(f'Graphics/Main Characters/Pink Man/Idl
 mc_idle_left_sprite = pygame.transform.flip(mc_idle_right_sprite, True, False)
 mc_jump_right_sprite = pygame.image.load(f'Graphics/Main Characters/Pink Man/Jump (32x32).png')
 mc_jump_left_sprite = pygame.transform.flip(mc_jump_right_sprite, True, False)
-# Pálya
+# Pálya háttér
 level1_bg = pygame.image.load(f'Graphics/Background/Brown.png')
 # Power Upok
 apple_sprite = pygame.image.load(f'Graphics/Items/Fruits/Apple.png')
@@ -81,6 +72,10 @@ plant_idle_left_sprite = pygame.image.load(f'Graphics/Enemies/Plant/Idle (44x42)
 plant_idle_right_sprite = pygame.transform.flip(plant_idle_left_sprite, True, False)
 plant_attack_left_sprite = pygame.image.load(f'Graphics/Enemies/Plant/Attack (44x42).png')
 plant_attack_right_sprite = pygame.transform.flip(plant_attack_left_sprite, True, False)
+# Block sprite
+brick_sprite = pygame.image.load(f'Graphics/Terrain/brick.png')
+steel_sprite = pygame.image.load(f'Graphics/Terrain/steel.png')
+gold_sprite = pygame.image.load(f'Graphics/Terrain/gold.png')
 
 # Frame-ek
 # Főszereplő
@@ -105,3 +100,7 @@ plane_idle_left_frames = frameToList(44, 42, 1, 11, plant_idle_left_sprite)
 plane_idle_right_frames = frameToList(44, 42, 1, 11, plant_idle_right_sprite)
 plane_attack_left_frames = frameToList(44, 42, 1, 8, plant_attack_left_sprite)
 plane_attack_right_frames = frameToList(44, 42, 1, 8, plant_attack_right_sprite)
+# Block
+brick_frame = frameToList(40, 40, 1, 1, brick_sprite)
+steel_frame = frameToList(40, 40, 1, 1, steel_sprite)
+gold_frame = frameToList(40, 40, 1, 1, gold_sprite)

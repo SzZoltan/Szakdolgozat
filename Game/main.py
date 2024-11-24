@@ -1,7 +1,7 @@
 import pygame
 
 from Game.Entity import PowerUp
-from Game.Entity.Block import Block, Inside
+from Game.Entity.Block import Block, GoldBlock, SteelBlock, BrickBlock, Inside
 from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Powerup)
 from Game.Entity.Player import Player
 from Game.Entity.Enemy import (BunnyEnemy)
@@ -36,7 +36,8 @@ def redrawGameWindow():
         powerup.drawPowerup(win)
     drawProjectiles()
     bunny.drawEnemy(win)
-    testblock.draw(win)
+    for block in blocklist:
+        block.draw(win)
     pygame.display.update()
 
 # Terv: Az alapokat kifejelszteni: player, block, projectile,powerup, enemy, block alapú map editor elkészítése és
@@ -57,16 +58,17 @@ apple = Apple(200, 255, 32, 32)
 cherry = Cherry(250, 255, 32, 32)
 pineapple = Pineapple(150, 255, 32, 32)
 strawberry = Strawberry(300, 255, 32, 32)
-poweruplist = [apple, cherry, pineapple, strawberry]
 bunny = BunnyEnemy(100, 255, 32, 32)
-friendlyProjectiles = []
-enemyProjectiles = []
 invincibleTimer = 0
-testblock = Block(30, 200, Inside.APPLE)
-testblock.isContainer = True
-
+testgoldblock = GoldBlock(30, 200, Inside.APPLE)
+testbrick = BrickBlock(70,200)
+teststeel = SteelBlock(110,200)
 # shootLimit azért hogy legyen egy kis delay a lövések között
 shootLimit = 0
+friendlyProjectiles = []
+enemyProjectiles = []
+blocklist = [testbrick, teststeel, testgoldblock]
+poweruplist = [apple, cherry, pineapple, strawberry]
 run = True
 
 # Mainloop
@@ -140,10 +142,13 @@ while run:
         else:
             mc.hit()
 
-    if mc.hitbox.colliderect(testblock.hitbox) and testblock.isVisible and testblock.isBreakable:
-        if mc.hitbox.bottom > testblock.hitbox.bottom:
-            poweruplist.append(testblock.destroy());
-            print('testblock destroyed')
+    for block in blocklist:
+        if mc.hitbox.colliderect(block.hitbox) and block.isVisible and block.isBreakable:
+            if mc.hitbox.bottom > block.hitbox.bottom:
+                result = block.destroy()
+                if result is not None:
+                    poweruplist.append(result)
+                print('testblock destroyed')
     # Ugrás viselkedés: Parabola megoldás
     if not mc.isJump:
         if keys[pygame.K_UP]:

@@ -1,5 +1,6 @@
 # Öröklődés különleges block-okból: ? blokk, törhetetlen
-from Game.Entity.PowerUp import Powerup, Apple, Pineapple, Cherry, Strawberry
+from Game.Entity.PowerUp import Apple, Pineapple, Cherry, Strawberry
+from Game.Game_Graphics.Graphics_Loader import (brick_frame, steel_frame, gold_frame)
 from enum import Enum
 import pygame
 
@@ -15,7 +16,6 @@ class Inside(Enum):
 
 
 class Block:
-    # Az Inside-ot hogyan oldjam meg, string, maga az PowerUp?
     def __init__(self, x: int or float, y: int or float, inside=Inside.NOTHING):
         self.x = x
         self.y = y
@@ -126,4 +126,60 @@ class Block:
     def draw(self, window: pygame.Surface):
         if self.isVisible:
             self.hitbox = pygame.Rect(self.x, self.y, 40, 40)
+            window.blit(brick_frame[0],(self.x,self.y))
+            pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+
+# Átalgos tégla, törhető, de nincs benne semmi
+class BrickBlock(Block):
+    def __init__(self, x: int or float, y: int or float):
+        super().__init__(x, y)
+        self.isBreakable = True
+        self.isContainer = False
+        self.inside = Inside.NOTHING
+        self.isVisible = True
+
+    def destroy(self):
+        return super().destroy()
+
+    def draw(self, window: pygame.Surface):
+        if self.isVisible:
+            self.hitbox = pygame.Rect(self.x, self.y, 40, 40)
+            window.blit(brick_frame[0],(self.x,self.y))
+            pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+
+
+# Vasblock, törhetetlen
+class SteelBlock(Block):
+    def __init__(self, x: int or float, y: int or float):
+        super().__init__(x, y)
+        self.isBreakable = False
+        self.isContainer = False
+        self.inside = Inside.NOTHING
+        self.isVisible = True
+
+    def destroy(self):
+        return super().destroy()
+
+    def draw(self, window: pygame.Surface):
+        if self.isVisible:
+            self.hitbox = pygame.Rect(self.x, self.y, 40, 40)
+            window.blit(steel_frame[0],(self.x,self.y))
+            pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+
+# Aranyblock, törhető és van benne PowerUp
+class GoldBlock(Block):
+    def __init__(self, x: int or float, y: int or float, inside):
+        super().__init__(x, y)
+        self.isBreakable = True
+        self.isContainer = True
+        self.inside = inside
+        self.isVisible = True
+
+    def destroy(self):
+        return super().destroy()
+
+    def draw(self, window: pygame.Surface):
+        if self.isVisible:
+            self.hitbox = pygame.Rect(self.x, self.y, 40, 40)
+            window.blit(gold_frame[0],(self.x,self.y))
             pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
