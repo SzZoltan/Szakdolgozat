@@ -63,12 +63,14 @@ invincibleTimer = 0
 testgoldblock = GoldBlock(30, 200, Inside.APPLE)
 testbrick = BrickBlock(70,200)
 teststeel = SteelBlock(110,200)
+testbrick2 = BrickBlock(190,290)
 # shootLimit azért hogy legyen egy kis delay a lövések között
 shootLimit = 0
 friendlyProjectiles = []
 enemyProjectiles = []
-blocklist = [testbrick, teststeel, testgoldblock]
+blocklist = [testbrick, teststeel, testgoldblock, testbrick2]
 poweruplist = [apple, cherry, pineapple, strawberry]
+entitylist = [mc,bunny]
 run = True
 
 # Mainloop
@@ -84,6 +86,22 @@ while run:
         else:
             friendlyProjectiles.pop(friendlyProjectiles.index(proj))
 
+# Gravitáció
+    for entity in entitylist:
+        for block in blocklist:
+            if entity.isAlive and entity.hitbox.colliderect(block.hitbox):
+                if (entity.hitbox.bottom > block.hitbox.top and
+                        entity.hitbox.bottom+block.height-10 < block.hitbox.bottom
+                        and block.isVisible and entity.isAlive):
+                    entity.isFalling = False
+                    break
+            elif entity.y >= 280:
+                entity.isFalling = False
+            else:
+                entity.isFalling = True
+        if entity.isFalling:
+            entity.y += 5
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -93,10 +111,24 @@ while run:
         mc.isIdle = True
 
     if keys[pygame.K_LEFT]:
-        mc.move('left')
+        collision = False
+        for block in blocklist:
+            if mc.hitbox.colliderect(block.hitbox):
+                if (block.hitbox.right > mc.hitbox.left > block.hitbox.left and mc.hitbox.bottom +
+                        block.height/2 > block.hitbox.bottom and block.isVisible):
+                    collision = True
+        if not collision:
+            mc.move('left')
 
     if keys[pygame.K_RIGHT]:
-        mc.move('right')
+        collision = False
+        for block in blocklist:
+            if mc.hitbox.colliderect(block.hitbox):
+                if (block.hitbox.left < mc.hitbox.right < block.hitbox.right and mc.hitbox.bottom +
+                        block.height/2 > block.hitbox.bottom and block.isVisible):
+                    collision = True
+        if not collision:
+            mc.move('right')
 
     if shootLimit > 0:
         shootLimit += 1
@@ -144,13 +176,13 @@ while run:
 
     for block in blocklist:
         if mc.hitbox.colliderect(block.hitbox) and block.isVisible and block.isBreakable:
-            if mc.hitbox.bottom > block.hitbox.bottom:
+            if (mc.hitbox.bottom > block.hitbox.bottom and mc.hitbox.left + 20 > block.hitbox.left and
+                    mc.hitbox.right - 20 < block.hitbox.right):
                 result = block.destroy()
                 if result is not None:
                     poweruplist.append(result)
-                print('testblock destroyed')
-    # Ugrás viselkedés: Parabola megoldás
-    if not mc.isJump:
+    # Ugrás viselkedés: fél-Parabola megoldás
+    if not mc.isJump and not mc.isFalling:
         if keys[pygame.K_UP]:
             mc.isJump = True
     else:

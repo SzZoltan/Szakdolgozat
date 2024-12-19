@@ -10,25 +10,26 @@ from Game.Game_Graphics.Graphics_Loader import (iterateFrames, bunny_run_left_fr
 
 class Enemy:
     def __init__(self, x: int or float, y: int or float, width: int, height: int):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+        self._x = x
+        self._y = y
+        self._width = width
+        self._height = height
         self._vel = 5
-        self.health = 1
-        self.canShoot = False
-        self.canMove = True
-        self.idleFrameCount = 0
-        self.movingFrameCount = 0
-        self.shootingFrameCount = 0
-        self.isShooting = False
-        self.isAlive = True
+        self._health = 1
+        self._canShoot = False
+        self._canMove = True
+        self._idleFrameCount = 0
+        self._movingFrameCount = 0
+        self._shootingFrameCount = 0
+        self._isShooting = False
+        self._isAlive = True
         self._canBeJumped = True
-        self.isIdle = True
-        self.facingLeft = True
-        self.facingRight = False
-        self.isMoving = False
-        self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
+        self._isIdle = True
+        self._facingLeft = True
+        self._facingRight = False
+        self._isMoving = False
+        self._isFalling = False
+        self._hitbox = pygame.Rect(self.x, self.y, 30, 40)
 
     # <editor-fold desc="Property-k és setterek">
     @property
@@ -106,6 +107,10 @@ class Enemy:
     @property
     def hitbox(self):
         return self._hitbox
+
+    @property
+    def isFalling(self):
+        return self._isFalling
 
     @x.setter
     def x(self, x: int or float):
@@ -208,6 +213,13 @@ class Enemy:
         if not isinstance(canMove, bool):
             raise TypeError("canMove must be a bool")
         self._canMove = canMove
+
+    @isFalling.setter
+    def isFalling(self, isFalling: bool):
+        if not isinstance(isFalling, bool):
+            raise TypeError("isFalling must be a bool")
+        if self.canMove:
+            self._isFalling = isFalling
 
     # </editor-fold>
 

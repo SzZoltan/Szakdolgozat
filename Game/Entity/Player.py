@@ -8,26 +8,27 @@ from Game.Game_Graphics.Graphics_Loader import (iterateFrames, mc_jump_left_fram
 # Player visekedésének definálása
 class Player:
     def __init__(self, x: int or float, y: int or float, width: int, height: int):
-        self.hp = 1
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.lives = 3
-        self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
+        self._hp = 1
+        self._x = x
+        self._y = y
+        self._width = width
+        self._height = height
+        self._lives = 3
+        self._hitbox = pygame.Rect(self.x, self.y, 30, 40)
         self._vel = 5
-        self.jumpCount = 10
-        self.idleFrameCount = 0
-        self.runningFrameCount = 0
-        self.iFrames = 0
-        self.isInvincible = False
-        self.canShoot = False
-        self.isFalling = False
-        self.isJump = False
-        self.isIdle = True
-        self.facingLeft = False
-        self.facingRight = True
-        self.isRunning = False
+        self._jumpCount = 10
+        self._idleFrameCount = 0
+        self._runningFrameCount = 0
+        self._iFrames = 0
+        self._isAlive = True
+        self._isInvincible = False
+        self._canShoot = False
+        self._isFalling = False
+        self._isJump = False
+        self._isIdle = True
+        self._facingLeft = False
+        self._facingRight = True
+        self._isRunning = False
 
     # <editor-fold desc="Property-k és setterek">
     @property
@@ -109,6 +110,9 @@ class Player:
     @property
     def isRunning(self):
         return self._isRunning
+    @property
+    def isAlive(self):
+        return self._isAlive
 
     # Setters
     @hp.setter
@@ -196,7 +200,8 @@ class Player:
     def isFalling(self, value: bool):
         if not isinstance(value, bool):
             raise TypeError("isFalling attribute must be an boolean.")
-        self._isFalling = value
+        if not self.isJump:
+            self._isFalling = value
 
     @isJump.setter
     def isJump(self, value: bool):
@@ -228,6 +233,11 @@ class Player:
             raise TypeError("isRunning attribute must be an boolean.")
         self._isRunning = value
 
+    @isAlive.setter
+    def isAlive(self, value: bool):
+        if not isinstance(value, bool):
+            raise TypeError("isAlive attribute must be an boolean.")
+        self._isAlive = value
     # </editor-fold>
 
     # Játékos animációiért felelős függvény
@@ -270,15 +280,15 @@ class Player:
             raise ValueError('Invalid direction for Player move')
 
     def jump(self):
-        if self.jumpCount >= -10:
-            neg = 0.7
-            if self.jumpCount < 0:
-                neg = -0.7
-            self.y -= (self.jumpCount ** 2) * 0.5 * neg
-            self.jumpCount -= 1
-        else:
-            self.isJump = False
-            self.jumpCount = 10
+        if not self.isFalling and self.isJump:
+            if self.jumpCount >= 0:
+                self.y -= int((self.jumpCount ** 2) * 0.5 * 0.7)
+                self.jumpCount -= 1
+            else:
+                self.isJump = False
+                self.isFalling = True
+                print(self.y)
+                self.jumpCount = 10
 
     def hit(self):
         if not self.isInvincible:
