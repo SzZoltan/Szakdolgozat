@@ -290,6 +290,12 @@ class Player:
                 print(self.y)
                 self.jumpCount = 10
 
+    def interruptJump(self):
+        if self.isJump:
+            self.isJump = False
+            self.isFalling = True
+            self.jumpCount = 10
+
     def hit(self):
         if not self.isInvincible:
             self.hp = self.hp - 1

@@ -176,12 +176,10 @@ while run:
 
     for block in blocklist:
         if mc.hitbox.colliderect(block.hitbox) and block.isVisible:
-            if (mc.hitbox.bottom > block.hitbox.bottom and mc.hitbox.left + 20 > block.hitbox.left and
-                    mc.hitbox.right - 20 < block.hitbox.right):
+            if (mc.hitbox.bottom > block.hitbox.bottom and mc.hitbox.left + 15 > block.hitbox.left and
+                    mc.hitbox.right - 15 < block.hitbox.right):
                 result = block.destroy()
-                mc.isJump = False
-                mc.isFalling = True
-                mc.jumpCount = 10
+                mc.interruptJump()
                 if result is not None:
                     poweruplist.append(result)
     # Ugrás viselkedés: fél-Parabola megoldás
