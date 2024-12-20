@@ -100,7 +100,7 @@ while run:
             else:
                 entity.isFalling = True
         if entity.isFalling:
-            entity.y += 5
+            entity.y += 7
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -175,10 +175,13 @@ while run:
             mc.hit()
 
     for block in blocklist:
-        if mc.hitbox.colliderect(block.hitbox) and block.isVisible and block.isBreakable:
+        if mc.hitbox.colliderect(block.hitbox) and block.isVisible:
             if (mc.hitbox.bottom > block.hitbox.bottom and mc.hitbox.left + 20 > block.hitbox.left and
                     mc.hitbox.right - 20 < block.hitbox.right):
                 result = block.destroy()
+                mc.isJump = False
+                mc.isFalling = True
+                mc.jumpCount = 10
                 if result is not None:
                     poweruplist.append(result)
     # Ugrás viselkedés: fél-Parabola megoldás

@@ -111,13 +111,13 @@ class Block:
             self.isVisible = False
             if self.isContainer:
                 if self.inside == Inside.APPLE:
-                    return Apple(self.x, self.y, 32, 32)
+                    return Apple(self.x+5, self.y-15, 32, 32)
                 elif self.inside == Inside.PINEAPPLE:
-                    return Pineapple(self.x, self.y, 32, 32)
+                    return Pineapple(self.x+5, self.y-15, 32, 32)
                 elif self.inside == Inside.CHERRY:
-                    return Cherry(self.x, self.y, 32, 32)
+                    return Cherry(self.x+5, self.y-15, 32, 32)
                 elif self.inside == Inside.STRAWBERRY:
-                    return Strawberry(self.x, self.y, 32, 32)
+                    return Strawberry(self.x+5, self.y-15, 32, 32)
                 elif self.inside == Inside.NOTHING:
                     return None
             else:
