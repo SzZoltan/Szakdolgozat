@@ -4,7 +4,7 @@ from Game.Entity import PowerUp
 from Game.Entity.Block import Block, GoldBlock, SteelBlock, BrickBlock, Inside
 from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Powerup)
 from Game.Entity.Player import Player
-from Game.Entity.Enemy import (BunnyEnemy)
+from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy)
 from Game.Game_Graphics.Graphics_Loader import level1_bg
 
 pygame.init()
@@ -26,18 +26,33 @@ def drawBackground():
 def drawProjectiles():
     for fproj in friendlyProjectiles:
         fproj.draw(win)
+    for eproj in enemyProjectiles:
+        eproj.draw(win)
+
+
+def drawPowerUp():
+    for pup in poweruplist:
+        pup.drawPowerup(win)
+
+
+def drawBlocks():
+    for block in blocklist:
+        block.draw(win)
+
+
+def drawEnemies():
+    for e in enemylist:
+        e.drawEnemy(win)
 
 
 def redrawGameWindow():
     win.fill((0, 0, 0))
     drawBackground()
     mc.drawPlayer(win)
-    for powerup in poweruplist:
-        powerup.drawPowerup(win)
+    drawPowerUp()
     drawProjectiles()
-    bunny.drawEnemy(win)
-    for block in blocklist:
-        block.draw(win)
+    drawEnemies()
+    drawBlocks()
     pygame.display.update()
 
 # Terv: Az alapokat kifejelszteni: player, block, projectile,powerup, enemy, block alapú map editor elkészítése és
@@ -59,6 +74,7 @@ cherry = Cherry(250, 255, 32, 32)
 pineapple = Pineapple(150, 255, 32, 32)
 strawberry = Strawberry(300, 255, 32, 32)
 bunny = BunnyEnemy(100, 255, 32, 32)
+plant = PlantEnemy(400, 255, 32, 32)
 invincibleTimer = 0
 testgoldblock = GoldBlock(30, 200, Inside.APPLE)
 testbrick = BrickBlock(70,200)
@@ -70,7 +86,8 @@ friendlyProjectiles = []
 enemyProjectiles = []
 blocklist = [testbrick, teststeel, testgoldblock, testbrick2]
 poweruplist = [apple, cherry, pineapple, strawberry]
-entitylist = [mc,bunny]
+entitylist = [mc, bunny, plant]
+enemylist = [bunny, plant]
 run = True
 
 # Mainloop
@@ -79,14 +96,36 @@ while run:
 
     keys = pygame.key.get_pressed()
 
+    # Friendly Projectile
     for proj in friendlyProjectiles:
         if window_width > proj.x > 0:
             proj.x += proj.vel
-            # hit check ide jön majd kell majd projectile hit method
         else:
             friendlyProjectiles.pop(friendlyProjectiles.index(proj))
+        for enemy in enemylist:
+            if proj.hitbox.colliderect(enemy.hitbox) and enemy.isAlive:
+                enemy.hit()
+                friendlyProjectiles.pop(friendlyProjectiles.index(proj))
+                break
+        for block in blocklist:
+            if proj.hitbox.colliderect(block.hitbox):
+                friendlyProjectiles.pop(friendlyProjectiles.index(proj))
+                break
 
-# Gravitáció
+    # Enemy projectiles
+    for proj in enemyProjectiles:
+        if window_width > proj.x > 0:
+            proj.x += proj.vel
+        else:
+            enemyProjectiles.pop(enemyProjectiles.index(proj))
+        if proj.hitbox.colliderect(mc.hitbox):
+            mc.hit()
+            enemyProjectiles.pop(enemyProjectiles.index(proj))
+        for block in blocklist:
+            if proj.hitbox.colliderect(block.hitbox):
+                enemyProjectiles.pop(enemyProjectiles.index(proj))
+
+    # Gravitáció
     for entity in entitylist:
         for block in blocklist:
             if entity.isAlive and entity.hitbox.colliderect(block.hitbox):
@@ -145,6 +184,16 @@ while run:
                     friendlyProjectiles.append(mc.shoot(-1))
                 shootLimit = 1
 
+    for enemies in enemylist:
+        if enemies.canShoot:
+            if enemies.facingLeft:
+                proj = enemies.shoot(-1)
+                if proj is not None:
+                    enemyProjectiles.append(proj)
+            else:
+                proj = enemies.shoot(1)
+                if proj is not None:
+                    enemyProjectiles.append(proj)
     if mc.isInvincible:
         if invincibleTimer > 0:
             invincibleTimer -= 1
@@ -165,23 +214,24 @@ while run:
     if bunny.x >= 0:
         bunny.move('left')
 
-    if mc.hitbox.colliderect(bunny.hitbox) and mc.isInvincible and bunny.isAlive:
-        bunny.hit()
-
-    if mc.hitbox.colliderect(bunny.hitbox) and bunny.isAlive and mc.hp > 0:
-        if mc.hitbox.bottom < bunny.hitbox.top + 15:
-            bunny.hit()
-        else:
-            mc.hit()
+    for enemies in enemylist:
+        if mc.hitbox.colliderect(enemies.hitbox) and mc.isInvincible and enemies.isAlive:
+            enemies.hit()
+        if mc.hitbox.colliderect(enemies.hitbox) and enemies.isAlive and mc.hp > 0:
+            if mc.hitbox.bottom < enemies.hitbox.top + 15:
+                enemies.hit()
+            else:
+                mc.hit()
 
     for block in blocklist:
         if mc.hitbox.colliderect(block.hitbox) and block.isVisible:
-            if (mc.hitbox.bottom > block.hitbox.bottom and mc.hitbox.left + 15 > block.hitbox.left and
-                    mc.hitbox.right - 15 < block.hitbox.right):
+            if (mc.hitbox.bottom > block.hitbox.bottom and mc.hitbox.left + 25 > block.hitbox.left and
+                    mc.hitbox.right - 25 < block.hitbox.right):
                 result = block.destroy()
                 mc.interruptJump()
                 if result is not None:
                     poweruplist.append(result)
+
     # Ugrás viselkedés: fél-Parabola megoldás
     if not mc.isJump and not mc.isFalling:
         if keys[pygame.K_UP]:

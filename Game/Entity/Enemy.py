@@ -2,7 +2,9 @@ import pygame
 from Game.Entity.Projectile import EnemyProjectile
 from Game.Game_Graphics.Graphics_Loader import (iterateFrames, bunny_run_left_frames, bunny_run_right_frames,
                                                 bunny_idle_left_frames, bunny_idle_right_frames, mc_run_left_frames,
-                                                mc_run_right_frames, mc_idle_left_frames, mc_idle_right_frames)
+                                                mc_run_right_frames, mc_idle_left_frames, mc_idle_right_frames,
+                                                plant_idle_left_frames, plant_idle_right_frames,
+                                                plant_attack_right_frames, plant_attack_left_frames)
 
 
 # Enemy viselkedés
@@ -218,8 +220,7 @@ class Enemy:
     def isFalling(self, isFalling: bool):
         if not isinstance(isFalling, bool):
             raise TypeError("isFalling must be a bool")
-        if self.canMove:
-            self._isFalling = isFalling
+        self._isFalling = isFalling
 
     # </editor-fold>
 
@@ -284,7 +285,6 @@ class BunnyEnemy(Enemy):
         self.canShoot = False
         self.canMove = True
 
-    # Kell egy megoldás arra, hogy ezt egységesíteni lehessen
     def drawEnemy(self, window: pygame.Surface):
         if isinstance(window, pygame.Surface):
             if self.isAlive:
@@ -312,7 +312,6 @@ class BunnyEnemy(Enemy):
 
     def hit(self):
         super().hit()
-        print("Enemy hit")
 
 
 # Az egyhelyben álló folyamatosan lövő ellenfél
@@ -321,19 +320,50 @@ class PlantEnemy(Enemy):
         super().__init__(x, y, width, height)
         self.canShoot = True
         self.canMove = False
-        self.shootCooldown = 0
+        self.shootCooldown = 45
+        self.shootDelay = 8
 
     def drawEnemy(self, window: pygame.Surface):
-        super().drawEnemy(window)
+        if isinstance(window, pygame.Surface):
+            if self.isAlive:
+                if self.isIdle:
+                    if self.facingLeft:
+                        self.idleFrameCount = iterateFrames(self, window, plant_idle_left_frames, self.idleFrameCount,
+                                                            11)
+                    else:
+                        self.idleFrameCount = iterateFrames(self, window, plant_idle_right_frames, self.idleFrameCount,
+                                                            11)
+                elif self.isShooting:
+                    if self.facingLeft:
+                        self.shootingFrameCount = iterateFrames(self, window, plant_attack_left_frames,
+                                                                self.shootingFrameCount, 8)
+                    else:
+                        self.shootingFrameCount = iterateFrames(self, window, plant_attack_right_frames,
+                                                                self.shootingFrameCount, 8)
+                self.hitbox = pygame.Rect(self.x, self.y, 45, 45)
+                pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+        else:
+            raise TypeError('Invalid window argument Plant drawEnemy')
 
     def hit(self):
         super().hit()
 
-    # Hogy garantálom, hogy az animáció lejátszódjon mielőtt lő és utánna viszamegy idle-be?
-    # self.shootingFrameCount = iterateFrames(self, window, plane_attack_left_frames, self.shootingFrameCount, 8)
     def shoot(self, direction: int):
-        if self.canShoot:
+        if self.canShoot and self.isAlive:
             if self.shootCooldown == 0:
+                self.isIdle = False
                 self.isShooting = True
-                super().shoot(direction)
-            self.shootCooldown = 90
+                if self.shootCooldown == 0 and self.shootDelay == 3:
+                    self.shootDelay -= 1
+                    return super().shoot(direction)
+                elif self.shootDelay == 0:
+                    self.shootCooldown = 45
+                    self.shootDelay = 8
+                    self.isIdle = True
+                    self.isShooting = False
+                    self.shootingFrameCount = 0
+                    self.idleFrameCount = 0
+                else:
+                    self.shootDelay -= 1
+            else:
+                self.shootCooldown -= 1

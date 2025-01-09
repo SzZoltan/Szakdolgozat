@@ -287,7 +287,6 @@ class Player:
             else:
                 self.isJump = False
                 self.isFalling = True
-                print(self.y)
                 self.jumpCount = 10
 
     def interruptJump(self):
