@@ -280,7 +280,7 @@ class Enemy:
 
 # A goomba féle ellenfél aki nem csinál semmit csak oda vissza járkál
 class BunnyEnemy(Enemy):
-    def __init__(self, x: int or float, y: int or float, width: int, height: int):
+    def __init__(self, x: int or float, y: int or float, width: int = 32, height: int = 32):
         super().__init__(x, y, width, height)
         self.canShoot = False
         self.canMove = True
@@ -316,7 +316,7 @@ class BunnyEnemy(Enemy):
 
 # Az egyhelyben álló folyamatosan lövő ellenfél
 class PlantEnemy(Enemy):
-    def __init__(self, x: int or float, y: int or float, width: int, height: int):
+    def __init__(self, x: int or float, y: int or float, width: int = 32, height: int = 32):
         super().__init__(x, y, width, height)
         self.canShoot = True
         self.canMove = False
@@ -340,7 +340,7 @@ class PlantEnemy(Enemy):
                     else:
                         self.shootingFrameCount = iterateFrames(self, window, plant_attack_right_frames,
                                                                 self.shootingFrameCount, 8)
-                self.hitbox = pygame.Rect(self.x, self.y, 45, 45)
+                self.hitbox = pygame.Rect(self.x+5, self.y, 40, 45)
                 pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
         else:
             raise TypeError('Invalid window argument Plant drawEnemy')

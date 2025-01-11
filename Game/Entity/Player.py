@@ -7,7 +7,7 @@ from Game.Game_Graphics.Graphics_Loader import (iterateFrames, mc_jump_left_fram
 
 # Player visekedésének definálása
 class Player:
-    def __init__(self, x: int or float, y: int or float, width: int, height: int):
+    def __init__(self, x: int or float, y: int or float, width: int = 32, height: int = 32):
         self._hp = 1
         self._x = x
         self._y = y
@@ -288,6 +288,13 @@ class Player:
                 self.isJump = False
                 self.isFalling = True
                 self.jumpCount = 10
+
+    def bounce(self):
+        if self.isFalling:
+            self.jumpCount = 7
+            self.isFalling = False
+            self.isJump = True
+            self.jump()
 
     def interruptJump(self):
         if self.isJump:

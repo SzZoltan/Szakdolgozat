@@ -68,18 +68,18 @@ win = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption('MyGame')
 
 
-mc = Player(0, 255, 32, 32)
-apple = Apple(200, 255, 32, 32)
-cherry = Cherry(250, 255, 32, 32)
-pineapple = Pineapple(150, 255, 32, 32)
-strawberry = Strawberry(300, 255, 32, 32)
-bunny = BunnyEnemy(100, 255, 32, 32)
-plant = PlantEnemy(400, 255, 32, 32)
+mc = Player(0, 255)
+apple = Apple(200, 255)
+cherry = Cherry(250, 255)
+pineapple = Pineapple(150, 255)
+strawberry = Strawberry(300, 255)
+bunny = BunnyEnemy(100, 255)
+plant = PlantEnemy(400, 255)
 invincibleTimer = 0
 testgoldblock = GoldBlock(30, 200, Inside.APPLE)
-testbrick = BrickBlock(70,200)
-teststeel = SteelBlock(110,200)
-testbrick2 = BrickBlock(190,290)
+testbrick = BrickBlock(70, 200)
+teststeel = SteelBlock(110, 200)
+testbrick2 = BrickBlock(190, 290)
 # shootLimit azért hogy legyen egy kis delay a lövések között
 shootLimit = 0
 friendlyProjectiles = []
@@ -98,32 +98,49 @@ while run:
 
     # Friendly Projectile
     for proj in friendlyProjectiles:
+        popped = False
         if window_width > proj.x > 0:
             proj.x += proj.vel
         else:
             friendlyProjectiles.pop(friendlyProjectiles.index(proj))
+            popped = True
+            break
         for enemy in enemylist:
+            if popped:
+                break
             if proj.hitbox.colliderect(enemy.hitbox) and enemy.isAlive:
                 enemy.hit()
                 friendlyProjectiles.pop(friendlyProjectiles.index(proj))
+                popped = True
                 break
         for block in blocklist:
+            if popped:
+                break
             if proj.hitbox.colliderect(block.hitbox):
                 friendlyProjectiles.pop(friendlyProjectiles.index(proj))
+                popped = True
                 break
 
     # Enemy projectiles
     for proj in enemyProjectiles:
+        popped = False
         if window_width > proj.x > 0:
             proj.x += proj.vel
         else:
             enemyProjectiles.pop(enemyProjectiles.index(proj))
-        if proj.hitbox.colliderect(mc.hitbox):
-            mc.hit()
-            enemyProjectiles.pop(enemyProjectiles.index(proj))
+            popped = True
+            break
         for block in blocklist:
+            if popped:
+                break
             if proj.hitbox.colliderect(block.hitbox):
                 enemyProjectiles.pop(enemyProjectiles.index(proj))
+                popped = True
+                break
+        if not popped and proj.hitbox.colliderect(mc.hitbox):
+            mc.hit()
+            enemyProjectiles.pop(enemyProjectiles.index(proj))
+            break
 
     # Gravitáció
     for entity in entitylist:
@@ -218,8 +235,9 @@ while run:
         if mc.hitbox.colliderect(enemies.hitbox) and mc.isInvincible and enemies.isAlive:
             enemies.hit()
         if mc.hitbox.colliderect(enemies.hitbox) and enemies.isAlive and mc.hp > 0:
-            if mc.hitbox.bottom < enemies.hitbox.top + 15:
+            if enemies.canBeJumped and mc.hitbox.bottom < enemies.hitbox.top + 15:
                 enemies.hit()
+                mc.bounce()
             else:
                 mc.hit()
 

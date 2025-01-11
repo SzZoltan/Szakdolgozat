@@ -121,7 +121,7 @@ class Powerup:
 
 # Megnöveli 1-el az életerejét a karakternek
 class Apple(Powerup):
-    def __init__(self, x: int, y: int, width: int, height: int):
+    def __init__(self, x: int, y: int, width: int = 32, height: int = 32):
         super().__init__(x, y, width, height)
         self.frames = apple_frames
 
@@ -142,7 +142,7 @@ class Apple(Powerup):
 
 # Elérhetővé teszi a lövés képességet a karakterünknek, elveszik miután eltalálják vagy meghal
 class Cherry(Powerup):
-    def __init__(self, x: int, y: int, width: int, height: int):
+    def __init__(self, x: int, y: int, width: int = 32, height: int = 32):
         super().__init__(x, y, width, height)
         self.frames = cherry_frames
 
@@ -163,7 +163,7 @@ class Cherry(Powerup):
 
 # Megnöveli az életek/újrapróbálkozások számát a Játékosnak
 class Pineapple(Powerup):
-    def __init__(self, x: int, y: int, width: int, height: int):
+    def __init__(self, x: int, y: int, width: int = 32, height: int = 32):
         super().__init__(x, y, width, height)
         self.frames = pineapple_frames
 
@@ -184,7 +184,7 @@ class Pineapple(Powerup):
 
 # Halhatatlanná teszi a karaktert egy ideig és míg halhatatlan át tud menni különböző ellenfeleken
 class Strawberry(Powerup):
-    def __init__(self, x: int, y: int, width: int, height: int):
+    def __init__(self, x: int, y: int, width: int = 32, height: int = 32):
         super().__init__(x, y, width, height)
         self.frames = strawberry_frames
 
