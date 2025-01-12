@@ -7,14 +7,14 @@ from Game.Game_Graphics.Graphics_Loader import (iterateFrames, mc_jump_left_fram
 
 # Player visekedésének definálása
 class Player:
-    def __init__(self, x: int or float, y: int or float, width: int = 32, height: int = 32):
+    def __init__(self, x: int or float, y: int or float):
         self._hp = 1
         self._x = x
         self._y = y
-        self._width = width
-        self._height = height
+        self._width = 32
+        self._height = 32
         self._lives = 3
-        self._hitbox = pygame.Rect(self.x, self.y, 30, 40)
+        self._hitbox = pygame.Rect(self.x, self.y, 30, 35)
         self._vel = 5
         self._jumpCount = 10
         self._idleFrameCount = 0
@@ -260,7 +260,7 @@ class Player:
                 self.idleFrameCount = iterateFrames(self, window, mc_idle_right_frames, self.idleFrameCount, 11)
             else:
                 self.idleFrameCount = iterateFrames(self, window, mc_idle_left_frames, self.idleFrameCount, 11)
-        self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
+        self.hitbox = pygame.Rect(self.x, self.y, 30, 35)
         pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
     def move(self, direction: str):

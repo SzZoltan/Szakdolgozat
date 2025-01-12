@@ -244,7 +244,7 @@ while run:
     for block in blocklist:
         if mc.hitbox.colliderect(block.hitbox) and block.isVisible:
             if (mc.hitbox.bottom > block.hitbox.bottom and mc.hitbox.left + 25 > block.hitbox.left and
-                    mc.hitbox.right - 25 < block.hitbox.right):
+                    mc.hitbox.right - 25 < block.hitbox.right and mc.isJump):
                 result = block.destroy()
                 mc.interruptJump()
                 if result is not None:
