@@ -11,11 +11,11 @@ from Game.Game_Graphics.Graphics_Loader import (iterateFrames, bunny_run_left_fr
 # Az összes ellenfélnek az alapja mind öröklődik innen
 
 class Enemy:
-    def __init__(self, x: int or float, y: int or float, width: int, height: int):
+    def __init__(self, x: int or float, y: int or float, direction: str = 'l'):
         self._x = x
         self._y = y
-        self._width = width
-        self._height = height
+        self._width = 32
+        self._height = 32
         self._vel = 5
         self._health = 1
         self._canShoot = False
@@ -27,11 +27,17 @@ class Enemy:
         self._isAlive = True
         self._canBeJumped = True
         self._isIdle = True
-        self._facingLeft = True
-        self._facingRight = False
         self._isMoving = False
         self._isFalling = False
         self._hitbox = pygame.Rect(self.x, self.y, 30, 40)
+        if direction == 'l':
+            self._facingLeft = True
+            self._facingRight = False
+        elif direction == 'r':
+            self._facingLeft = False
+            self._facingRight = True
+        else:
+            raise ValueError('Direction must be either "l" or "r"')
 
     # <editor-fold desc="Property-k és setterek">
     @property
@@ -280,10 +286,12 @@ class Enemy:
 
 # A goomba féle ellenfél aki nem csinál semmit csak oda vissza járkál
 class BunnyEnemy(Enemy):
-    def __init__(self, x: int or float, y: int or float, width: int = 32, height: int = 32):
-        super().__init__(x, y, width, height)
+    def __init__(self, x: int or float, y: int or float, direction: str = 'l'):
+        super().__init__(x, y, direction)
         self.canShoot = False
         self.canMove = True
+        self.width = 32
+        self.height = 32
 
     def drawEnemy(self, window: pygame.Surface):
         if isinstance(window, pygame.Surface):
@@ -316,12 +324,14 @@ class BunnyEnemy(Enemy):
 
 # Az egyhelyben álló folyamatosan lövő ellenfél
 class PlantEnemy(Enemy):
-    def __init__(self, x: int or float, y: int or float, width: int = 32, height: int = 32):
-        super().__init__(x, y, width, height)
+    def __init__(self, x: int or float, y: int or float, direction: str = 'l'):
+        super().__init__(x, y, direction)
         self.canShoot = True
         self.canMove = False
         self.shootCooldown = 45
         self.shootDelay = 8
+        self.width = 32
+        self.height = 32
 
     def drawEnemy(self, window: pygame.Surface):
         if isinstance(window, pygame.Surface):
@@ -340,7 +350,10 @@ class PlantEnemy(Enemy):
                     else:
                         self.shootingFrameCount = iterateFrames(self, window, plant_attack_right_frames,
                                                                 self.shootingFrameCount, 8)
-                self.hitbox = pygame.Rect(self.x+5, self.y, 40, 45)
+                if self.facingLeft:
+                    self.hitbox = pygame.Rect(self.x+5, self.y, 40, 45)
+                elif self.facingRight:
+                    self.hitbox = pygame.Rect(self.x, self.y, 40, 45)
                 pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
         else:
             raise TypeError('Invalid window argument Plant drawEnemy')
