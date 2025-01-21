@@ -29,6 +29,7 @@ class Enemy:
         self._isIdle = True
         self._isMoving = False
         self._isFalling = False
+        self._isVisible = False
         self._hitbox = pygame.Rect(self.x, self.y, 30, 40)
         if direction == 'l':
             self._facingLeft = True
@@ -115,6 +116,11 @@ class Enemy:
     @property
     def hitbox(self):
         return self._hitbox
+
+    @property
+    def isVisible(self):
+        return self._isVisible
+
 
     @property
     def isFalling(self):
@@ -228,6 +234,11 @@ class Enemy:
             raise TypeError("isFalling must be a bool")
         self._isFalling = isFalling
 
+    @isVisible.setter
+    def isVisible(self,isVisible: bool):
+        if not isinstance(isVisible, bool):
+            raise TypeError("isVisible must be a bool")
+        self._isVisible = isVisible
     # </editor-fold>
 
     # Ez lesz a default Enemy animáció, a Főszereplő, de csak akkor ha nincs implementálva sajátja,

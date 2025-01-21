@@ -6,7 +6,6 @@ from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Powerup)
 from Game.Entity.Player import Player
 from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy)
 from Game.Game_Graphics.Graphics_Loader import level1_bg
-
 pygame.init()
 
 # Az animációk 20 FPS-re vannak megcsinálva
@@ -36,13 +35,14 @@ def drawPowerUp():
 
 
 def drawBlocks():
-    for block in blocklist:
-        block.draw(win)
+    for blocks in blocklist:
+        blocks.draw(win)
 
 
 def drawEnemies():
     for e in enemylist:
-        e.drawEnemy(win)
+        if e.isVisible:
+            e.drawEnemy(win)
 
 
 def redrawGameWindow():
@@ -59,9 +59,11 @@ def redrawGameWindow():
 # miután ez megvan: pályák ,egy főmenü, score system, leaderboard
 
 
+offset_x = 205
 window_width = 500
 window_height = 500
-tiles_across = window_width // level1_bg.get_width()+1
+map_width = 600
+tiles_across = map_width // level1_bg.get_width()+1
 tiles_down = window_height // level1_bg.get_height()+1
 
 win = pygame.display.set_mode((window_width, window_height))
@@ -75,25 +77,28 @@ pineapple = Pineapple(150, 255)
 strawberry = Strawberry(300, 255)
 bunny = BunnyEnemy(100, 255)
 plant = PlantEnemy(400, 255)
+plant2 = PlantEnemy(550, 255)
 invincibleTimer = 0
 testgoldblock = GoldBlock(30, 200, Inside.APPLE)
 testbrick = BrickBlock(70, 200)
 teststeel = SteelBlock(110, 200)
 testbrick2 = BrickBlock(190, 290)
+endbrick = BrickBlock(600, 255)
 # shootLimit azért hogy legyen egy kis delay a lövések között
 shootLimit = 0
 friendlyProjectiles = []
 enemyProjectiles = []
-blocklist = [testbrick, teststeel, testgoldblock, testbrick2]
+blocklist = [testbrick, teststeel, testgoldblock, testbrick2, endbrick]
 poweruplist = [apple, cherry, pineapple, strawberry]
-entitylist = [mc, bunny, plant]
-enemylist = [bunny, plant]
+entitylist = [mc, bunny, plant, plant2]
+enemylist = [bunny, plant, plant2]
+spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
 run = True
 
 # Mainloop
 while run:
     clock.tick(20)
-
+    spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
     keys = pygame.key.get_pressed()
 
     # Friendly Projectile
@@ -146,12 +151,11 @@ while run:
     for entity in entitylist:
         for block in blocklist:
             if entity.isAlive and entity.hitbox.colliderect(block.hitbox):
-                if (entity.hitbox.bottom > block.hitbox.top and
-                        entity.hitbox.bottom+block.height-10 < block.hitbox.bottom
+                if (entity.hitbox.bottom+block.height-10 < block.hitbox.bottom
                         and block.isVisible and entity.isAlive):
                     entity.isFalling = False
                     break
-            elif entity.y >= 280:
+            elif entity.y+entity.height >= 320:
                 entity.isFalling = False
             else:
                 entity.isFalling = True
@@ -173,7 +177,7 @@ while run:
                 if (block.hitbox.right > mc.hitbox.left > block.hitbox.left and mc.hitbox.bottom +
                         block.height/2 > block.hitbox.bottom and block.isVisible):
                     collision = True
-        if not collision:
+        if not collision and mc.x != 0:
             mc.move('left')
 
     if keys[pygame.K_RIGHT]:
@@ -183,8 +187,15 @@ while run:
                 if (block.hitbox.left < mc.hitbox.right < block.hitbox.right and mc.hitbox.bottom +
                         block.height/2 > block.hitbox.bottom and block.isVisible):
                     collision = True
-        if not collision:
-            mc.move('right')
+        if not collision and mc.x != window_width - 30:
+            if mc.x + offset_x > endbrick.x:
+                mc.move('right')
+            elif mc.x == offset_x:
+                for sprites in spritelist:
+                    sprites.x -= mc.vel
+                mc.move('right')
+            else:
+                mc.move('right')
 
     if shootLimit > 0:
         shootLimit += 1
@@ -202,7 +213,7 @@ while run:
                 shootLimit = 1
 
     for enemies in enemylist:
-        if enemies.canShoot:
+        if enemies.canShoot and enemies.isVisible:
             if enemies.facingLeft:
                 proj = enemies.shoot(-1)
                 if proj is not None:
@@ -211,6 +222,7 @@ while run:
                 proj = enemies.shoot(1)
                 if proj is not None:
                     enemyProjectiles.append(proj)
+
     if mc.isInvincible:
         if invincibleTimer > 0:
             invincibleTimer -= 1
@@ -232,6 +244,8 @@ while run:
         bunny.move('left')
 
     for enemies in enemylist:
+        if enemies.x < window_width and enemies.x+enemies.width > 0:
+            enemies.isVisible = True
         if mc.hitbox.colliderect(enemies.hitbox) and mc.isInvincible and enemies.isAlive:
             enemies.hit()
         if mc.hitbox.colliderect(enemies.hitbox) and enemies.isAlive and mc.hp > 0:

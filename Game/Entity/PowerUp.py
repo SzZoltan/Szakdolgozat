@@ -9,7 +9,7 @@ from Game.Entity.Player import Player
 
 class Powerup:
     def __init__(self, x: int or float, y: int or float, width: int, height: int):
-        self.x = x
+        self._x = x
         self.y = y
         self.width = width
         self.height = height
