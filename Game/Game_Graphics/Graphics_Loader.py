@@ -57,6 +57,8 @@ mc_jump_right_sprite = pygame.image.load(f'Graphics/Main Characters/Pink Man/Jum
 mc_jump_left_sprite = pygame.transform.flip(mc_jump_right_sprite, True, False)
 # Pálya háttér
 level1_bg = pygame.image.load(f'Graphics/Background/Brown.png')
+level2_bg = pygame.image.load(f'Graphics/Background/Purple.png')
+level3_bg = pygame.image.load(f'Graphics/Background/Blue.png')
 # Power Upok
 apple_sprite = pygame.image.load(f'Graphics/Items/Fruits/Apple.png')
 pineapple_sprite = pygame.image.load(f'Graphics/Items/Fruits/Pineapple.png')

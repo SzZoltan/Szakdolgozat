@@ -10,6 +10,7 @@ pygame.init()
 
 # Az animációk 20 FPS-re vannak megcsinálva
 clock = pygame.time.Clock()
+FPS = 20
 
 
 # Unit tesztelés extrém tesztesetek
@@ -62,8 +63,7 @@ def redrawGameWindow():
 offset_x = 205
 window_width = 500
 window_height = 500
-map_width = 600
-tiles_across = map_width // level1_bg.get_width()+1
+tiles_across = window_width // level1_bg.get_width()+1
 tiles_down = window_height // level1_bg.get_height()+1
 
 win = pygame.display.set_mode((window_width, window_height))
@@ -97,7 +97,7 @@ run = True
 
 # Mainloop
 while run:
-    clock.tick(20)
+    clock.tick(FPS)
     spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
     keys = pygame.key.get_pressed()
 
