@@ -1,6 +1,6 @@
 import pygame
 from Button.Button import Button
-from Game.Game_Graphics.Graphics_Loader import level1_bg, level3_bg, level2_bg
+from Game.Game_Graphics.Graphics_Loader import level1_bg, level3_bg, level2_bg, map_editor_tile_list
 
 pygame.init()
 
@@ -33,6 +33,7 @@ scroll_speed = 1
 tiles_across = WINDOW_WIDTH * 5 // level1_bg.get_width()
 tiles_down = WINDOW_HEIGHT // level1_bg.get_height()
 MAP_WIDTH = level1_bg.get_width() * tiles_across
+current_tile = 0
 
 
 # Hogy változtassuk meg a háttéret? ötlet: listába beletesszük az összes képet és gombra változtatjuk
@@ -55,11 +56,34 @@ def draw_grid():
         pygame.draw.line(window, (255, 255, 255), (0, h * TILE_SIZE), (WINDOW_WIDTH, h * TILE_SIZE), 2)
 
 
+# Gombok létrehozása
+button_list = []
+button_col = 0
+button_row = 0
+# Skálázuk egy kicsit a map_editor_tile_list képeit és utána a gombra tesszük és utána eltoljuk 75 pixel + 50-el
+for i in range(len(map_editor_tile_list)):
+    img = pygame.transform.scale(map_editor_tile_list[i], (TILE_SIZE, TILE_SIZE))
+    tile_button = Button(WINDOW_WIDTH + (75 * button_col) + 50, 75 * button_row + 50, img, 1)
+    button_list.append(tile_button)
+    button_col += 1
+    if button_col == 3:
+        button_row += 1
+        button_col = 0
+
 run = True
 while run:
     clock.tick(FPS)
     draw_bg()
     draw_grid()
+
+    pygame.draw.rect(window, (144, 201, 120), (WINDOW_WIDTH, 0, RIGHT_MARGIN, WINDOW_HEIGHT))
+
+    button_count = 0
+    for button_count, i in enumerate(button_list):
+        if i.draw(window):
+            current_tile = button_count
+
+    pygame.draw.rect(window, (0, 0, 255), (button_list[current_tile]), 3)
 
     # kamera mozgás
     if scroll_left and scroll > 0:

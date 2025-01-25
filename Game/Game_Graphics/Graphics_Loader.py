@@ -1,5 +1,8 @@
 import pygame
 
+MAP_EDITOR_TILE_TYPES = 9
+
+
 def getSprite(sheet: pygame.Surface, f_width: int, f_height: int, x: int, y: int):
     # kiszed 1 frame-et a sprite-sheetből
     # f_width: frame széle
@@ -106,3 +109,8 @@ plant_attack_right_frames = frameToList(44, 42, 1, 8, plant_attack_right_sprite)
 brick_frame = frameToList(40, 40, 1, 1, brick_sprite)
 steel_frame = frameToList(40, 40, 1, 1, steel_sprite)
 gold_frame = frameToList(40, 40, 1, 1, gold_sprite)
+# Map Editor képek
+map_editor_tile_list = []
+for x in range(MAP_EDITOR_TILE_TYPES):
+    img = pygame.image.load(f'Graphics/Editor Tiles/{x}.png')
+    map_editor_tile_list.append(img)

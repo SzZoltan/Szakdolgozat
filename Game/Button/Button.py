@@ -10,10 +10,11 @@ class Button:
         self.y = y
         self.img = pygame.transform.scale(img, (int( self.width*scale), int(self.height*scale)))
         self.rect = self.img.get_rect()
+        self.rect.topleft = (x, y)
         self.clicked = False
 
 # Megszerzi az egér pozicióját és megnézi hogy megnyomták-e rá a bal egérgombot, visszaadja hogy megnyomták-e vagy nem
-    def draw(self, screen):
+    def draw(self, win):
         action = False
 
         pos = pygame.mouse.get_pos()
@@ -26,6 +27,6 @@ class Button:
         if pygame.mouse.get_pressed()[0] == 0:
             self.clicked = False
 
-        screen.blit(self.img, self.rect)
+        win.blit(self.img, (self.rect.x, self.rect.y))
 
         return action
