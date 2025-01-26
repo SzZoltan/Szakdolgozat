@@ -48,9 +48,10 @@ def iterateFrames(self, window: pygame.Surface, frames: list, f_count: int, m_fr
         window.blit(frames[f_count], (self.x, self.y))
     return f_count
 
+# Gombok
+save_btn_pic = pygame.image.load(f'Graphics/Buttons/save_btn.png')
+load_btn_pic = pygame.image.load(f'Graphics/Buttons/load_btn.png')
 
-# Java doc szerű doksit létrehozni, ha létezik
-# Property fájlba kiszedni ezeket
 # Főszereplő
 mc_running_right_sprite = pygame.image.load(f'Graphics/Main Characters/Pink Man/Run (32x32).png')
 mc_running_left_sprite = pygame.transform.flip(mc_running_right_sprite, True, False)
