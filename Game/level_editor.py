@@ -2,7 +2,7 @@ import pygame
 import pickle
 from Button.Button import Button
 from Game.Game_Graphics.Graphics_Loader import (level1_bg, level3_bg, level2_bg, map_editor_tile_list,
-                                                save_btn_pic, load_btn_pic)
+                                                save_btn_pic, load_btn_pic, ok_btn_pic)
 
 pygame.init()
 
@@ -15,6 +15,12 @@ WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 640
 BOTTOM_MARGIN = 140
 RIGHT_MARGIN = 300
+
+GREEN = (144, 201, 120)
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+BLACK = (0, 0, 0)
 
 window = pygame.display.set_mode((WINDOW_WIDTH + RIGHT_MARGIN, WINDOW_HEIGHT + BOTTOM_MARGIN))
 pygame.display.set_caption('Level Editor')
@@ -53,14 +59,44 @@ for tile in range(0, MAX_COLS):
 
 
 # Szöveg kiírására szolgáló metódus
-def draw_txt(text, font, text_color, x, y):
+def draw_txt(text, font, text_color, x, y, surface):
     img = font.render(text, True, text_color)
-    window.blit(img, (x, y))
+    surface.blit(img, (x, y))
+
+
+# Csinál egy új felületet amibe kiírja az error üzenetet és egy gomb megnyomásával el lehet tüntetni a felületet
+def error_popup(text):
+    popup_width = 500
+    popup_height = 200
+    popup_surface = pygame.Surface((popup_width, popup_height))
+    popup_surface.fill(RED)
+
+    draw_txt(text, font, WHITE, popup_width // 2 - 100, popup_height // 2 - 50, popup_surface)
+
+    ok_btn = Button((WINDOW_WIDTH+RIGHT_MARGIN) // 2 - 40, (WINDOW_HEIGHT+BOTTOM_MARGIN) // 2 + 50, ok_btn_pic, 1)
+
+    window.fill(BLACK)
+    window.blit(popup_surface, ((WINDOW_WIDTH + RIGHT_MARGIN)//2 - popup_width // 2,
+                                (WINDOW_HEIGHT + BOTTOM_MARGIN) // 2 - popup_height // 2))
+    pygame.display.flip()
+    waiting = True
+    while waiting:
+
+        if ok_btn.draw(window):
+            waiting = False
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+        pygame.display.update()
 
 
 # Hogy változtassuk meg a háttéret? ötlet: listába beletesszük az összes képet és gombra változtatjuk
 def draw_bg():
-    window.fill((144, 201, 120))
+    window.fill(GREEN)
     for rows in range(tiles_down):
         for col in range(tiles_across):
             x_pos = col * level1_bg.get_width()
@@ -71,11 +107,11 @@ def draw_bg():
 def draw_grid():
     # v mint vertical
     for v in range(MAX_COLS + 1):
-        pygame.draw.line(window, (255, 255, 255), (v * TILE_SIZE - scroll, 0),
+        pygame.draw.line(window, WHITE, (v * TILE_SIZE - scroll, 0),
                          (v * TILE_SIZE - scroll, WINDOW_HEIGHT), 2)
     # h mint horizontal
     for h in range(ROWS + 1):
-        pygame.draw.line(window, (255, 255, 255), (0, h * TILE_SIZE), (WINDOW_WIDTH, h * TILE_SIZE), 2)
+        pygame.draw.line(window, WHITE, (0, h * TILE_SIZE), (WINDOW_WIDTH, h * TILE_SIZE), 2)
 
 
 def draw_world():
@@ -83,6 +119,36 @@ def draw_world():
         for x, t in enumerate(rows):
             if t >= 0:
                 window.blit(map_editor_tile_list[t], (x * TILE_SIZE - scroll, y * TILE_SIZE))
+
+
+def load_map():
+    try:
+        with open(f'Maps/level_{level}_data', 'rb') as pickle_in:
+            data = pickle.load(pickle_in)
+            return data
+    except FileNotFoundError:
+        error_popup('Map not found error')
+        return world_data
+    except pickle.UnpicklingError:
+        error_popup('Map unpickling error')
+        return world_data
+    except Exception as e:
+        error_popup(f'Something went wrong: {e}')
+        return world_data
+
+
+def save_map():
+    try:
+        with open(f'Maps/level_{level}_data', 'wb') as pickle_out:
+            pickle.dump(world_data, pickle_out)
+    except FileNotFoundError:
+        error_popup("Directory doesn't exist")
+    except pickle.PickleError:
+        error_popup("The Map can't be saved")
+    except Exception as e:
+        error_popup(f'Something went wrong: {e}')
+    finally:
+        pickle_out.close()
 
 
 # Gombok létrehozása
@@ -105,6 +171,7 @@ for i in range(len(map_editor_tile_list)):
         button_row += 1
         button_col = 0
 
+
 run = True
 while run:
     clock.tick(FPS)
@@ -112,29 +179,27 @@ while run:
     draw_grid()
     draw_world()
 
-    draw_txt(f'Level: {level}', font, (255, 255, 255), 10, WINDOW_HEIGHT + BOTTOM_MARGIN - 100)
-    draw_txt('Press UP or DOWN arrows to change level', font, (255, 255, 255), 10, WINDOW_HEIGHT + BOTTOM_MARGIN - 70)
+    draw_txt(f'Level: {level}', font, WHITE, 10, WINDOW_HEIGHT + BOTTOM_MARGIN - 100, window)
+    draw_txt('Press UP or DOWN arrows to change level', font, WHITE, 10, WINDOW_HEIGHT + BOTTOM_MARGIN - 70,
+             window)
 
-    pygame.draw.rect(window, (144, 201, 120), (WINDOW_WIDTH, 0, RIGHT_MARGIN, WINDOW_HEIGHT))
+    pygame.draw.rect(window, GREEN, (WINDOW_WIDTH, 0, RIGHT_MARGIN, WINDOW_HEIGHT))
 
     # Pálya mentése
     if save_btn.draw(window):
-        pickle_out = open(f'Maps/level_{level}_data', 'wb')
-        pickle.dump(world_data, pickle_out)
-        pickle_out.close()
+        save_map()
 
     # Pálya betöltés
     if load_btn.draw(window):
         scroll = 0
-        pickle_in = open(f'Maps/level_{level}_data', 'rb')
-        world_data = pickle.load(pickle_in)
+        world_data = load_map()
 
     button_count = 0
     for button_count, i in enumerate(button_list):
         if i.draw(window):
             current_tile = button_count
 
-    pygame.draw.rect(window, (0, 0, 255), (button_list[current_tile]), 3)
+    pygame.draw.rect(window, BLUE, (button_list[current_tile]), 3)
 
     # kamera mozgás
 

@@ -51,6 +51,7 @@ def iterateFrames(self, window: pygame.Surface, frames: list, f_count: int, m_fr
 # Gombok
 save_btn_pic = pygame.image.load(f'Graphics/Buttons/save_btn.png')
 load_btn_pic = pygame.image.load(f'Graphics/Buttons/load_btn.png')
+ok_btn_pic = pygame.image.load(f'Graphics/Buttons/ok_btn.png')
 
 # Főszereplő
 mc_running_right_sprite = pygame.image.load(f'Graphics/Main Characters/Pink Man/Run (32x32).png')
