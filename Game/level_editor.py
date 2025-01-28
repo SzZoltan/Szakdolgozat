@@ -36,6 +36,8 @@ scroll_left = False
 scroll_right = False
 scroll = 0
 scroll_speed = 1
+mcx_position = -1
+mcy_position = -1
 
 
 # Rajzoló metódusok és hozzájuk tartózó változók
@@ -201,7 +203,7 @@ while run:
 
     pygame.draw.rect(window, BLUE, (button_list[current_tile]), 3)
 
-    # kamera mozgás
+    # Kamera mozgás
 
     if scroll_left and scroll > 0:
         scroll -= 5 * scroll_speed
@@ -217,7 +219,15 @@ while run:
     if pos[0] < WINDOW_WIDTH and pos[1] < WINDOW_HEIGHT:
         if pygame.mouse.get_pressed()[0] == 1:
             if world_data[y][x] != current_tile:
-                world_data[y][x] = current_tile
+                if current_tile == 6:
+                    if world_data[mcy_position][mcx_position] == 6:
+                        world_data[mcy_position][mcx_position] = -1
+                    world_data[y][x] = current_tile
+                    mcx_position = x
+                    mcy_position = y
+                else:
+                    world_data[y][x] = current_tile
+
         if pygame.mouse.get_pressed()[2] == 1:
             world_data[y][x] = -1
 
