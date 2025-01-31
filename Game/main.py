@@ -1,10 +1,9 @@
 import pygame
 
-from Game.Entity import PowerUp
 from Game.Entity.Block import Block, GoldBlock, SteelBlock, BrickBlock, Inside
 from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Powerup)
 from Game.Entity.Player import Player
-from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy)
+from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy, Enemy)
 from Game.Game_Graphics.Graphics_Loader import level1_bg
 pygame.init()
 
@@ -56,9 +55,8 @@ def redrawGameWindow():
     drawBlocks()
     pygame.display.update()
 
-# Terv: Az alapokat kifejelszteni: player, block, projectile,powerup, enemy, block alapú map editor elkészítése és
-# miután ez megvan: pályák ,egy főmenü, score system, leaderboard
 
+# Terv: Az alapokat kifejelszteni:  pályák ,egy főmenü, score system, leaderboard
 
 offset_x = 205
 window_width = 500
@@ -70,7 +68,8 @@ win = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption('MyGame')
 
 
-mc = Player(0, 255)
+mc = Player(0, 200)
+blocker = BrickBlock(0,255)
 apple = Apple(200, 255)
 cherry = Cherry(250, 255)
 pineapple = Pineapple(150, 255)
@@ -88,20 +87,64 @@ endbrick = BrickBlock(600, 255)
 shootLimit = 0
 friendlyProjectiles = []
 enemyProjectiles = []
-blocklist = [testbrick, teststeel, testgoldblock, testbrick2, endbrick]
+blocklist = [testbrick, teststeel, testgoldblock, testbrick2, endbrick, blocker]
 poweruplist = [apple, cherry, pineapple, strawberry]
 entitylist = [mc, bunny, plant, plant2]
 enemylist = [bunny, plant, plant2]
 spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
 run = True
 
-# Mainloop
+
+# Megnézi hogy az entitás ütközik-e valamelyik bolckal
+
+def collisionchecker(entity, direction):
+    if isinstance(entity, Player) or isinstance(entity, Enemy):
+        if direction == 'left':
+            col = False
+            for block in blocklist:
+                if entity.hitbox.colliderect(block.hitbox):
+                    if (block.hitbox.right > entity.hitbox.left > block.hitbox.left and entity.hitbox.bottom +
+                            block.height / 2 > block.hitbox.bottom and block.isVisible):
+                        col = True
+                        break
+            return col
+        elif direction == 'right':
+            col = False
+            for block in blocklist:
+                if entity.hitbox.colliderect(block.hitbox):
+                    if (block.hitbox.left < entity.hitbox.right < block.hitbox.right and entity.hitbox.bottom +
+                            block.height / 2 > block.hitbox.bottom and block.isVisible):
+                        col = True
+                        break
+            return col
+        else:
+            raise ValueError('Direction must be either "left" or "right"')
+    else:
+        raise ValueError('entity must be Player or Enemy type')
+
+
+# ==================Mainloop==================
 while run:
     clock.tick(FPS)
     spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
     keys = pygame.key.get_pressed()
 
-    # Friendly Projectile
+    # ==================Gravitáció==================
+    for entity in entitylist:
+        for block in blocklist:
+            if entity.isAlive and entity.hitbox.colliderect(block.hitbox):
+                if (entity.hitbox.bottom+block.height-10 < block.hitbox.bottom
+                        and block.isVisible and entity.isAlive):
+                    entity.isFalling = False
+                    break
+            elif entity.y+entity.height >= 320:
+                entity.isFalling = False
+            else:
+                entity.isFalling = True
+        if entity.isFalling:
+            entity.y += 7
+
+    # ==================Friendly Projectile==================
     for proj in friendlyProjectiles:
         popped = False
         if window_width > proj.x > 0:
@@ -126,7 +169,7 @@ while run:
                 popped = True
                 break
 
-    # Enemy projectiles
+    # ==================Enemy projectiles==================
     for proj in enemyProjectiles:
         popped = False
         if window_width > proj.x > 0:
@@ -147,71 +190,28 @@ while run:
             enemyProjectiles.pop(enemyProjectiles.index(proj))
             break
 
-    # Gravitáció
-    for entity in entitylist:
-        for block in blocklist:
-            if entity.isAlive and entity.hitbox.colliderect(block.hitbox):
-                if (entity.hitbox.bottom+block.height-10 < block.hitbox.bottom
-                        and block.isVisible and entity.isAlive):
-                    entity.isFalling = False
-                    break
-            elif entity.y+entity.height >= 320:
-                entity.isFalling = False
-            else:
-                entity.isFalling = True
-        if entity.isFalling:
-            entity.y += 7
+    # ==================PowerUps==================
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
+    for powerup in poweruplist:
+        if mc.hitbox.colliderect(powerup.hitbox) and isinstance(powerup, Strawberry):
+            invincibleTimer = 200
+            powerup.pickUp(mc)
+            poweruplist.remove(powerup)
+        if mc.hitbox.colliderect(powerup.hitbox) and not isinstance(powerup, Strawberry):
+            powerup.pickUp(mc)
+            poweruplist.remove(powerup)
 
-    if not any(keys):
-        mc.isRunning = False
-        mc.isIdle = True
+    if mc.isInvincible:
+        if invincibleTimer > 0:
+            invincibleTimer -= 1
+            print(f'{invincibleTimer} miliseconds remaining')
+        else:
+            print('no longer invincible')
+            mc.isInvincible = False
 
-    if keys[pygame.K_LEFT]:
-        collision = False
-        for block in blocklist:
-            if mc.hitbox.colliderect(block.hitbox):
-                if (block.hitbox.right > mc.hitbox.left > block.hitbox.left and mc.hitbox.bottom +
-                        block.height/2 > block.hitbox.bottom and block.isVisible):
-                    collision = True
-        if not collision and mc.x != 0:
-            mc.move('left')
+    # ==================Enemies==================
 
-    if keys[pygame.K_RIGHT]:
-        collision = False
-        for block in blocklist:
-            if mc.hitbox.colliderect(block.hitbox):
-                if (block.hitbox.left < mc.hitbox.right < block.hitbox.right and mc.hitbox.bottom +
-                        block.height/2 > block.hitbox.bottom and block.isVisible):
-                    collision = True
-        if not collision and mc.x != window_width - 30:
-            if mc.x + offset_x > endbrick.x:
-                mc.move('right')
-            elif mc.x == offset_x:
-                for sprites in spritelist:
-                    sprites.x -= mc.vel
-                mc.move('right')
-            else:
-                mc.move('right')
-
-    if shootLimit > 0:
-        shootLimit += 1
-    if shootLimit > 3:
-        shootLimit = 0
-
-    if keys[pygame.K_SPACE]:
-        mc.isIdle = True
-        if mc.canShoot and shootLimit == 0:
-            if len(friendlyProjectiles) < 5:
-                if mc.facingRight:
-                    friendlyProjectiles.append(mc.shoot(1))
-                else:
-                    friendlyProjectiles.append(mc.shoot(-1))
-                shootLimit = 1
-
+    # Enemy-k lövése
     for enemies in enemylist:
         if enemies.canShoot and enemies.isVisible:
             if enemies.facingLeft:
@@ -223,26 +223,7 @@ while run:
                 if proj is not None:
                     enemyProjectiles.append(proj)
 
-    if mc.isInvincible:
-        if invincibleTimer > 0:
-            invincibleTimer -= 1
-            print(f'{invincibleTimer} miliseconds remaining')
-        else:
-            print('no longer invincible')
-            mc.isInvincible = False
-
-    for powerup in poweruplist:
-        if mc.hitbox.colliderect(powerup.hitbox) and isinstance(powerup, Strawberry):
-            invincibleTimer = 200
-            powerup.pickUp(mc)
-            poweruplist.remove(powerup)
-        if mc.hitbox.colliderect(powerup.hitbox) and not isinstance(powerup, Strawberry):
-            powerup.pickUp(mc)
-            poweruplist.remove(powerup)
-
-    if bunny.x >= 0:
-        bunny.move('left')
-
+    # Enemy-k hit detektálása
     for enemies in enemylist:
         if enemies.x < window_width and enemies.x+enemies.width > 0:
             enemies.isVisible = True
@@ -255,6 +236,25 @@ while run:
             else:
                 mc.hit()
 
+    # Enemy-k mozgása
+
+    for enemies in enemylist:
+        if enemies.canMove:
+            if enemies.facingLeft:
+                left_collision = collisionchecker(enemies, 'left')
+                if left_collision is False:
+                    enemies.move('left')
+                else:
+                    enemies.move('right')
+            else:
+                right_collision = collisionchecker(enemies, 'right')
+                if right_collision is False:
+                    enemies.move('right')
+                else:
+                    enemies.move('left')
+
+    # ==================Blocks==================
+
     for block in blocklist:
         if mc.hitbox.colliderect(block.hitbox) and block.isVisible:
             if (mc.hitbox.bottom > block.hitbox.bottom and mc.hitbox.left + 25 > block.hitbox.left and
@@ -264,12 +264,56 @@ while run:
                 if result is not None:
                     poweruplist.append(result)
 
+    # ==================Gomb lenyomások kezelése==================
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+
+    if not any(keys):
+        mc.isRunning = False
+        mc.isIdle = True
+
+    if keys[pygame.K_LEFT]:
+        collision = collisionchecker(mc, 'left')
+        if not collision and mc.x != 0:
+            mc.move('left')
+
+    if keys[pygame.K_RIGHT]:
+        collision = collisionchecker(mc,'right')
+        # kamera
+        if not collision and mc.x != window_width - 30:
+            if mc.x + offset_x > endbrick.x:
+                mc.move('right')
+            elif mc.x == offset_x:
+                for sprites in spritelist:
+                    sprites.x -= mc.vel
+                mc.move('right')
+            else:
+                mc.move('right')
+
     # Ugrás viselkedés: fél-Parabola megoldás
     if not mc.isJump and not mc.isFalling:
         if keys[pygame.K_UP]:
             mc.isJump = True
     else:
         mc.jump()
+
+    if keys[pygame.K_SPACE]:
+        mc.isIdle = True
+        if mc.canShoot and shootLimit == 0:
+            if len(friendlyProjectiles) < 5:
+                if mc.facingRight:
+                    friendlyProjectiles.append(mc.shoot(1))
+                else:
+                    friendlyProjectiles.append(mc.shoot(-1))
+                shootLimit = 1
+
+    if shootLimit > 0:
+        shootLimit += 1
+    if shootLimit > 3:
+        shootLimit = 0
+
     redrawGameWindow()
 
 pygame.quit()

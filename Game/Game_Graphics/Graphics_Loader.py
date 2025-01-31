@@ -1,6 +1,7 @@
 import pygame
 
 MAP_EDITOR_TILE_TYPES = 9
+GRAPHICS_LOCATION = 'Graphics'
 
 
 def getSprite(sheet: pygame.Surface, f_width: int, f_height: int, x: int, y: int):
@@ -49,40 +50,46 @@ def iterateFrames(self, window: pygame.Surface, frames: list, f_count: int, m_fr
     return f_count
 
 # Gombok
-save_btn_pic = pygame.image.load(f'Graphics/Buttons/save_btn.png')
-load_btn_pic = pygame.image.load(f'Graphics/Buttons/load_btn.png')
-ok_btn_pic = pygame.image.load(f'Graphics/Buttons/ok_btn.png')
+save_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/save_btn.png')
+load_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/load_btn.png')
+ok_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/ok_btn.png')
 
 # Főszereplő
-mc_running_right_sprite = pygame.image.load(f'Graphics/Main Characters/Pink Man/Run (32x32).png')
+mc_running_right_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Main Characters/Pink Man/Run (32x32).png')
 mc_running_left_sprite = pygame.transform.flip(mc_running_right_sprite, True, False)
-mc_idle_right_sprite = pygame.image.load(f'Graphics/Main Characters/Pink Man/Idle (32x32).png')
+mc_idle_right_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Main Characters/Pink Man/Idle (32x32).png')
 mc_idle_left_sprite = pygame.transform.flip(mc_idle_right_sprite, True, False)
-mc_jump_right_sprite = pygame.image.load(f'Graphics/Main Characters/Pink Man/Jump (32x32).png')
+mc_jump_right_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Main Characters/Pink Man/Jump (32x32).png')
 mc_jump_left_sprite = pygame.transform.flip(mc_jump_right_sprite, True, False)
 # Pálya háttér
-level1_bg = pygame.image.load(f'Graphics/Background/Brown.png')
-level2_bg = pygame.image.load(f'Graphics/Background/Purple.png')
-level3_bg = pygame.image.load(f'Graphics/Background/Blue.png')
+level1_bg = pygame.image.load(f'{GRAPHICS_LOCATION}/Background/Brown.png')
+level2_bg = pygame.image.load(f'{GRAPHICS_LOCATION}/Background/Purple.png')
+level3_bg = pygame.image.load(f'{GRAPHICS_LOCATION}/Background/Blue.png')
 # Power Upok
-apple_sprite = pygame.image.load(f'Graphics/Items/Fruits/Apple.png')
-pineapple_sprite = pygame.image.load(f'Graphics/Items/Fruits/Pineapple.png')
-cherry_sprite = pygame.image.load(f'Graphics/Items/Fruits/Cherries.png')
-strawberry_sprite = pygame.image.load(f'Graphics/Items/Fruits/Strawberry.png')
+apple_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Items/Fruits/Apple.png')
+pineapple_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Items/Fruits/Pineapple.png')
+cherry_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Items/Fruits/Cherries.png')
+strawberry_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Items/Fruits/Strawberry.png')
 # Bunny ellenfél
-bunny_run_left_sprite = pygame.image.load(f'Graphics/Enemies/Bunny/Run (34x44).png')
+bunny_run_left_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Bunny/Run (34x44).png')
 bunny_run_right_sprite = pygame.transform.flip(bunny_run_left_sprite, True, False)
-bunny_idle_left_sprite = pygame.image.load(f'Graphics/Enemies/Bunny/Idle (34x44).png')
+bunny_idle_left_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Bunny/Idle (34x44).png')
 bunny_idle_right_sprite = pygame.transform.flip(bunny_idle_left_sprite, True, False)
 # Plant ellenfél
-plant_idle_left_sprite = pygame.image.load(f'Graphics/Enemies/Plant/Idle (44x42).png')
+plant_idle_left_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Plant/Idle (44x42).png')
 plant_idle_right_sprite = pygame.transform.flip(plant_idle_left_sprite, True, False)
-plant_attack_left_sprite = pygame.image.load(f'Graphics/Enemies/Plant/Attack (44x42).png')
+plant_attack_left_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Plant/Attack (44x42).png')
 plant_attack_right_sprite = pygame.transform.flip(plant_attack_left_sprite, True, False)
 # Block sprite
-brick_sprite = pygame.image.load(f'Graphics/Terrain/brick.png')
-steel_sprite = pygame.image.load(f'Graphics/Terrain/steel.png')
-gold_sprite = pygame.image.load(f'Graphics/Terrain/gold.png')
+brick_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Terrain/brick.png')
+steel_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Terrain/steel.png')
+gold_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Terrain/gold.png')
+
+# Map Editor képek
+map_editor_tile_list = []
+for x in range(MAP_EDITOR_TILE_TYPES):
+    img = pygame.image.load(f'{GRAPHICS_LOCATION}/Editor Tiles/{x}.png')
+    map_editor_tile_list.append(img)
 
 # Frame-ek
 # Főszereplő
@@ -111,8 +118,4 @@ plant_attack_right_frames = frameToList(44, 42, 1, 8, plant_attack_right_sprite)
 brick_frame = frameToList(40, 40, 1, 1, brick_sprite)
 steel_frame = frameToList(40, 40, 1, 1, steel_sprite)
 gold_frame = frameToList(40, 40, 1, 1, gold_sprite)
-# Map Editor képek
-map_editor_tile_list = []
-for x in range(MAP_EDITOR_TILE_TYPES):
-    img = pygame.image.load(f'Graphics/Editor Tiles/{x}.png')
-    map_editor_tile_list.append(img)
+
