@@ -8,12 +8,15 @@ from Game.Game_Graphics.Graphics_Loader import level1_bg
 pygame.init()
 
 # Az animációk 20 FPS-re vannak megcsinálva
+
 clock = pygame.time.Clock()
 FPS = 20
 
-
 # Unit tesztelés extrém tesztesetek
+
 # A háttér
+
+
 def drawBackground():
     for row in range(tiles_down):
         for col in range(tiles_across):
@@ -83,7 +86,9 @@ testbrick = BrickBlock(70, 200)
 teststeel = SteelBlock(110, 200)
 testbrick2 = BrickBlock(190, 290)
 endbrick = BrickBlock(600, 255)
+
 # shootLimit azért hogy legyen egy kis delay a lövések között
+
 shootLimit = 0
 friendlyProjectiles = []
 enemyProjectiles = []
@@ -124,12 +129,14 @@ def collisionchecker(entity, direction):
 
 
 # ==================Mainloop==================
+
 while run:
     clock.tick(FPS)
     spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
     keys = pygame.key.get_pressed()
 
     # ==================Gravitáció==================
+
     for entity in entitylist:
         for block in blocklist:
             if entity.isAlive and entity.hitbox.colliderect(block.hitbox):
@@ -145,6 +152,7 @@ while run:
             entity.y += 7
 
     # ==================Friendly Projectile==================
+
     for proj in friendlyProjectiles:
         popped = False
         if window_width > proj.x > 0:
@@ -170,6 +178,7 @@ while run:
                 break
 
     # ==================Enemy projectiles==================
+
     for proj in enemyProjectiles:
         popped = False
         if window_width > proj.x > 0:
@@ -212,6 +221,7 @@ while run:
     # ==================Enemies==================
 
     # Enemy-k lövése
+
     for enemies in enemylist:
         if enemies.canShoot and enemies.isVisible:
             if enemies.facingLeft:
@@ -224,6 +234,7 @@ while run:
                     enemyProjectiles.append(proj)
 
     # Enemy-k hit detektálása
+
     for enemies in enemylist:
         if enemies.x < window_width and enemies.x+enemies.width > 0:
             enemies.isVisible = True
@@ -281,7 +292,9 @@ while run:
 
     if keys[pygame.K_RIGHT]:
         collision = collisionchecker(mc,'right')
-        # kamera
+
+        # Kamera
+
         if not collision and mc.x != window_width - 30:
             if mc.x + offset_x > endbrick.x:
                 mc.move('right')
@@ -293,6 +306,7 @@ while run:
                 mc.move('right')
 
     # Ugrás viselkedés: fél-Parabola megoldás
+
     if not mc.isJump and not mc.isFalling:
         if keys[pygame.K_UP]:
             mc.isJump = True

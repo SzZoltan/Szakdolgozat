@@ -31,13 +31,14 @@ MAX_COLS = 150
 TILE_SIZE = WINDOW_HEIGHT // ROWS
 font = pygame.font.SysFont('Futura', 30)
 level = 0
+background_id = 1
 
 scroll_left = False
 scroll_right = False
 scroll = 0
 scroll_speed = 1
-mcx_position = -1
-mcy_position = -1
+mcx_position = 0
+mcy_position = ROWS - 2
 
 
 # Rajzoló metódusok és hozzájuk tartózó változók
@@ -55,18 +56,26 @@ for row in range(ROWS):
     r = [-1] * MAX_COLS
     world_data.append(r)
 
+map_data = {
+    'world_data': world_data,
+    'background': background_id
+}
 # Ezzel egy alap földet generálunk
+
 for tile in range(0, MAX_COLS):
     world_data[ROWS-1][tile] = 0
-
+world_data[ROWS-2][0] = 6
 
 # Szöveg kiírására szolgáló metódus
+
+
 def draw_txt(text, font, text_color, x, y, surface):
     img = font.render(text, True, text_color)
     surface.blit(img, (x, y))
 
 
 # Csinál egy új felületet amibe kiírja az error üzenetet és egy gomb megnyomásával el lehet tüntetni a felületet
+
 def error_popup(text):
     popup_width = 500
     popup_height = 200
@@ -82,13 +91,20 @@ def error_popup(text):
                                 (WINDOW_HEIGHT + BOTTOM_MARGIN) // 2 - popup_height // 2))
     pygame.display.flip()
     waiting = True
-    while waiting:
 
-        if ok_btn.draw(window):
+    wait = 150
+    waitcountdown = False
+
+    while waiting:
+        if waitcountdown:
+            wait -= 1
+        if wait == 0:
             waiting = False
 
-        for event in pygame.event.get():
+        if ok_btn.draw(window):
+            waitcountdown = True
 
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
@@ -96,22 +112,38 @@ def error_popup(text):
         pygame.display.update()
 
 
-# Hogy változtassuk meg a háttéret? ötlet: listába beletesszük az összes képet és gombra változtatjuk
 def draw_bg():
     window.fill(GREEN)
-    for rows in range(tiles_down):
-        for col in range(tiles_across):
-            x_pos = col * level1_bg.get_width()
-            y_pos = rows * level1_bg.get_height()
-            window.blit(level1_bg, (x_pos - scroll, y_pos))
+    if background_id == 1:
+        for rows in range(tiles_down):
+            for col in range(tiles_across):
+                x_pos = col * level1_bg.get_width()
+                y_pos = rows * level1_bg.get_height()
+                window.blit(level1_bg, (x_pos - scroll, y_pos))
+    elif background_id == 2:
+        for rows in range(tiles_down):
+            for col in range(tiles_across):
+                x_pos = col * level2_bg.get_width()
+                y_pos = rows * level2_bg.get_height()
+                window.blit(level2_bg, (x_pos - scroll, y_pos))
+    else:
+        for rows in range(tiles_down):
+            for col in range(tiles_across):
+                x_pos = col * level3_bg.get_width()
+                y_pos = rows * level3_bg.get_height()
+                window.blit(level3_bg, (x_pos - scroll, y_pos))
 
 
 def draw_grid():
+
     # v mint vertical
+
     for v in range(MAX_COLS + 1):
         pygame.draw.line(window, WHITE, (v * TILE_SIZE - scroll, 0),
                          (v * TILE_SIZE - scroll, WINDOW_HEIGHT), 2)
+
     # h mint horizontal
+
     for h in range(ROWS + 1):
         pygame.draw.line(window, WHITE, (0, h * TILE_SIZE), (WINDOW_WIDTH, h * TILE_SIZE), 2)
 
@@ -124,25 +156,31 @@ def draw_world():
 
 
 def load_map():
+    filler_data = {
+        'world_data': world_data,
+        'background': background_id
+    }
     try:
         with open(f'Maps/level_{level}_data', 'rb') as pickle_in:
             data = pickle.load(pickle_in)
             return data
     except FileNotFoundError:
         error_popup('Map not found error')
-        return world_data
+        return filler_data
     except pickle.UnpicklingError:
         error_popup('Map unpickling error')
-        return world_data
+        return filler_data
     except Exception as e:
         error_popup(f'Something went wrong: {e}')
-        return world_data
+        return filler_data
 
 
 def save_map():
     try:
+        map_data['world_data'] = world_data
+        map_data['background'] = background_id
         with open(f'Maps/level_{level}_data', 'wb') as pickle_out:
-            pickle.dump(world_data, pickle_out)
+            pickle.dump(map_data, pickle_out)
     except FileNotFoundError:
         error_popup("Directory doesn't exist")
     except pickle.PickleError:
@@ -182,19 +220,23 @@ while run:
     draw_world()
 
     draw_txt(f'Level: {level}', font, WHITE, 10, WINDOW_HEIGHT + BOTTOM_MARGIN - 100, window)
-    draw_txt('Press UP or DOWN arrows to change level', font, WHITE, 10, WINDOW_HEIGHT + BOTTOM_MARGIN - 70,
-             window)
+    draw_txt('Press UP or DOWN arrows to change level and 1,2,3 to change background', font, WHITE, 10,
+             WINDOW_HEIGHT + BOTTOM_MARGIN - 70, window)
 
     pygame.draw.rect(window, GREEN, (WINDOW_WIDTH, 0, RIGHT_MARGIN, WINDOW_HEIGHT))
 
     # Pálya mentése
+
     if save_btn.draw(window):
         save_map()
 
     # Pálya betöltés
+
     if load_btn.draw(window):
         scroll = 0
-        world_data = load_map()
+        load = load_map()
+        world_data = load['world_data']
+        background_id = load['background']
 
     button_count = 0
     for button_count, i in enumerate(button_list):
@@ -226,12 +268,15 @@ while run:
                     mcx_position = x
                     mcy_position = y
                 else:
-                    world_data[y][x] = current_tile
+                    if world_data[y][x] != 6:
+                        world_data[y][x] = current_tile
 
         if pygame.mouse.get_pressed()[2] == 1:
-            world_data[y][x] = -1
+            if world_data[y][x] != 6:
+                world_data[y][x] = -1
 
     # pygame event-ek kezelője
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -247,6 +292,12 @@ while run:
                 level += 1
             if event.key == pygame.K_DOWN and level > 0:
                 level -= 1
+            if event.key == pygame.K_1:
+                background_id = 1
+            if event.key == pygame.K_2:
+                background_id = 2
+            if event.key == pygame.K_3:
+                background_id = 3
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
