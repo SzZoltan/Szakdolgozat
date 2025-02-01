@@ -39,6 +39,8 @@ scroll = 0
 scroll_speed = 1
 mcx_position = 0
 mcy_position = ROWS - 2
+endtilex_position = 9
+endtiley_position = ROWS - 2
 
 
 # Rajzoló metódusok és hozzájuk tartózó változók
@@ -65,6 +67,7 @@ map_data = {
 for tile in range(0, MAX_COLS):
     world_data[ROWS-1][tile] = 0
 world_data[ROWS-2][0] = 6
+world_data[ROWS-2][9] = 10
 
 # Szöveg kiírására szolgáló metódus
 
@@ -92,7 +95,7 @@ def error_popup(text):
     pygame.display.flip()
     waiting = True
 
-    wait = 150
+    wait = 200
     waitcountdown = False
 
     while waiting:
@@ -191,6 +194,33 @@ def save_map():
         pickle_out.close()
 
 
+#   Megnézi hogy van-e pontosan 1 Főszereplő és pontosan 1 záró block
+
+def check_map_validity():
+    mc_count = 0
+    endtile_count = 0
+    error_builder = ''
+    for r in world_data:
+        for col in r:
+            if col == 6:
+                mc_count += 1
+            if col == 10:
+                endtile_count += 1
+    if mc_count == 0:
+        error_builder = 'There is no main character'
+    if mc_count > 1:
+        error_builder = 'There is more than one main character'
+    if endtile_count == 0:
+        error_builder = 'There is no end tile'
+    if endtile_count > 1:
+        error_builder = 'There is more than one end tile'
+    if mc_count != 1 or endtile_count != 1:
+        error_popup(error_builder)
+        return False
+    else:
+        return True
+
+
 # Gombok létrehozása
 
 button_list = []
@@ -228,7 +258,8 @@ while run:
     # Pálya mentése
 
     if save_btn.draw(window):
-        save_map()
+        if check_map_validity():
+            save_map()
 
     # Pálya betöltés
 
@@ -267,13 +298,18 @@ while run:
                     world_data[y][x] = current_tile
                     mcx_position = x
                     mcy_position = y
+                elif current_tile == 10:
+                    if world_data[endtiley_position][endtilex_position] == 10:
+                        world_data[endtiley_position][endtilex_position] = -1
+                    world_data[y][x] = current_tile
+                    endtilex_position = x
+                    endtiley_position = y
                 else:
-                    if world_data[y][x] != 6:
+                    if world_data[y][x] != 6 or world_data[y][x] != 10:
                         world_data[y][x] = current_tile
 
         if pygame.mouse.get_pressed()[2] == 1:
-            if world_data[y][x] != 6:
-                world_data[y][x] = -1
+            world_data[y][x] = -1
 
     # pygame event-ek kezelője
 

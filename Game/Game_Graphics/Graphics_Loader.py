@@ -1,6 +1,6 @@
 import pygame
 
-MAP_EDITOR_TILE_TYPES = 9
+MAP_EDITOR_TILE_TYPES = 11
 GRAPHICS_LOCATION = 'Graphics'
 
 
