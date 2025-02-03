@@ -3,7 +3,7 @@ import pygame
 from Game.Entity.Block import Block, GoldBlock, SteelBlock, BrickBlock, Inside
 from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Powerup)
 from Game.Entity.Player import Player
-from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy, Enemy)
+from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy, TurtleEnemy, Enemy)
 from Game.Game_Graphics.Graphics_Loader import level1_bg
 pygame.init()
 
@@ -78,6 +78,7 @@ cherry = Cherry(250, 255)
 pineapple = Pineapple(150, 255)
 strawberry = Strawberry(300, 255)
 bunny = BunnyEnemy(100, 255)
+turtle = TurtleEnemy(130, 255)
 plant = PlantEnemy(400, 255)
 plant2 = PlantEnemy(550, 255)
 invincibleTimer = 0
@@ -94,8 +95,8 @@ friendlyProjectiles = []
 enemyProjectiles = []
 blocklist = [testbrick, teststeel, testgoldblock, testbrick2, endbrick, blocker]
 poweruplist = [apple, cherry, pineapple, strawberry]
-entitylist = [mc, bunny, plant, plant2]
-enemylist = [bunny, plant, plant2]
+entitylist = [mc, bunny, plant, plant2, turtle]
+enemylist = [bunny, plant, plant2, turtle]
 spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
 run = True
 
@@ -327,6 +328,7 @@ while run:
         shootLimit += 1
     if shootLimit > 3:
         shootLimit = 0
+
 
     redrawGameWindow()
 

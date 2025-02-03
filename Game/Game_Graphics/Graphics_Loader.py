@@ -49,72 +49,112 @@ def iterateFrames(self, window: pygame.Surface, frames: list, f_count: int, m_fr
         window.blit(frames[f_count], (self.x, self.y))
     return f_count
 
+
 # Gombok
+
 save_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/save_btn.png')
 load_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/load_btn.png')
 ok_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/ok_btn.png')
 
+# =======================================================Spriteok=======================================================
+
 # Főszereplő
+
 mc_running_right_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Main Characters/Pink Man/Run (32x32).png')
 mc_running_left_sprite = pygame.transform.flip(mc_running_right_sprite, True, False)
 mc_idle_right_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Main Characters/Pink Man/Idle (32x32).png')
 mc_idle_left_sprite = pygame.transform.flip(mc_idle_right_sprite, True, False)
 mc_jump_right_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Main Characters/Pink Man/Jump (32x32).png')
 mc_jump_left_sprite = pygame.transform.flip(mc_jump_right_sprite, True, False)
+
 # Pálya háttér
+
 level1_bg = pygame.image.load(f'{GRAPHICS_LOCATION}/Background/Brown.png')
 level2_bg = pygame.image.load(f'{GRAPHICS_LOCATION}/Background/Purple.png')
 level3_bg = pygame.image.load(f'{GRAPHICS_LOCATION}/Background/Blue.png')
+
 # Power Upok
+
 apple_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Items/Fruits/Apple.png')
 pineapple_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Items/Fruits/Pineapple.png')
 cherry_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Items/Fruits/Cherries.png')
 strawberry_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Items/Fruits/Strawberry.png')
+
 # Bunny ellenfél
+
 bunny_run_left_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Bunny/Run (34x44).png')
 bunny_run_right_sprite = pygame.transform.flip(bunny_run_left_sprite, True, False)
 bunny_idle_left_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Bunny/Idle (34x44).png')
 bunny_idle_right_sprite = pygame.transform.flip(bunny_idle_left_sprite, True, False)
+
 # Plant ellenfél
+
 plant_idle_left_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Plant/Idle (44x42).png')
 plant_idle_right_sprite = pygame.transform.flip(plant_idle_left_sprite, True, False)
 plant_attack_left_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Plant/Attack (44x42).png')
 plant_attack_right_sprite = pygame.transform.flip(plant_attack_left_sprite, True, False)
+
+# Turtle ellenfél
+
+turtle_idle_spiked_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Turtle/Idle 1 (44x26).png')
+turtle_idle_unspiked_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Turtle/Idle 2 (44x26).png')
+turtle_spikes_in_sprites = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Turtle/Spikes in (44x26).png')
+turtle_spikes_out_sprites = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Turtle/Spikes out (44x26).png')
+
 # Block sprite
+
 brick_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Terrain/brick.png')
 steel_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Terrain/steel.png')
 gold_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Terrain/gold.png')
 
 # Map Editor képek
+
 map_editor_tile_list = []
 for x in range(MAP_EDITOR_TILE_TYPES):
     img = pygame.image.load(f'{GRAPHICS_LOCATION}/Editor Tiles/{x}.png')
     map_editor_tile_list.append(img)
 
-# Frame-ek
+# ======================================================Frame-ek======================================================
+
 # Főszereplő
+
 mc_run_right_frames = frameToList(32, 32, 1, 12, mc_running_right_sprite)
 mc_run_left_frames = frameToList(32, 32, 1, 12, mc_running_left_sprite)
 mc_idle_right_frames = frameToList(32, 32, 1, 11, mc_idle_right_sprite)
 mc_idle_left_frames = frameToList(32, 32, 1, 11, mc_idle_left_sprite)
 mc_jump_right_frames = frameToList(32, 32, 1, 1, mc_jump_right_sprite)
 mc_jump_left_frames = frameToList(32, 32, 1, 1, mc_jump_left_sprite)
+
 # Power Up
+
 apple_frames = frameToList(32, 32, 1, 17, apple_sprite)
 pineapple_frames = frameToList(32, 32, 1, 17, pineapple_sprite)
 cherry_frames = frameToList(32, 32, 1, 17, cherry_sprite)
 strawberry_frames = frameToList(32, 32, 1, 17, strawberry_sprite)
+
 # Bunny Ellenfél
+
 bunny_run_left_frames = frameToList(34, 44, 1, 12, bunny_run_left_sprite)
 bunny_run_right_frames = frameToList(34, 44, 1, 12, bunny_run_right_sprite)
 bunny_idle_left_frames = frameToList(34, 44, 1, 8, bunny_idle_left_sprite)
 bunny_idle_right_frames = frameToList(34, 44, 1, 8, bunny_idle_right_sprite)
+
 # Plant Ellenfél
+
 plant_idle_left_frames = frameToList(44, 42, 1, 11, plant_idle_left_sprite)
 plant_idle_right_frames = frameToList(44, 42, 1, 11, plant_idle_right_sprite)
 plant_attack_left_frames = frameToList(44, 42, 1, 8, plant_attack_left_sprite)
 plant_attack_right_frames = frameToList(44, 42, 1, 8, plant_attack_right_sprite)
+
+# Turtle Ellenfél
+
+turtle_idle_spiked_frames = frameToList(44, 42, 1, 14, turtle_idle_spiked_sprite)
+turtle_idle_unspiked_frames = frameToList(44, 42, 1, 14, turtle_idle_unspiked_sprite)
+turtle_spikes_in_frames = frameToList(44, 42, 1, 8, turtle_spikes_in_sprites)
+turtle_spikes_out_frames = frameToList(44, 42, 1, 8, turtle_spikes_out_sprites)
+
 # Block
+
 brick_frame = frameToList(40, 40, 1, 1, brick_sprite)
 steel_frame = frameToList(40, 40, 1, 1, steel_sprite)
 gold_frame = frameToList(40, 40, 1, 1, gold_sprite)

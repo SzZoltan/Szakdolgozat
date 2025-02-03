@@ -4,7 +4,9 @@ from Game.Game_Graphics.Graphics_Loader import (iterateFrames, bunny_run_left_fr
                                                 bunny_idle_left_frames, bunny_idle_right_frames, mc_run_left_frames,
                                                 mc_run_right_frames, mc_idle_left_frames, mc_idle_right_frames,
                                                 plant_idle_left_frames, plant_idle_right_frames,
-                                                plant_attack_right_frames, plant_attack_left_frames)
+                                                plant_attack_right_frames, plant_attack_left_frames,
+                                                turtle_idle_unspiked_frames, turtle_idle_spiked_frames,
+                                                turtle_spikes_in_frames, turtle_spikes_out_frames)
 
 
 # Enemy viselkedés
@@ -204,6 +206,12 @@ class Enemy:
             raise TypeError("isIdle must be a bool")
         self._isIdle = isIdle
 
+    @canBeJumped.setter
+    def canBeJumped(self, canBeJumped: bool):
+        if not isinstance(canBeJumped, bool):
+            raise TypeError("canBeJumped must be a bool")
+        self._canBeJumped = canBeJumped
+
     @isMoving.setter
     def isMoving(self, isMoving: bool):
         if not isinstance(isMoving, bool):
@@ -321,7 +329,7 @@ class BunnyEnemy(Enemy):
                     else:
                         self.idleFrameCount = iterateFrames(self, window, bunny_idle_left_frames,
                                                             self.idleFrameCount, 8)
-                self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
+                self.hitbox = pygame.Rect(self.x, self.y + 3, 30, 40)
                 pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
         else:
             raise TypeError('Invalid window argument Bunny drawEnemy')
@@ -391,3 +399,66 @@ class PlantEnemy(Enemy):
                     self.shootDelay -= 1
             else:
                 self.shootCooldown -= 1
+
+
+# Az egyhelyben álló néha tüskés ellenfél akire csak akkor lehet ráugrani ha a tüskéi nincsenek kint, csak balra nézhet
+
+class TurtleEnemy(Enemy):
+    def __init__(self, x: int or float, y: int or float):
+        super().__init__(x, y, 'l')
+        self.canMove = False
+        self.isSpiked = True
+        self.canBeJumped = False
+        self.width = 32
+        self.height = 16
+        self.transitionFrameCount = 0
+        self.spikeTransition = 50
+        self.transitionTimer = 8
+
+    def changeSpike(self):
+        self.isSpiked = not self.isSpiked
+        if self.isSpiked:
+            self.canBeJumped = False
+        else:
+            self.canBeJumped = True
+
+    def drawEnemy(self, window: pygame.Surface):
+        if isinstance(window, pygame.Surface):
+            if self.isAlive:
+                if self.spikeTransition != 0:
+                    if self.isSpiked:
+                        self.idleFrameCount = iterateFrames(self, window, turtle_idle_spiked_frames,
+                                                            self.idleFrameCount, 14)
+                    else:
+                        self.idleFrameCount = iterateFrames(self, window, turtle_idle_unspiked_frames,
+                                                            self.idleFrameCount, 14)
+                    self.spikeTransition -= 1
+                else:
+                    if self.transitionTimer != 0:
+                        if self.isSpiked:
+                            self.transitionFrameCount = iterateFrames(self, window, turtle_spikes_in_frames,
+                                                                      self.transitionFrameCount, 8)
+                        else:
+                            self.transitionFrameCount = iterateFrames(self, window, turtle_spikes_out_frames,
+                                                                      self.transitionFrameCount, 8)
+                        self.transitionTimer -= 1
+                    else:
+                        self.changeSpike()
+                        self.spikeTransition = 50
+                        self.transitionTimer = 8
+                        self.idleFrameCount = 0
+                        self.transitionFrameCount = 0
+                        if self.isSpiked:
+                            self.idleFrameCount = iterateFrames(self, window, turtle_idle_spiked_frames,
+                                                                self.idleFrameCount, 14)
+                        else:
+                            self.idleFrameCount = iterateFrames(self, window, turtle_idle_unspiked_frames,
+                                                                self.idleFrameCount, 14)
+                self.hitbox = pygame.Rect(self.x+3, self.y, 40, 25)
+                pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+
+        else:
+            raise TypeError('Invalid window argument Turtle drawEnemy')
+
+    def hit(self):
+        super().hit()
