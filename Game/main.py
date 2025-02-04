@@ -1,7 +1,7 @@
 import pygame
 
 from Game.Entity.Block import Block, GoldBlock, SteelBlock, BrickBlock, Inside
-from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Powerup)
+from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Finish, Powerup)
 from Game.Entity.Player import Player
 from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy, TurtleEnemy, Enemy)
 from Game.Game_Graphics.Graphics_Loader import level1_bg
@@ -87,6 +87,7 @@ testbrick = BrickBlock(70, 200)
 teststeel = SteelBlock(110, 200)
 testbrick2 = BrickBlock(190, 290)
 endbrick = BrickBlock(600, 255)
+finish = Finish(190, 150)
 
 # shootLimit azért hogy legyen egy kis delay a lövések között
 
@@ -94,7 +95,7 @@ shootLimit = 0
 friendlyProjectiles = []
 enemyProjectiles = []
 blocklist = [testbrick, teststeel, testgoldblock, testbrick2, endbrick, blocker]
-poweruplist = [apple, cherry, pineapple, strawberry]
+poweruplist = [apple, cherry, pineapple, strawberry, finish]
 entitylist = [mc, bunny, plant, plant2, turtle]
 enemylist = [bunny, plant, plant2, turtle]
 spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles

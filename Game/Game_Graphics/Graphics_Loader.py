@@ -80,6 +80,10 @@ pineapple_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Items/Fruits/Pineappl
 cherry_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Items/Fruits/Cherries.png')
 strawberry_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Items/Fruits/Strawberry.png')
 
+# Finish kupa
+
+end_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Items/Checkpoints/End/End (Idle).png')
+
 # Bunny ellenfél
 
 bunny_run_left_sprite = pygame.image.load(f'{GRAPHICS_LOCATION}/Enemies/Bunny/Run (34x44).png')
@@ -131,6 +135,10 @@ apple_frames = frameToList(32, 32, 1, 17, apple_sprite)
 pineapple_frames = frameToList(32, 32, 1, 17, pineapple_sprite)
 cherry_frames = frameToList(32, 32, 1, 17, cherry_sprite)
 strawberry_frames = frameToList(32, 32, 1, 17, strawberry_sprite)
+
+# Finish kupa
+
+end_frame = frameToList(64, 64, 1, 1, end_sprite)
 
 # Bunny Ellenfél
 

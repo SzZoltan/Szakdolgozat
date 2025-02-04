@@ -1,6 +1,6 @@
 import pygame
 from Game.Game_Graphics.Graphics_Loader import (iterateFrames, apple_frames, pineapple_frames, cherry_frames,
-                                                strawberry_frames)
+                                                strawberry_frames, end_frame)
 from Game.Entity.Player import Player
 
 
@@ -17,6 +17,7 @@ class Powerup:
         self.isVisible = True
         self.hitbox = pygame.Rect(self.x + 5, self.y + 5, 20, 20)
         self.frames = apple_frames
+        self.maxframes = 17
 
     # <editor-fold desc="Property-k és setterek">
     @property
@@ -105,8 +106,8 @@ class Powerup:
     def drawPowerup(self, window: pygame.Surface):
         if isinstance(window, pygame.Surface):
             if self.isVisible:
-                self.hitbox = pygame.Rect(self.x + 5, self.y + 5, 20, 20)
-                self.frameCount = iterateFrames(self, window, self.frames, self.frameCount, 17)
+                self.frameCount = iterateFrames(self, window, self.frames, self.frameCount, self.maxframes)
+                pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
         else:
             raise TypeError("Invalid Window argument for drawPowerup")
 
@@ -125,7 +126,8 @@ class Apple(Powerup):
         super().__init__(x, y, width, height)
         self.frames = apple_frames
 
-    def drawApple(self, window: pygame.Surface):
+    def drawPowerup(self, window: pygame.Surface):
+        self.hitbox = pygame.Rect(self.x + 5, self.y + 5, 20, 20)
         super().drawPowerup(window)
 
     def pickUp(self, player: Player):
@@ -146,7 +148,8 @@ class Cherry(Powerup):
         super().__init__(x, y, width, height)
         self.frames = cherry_frames
 
-    def drawCherry(self, window: pygame.Surface):
+    def drawPowerup(self, window: pygame.Surface):
+        self.hitbox = pygame.Rect(self.x + 5, self.y + 5, 20, 20)
         super().drawPowerup(window)
 
     def pickUp(self, player: Player):
@@ -167,7 +170,8 @@ class Pineapple(Powerup):
         super().__init__(x, y, width, height)
         self.frames = pineapple_frames
 
-    def drawPineapple(self, window: pygame.Surface):
+    def drawPowerup(self, window: pygame.Surface):
+        self.hitbox = pygame.Rect(self.x + 5, self.y + 5, 20, 20)
         super().drawPowerup(window)
 
     def pickUp(self, player: Player):
@@ -188,7 +192,8 @@ class Strawberry(Powerup):
         super().__init__(x, y, width, height)
         self.frames = strawberry_frames
 
-    def drawStrawberry(self, window: pygame.Surface):
+    def drawPowerup(self, window: pygame.Surface):
+        self.hitbox = pygame.Rect(self.x + 5, self.y + 5, 20, 20)
         super().drawPowerup(window)
 
     def pickUp(self, player: Player):
@@ -197,5 +202,24 @@ class Strawberry(Powerup):
                 self.isVisible = False
                 player.isInvincible = True
                 print('Strawberry picked up, invinciblity for 10 seconds')
+        else:
+            raise TypeError("Invalid player argument for pickUp")
+
+
+class Finish(Powerup):
+    def __init__(self, x: int, y: int, width: int = 32, height: int = 32):
+        super().__init__(x, y, width, height)
+        self.frames = end_frame
+        self.hitbox = pygame.Rect(self.x + 5, self.y + 10, 53, 55)
+        self.maxframes = 1
+
+    def drawPowerup(self, window: pygame.Surface):
+        self.hitbox = pygame.Rect(self.x + 5, self.y + 10, 53, 55)
+        super().drawPowerup(window)
+
+    def pickUp(self, player: Player):
+        if isinstance(player, Player):
+            if self.isVisible:
+                print('Trophy picked up, Game Won!')
         else:
             raise TypeError("Invalid player argument for pickUp")
