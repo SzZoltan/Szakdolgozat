@@ -244,22 +244,23 @@ class Player:
     def drawPlayer(self, window: pygame.Surface):
         if not isinstance(window, pygame.Surface):
             raise TypeError('Invalid window argument')
-        if self.isJump:
-            if self.facingRight:
-                window.blit(mc_jump_right_frames[0], (self.x, self.y))
-            else:
-                window.blit(mc_jump_left_frames[0], (self.x, self.y))
-        elif self.isRunning:
-            if self.facingRight:
-                self.runningFrameCount = iterateFrames(self, window, mc_run_right_frames, self.runningFrameCount,
-                                                       12)
-            else:
-                self.runningFrameCount = iterateFrames(self, window, mc_run_left_frames, self.runningFrameCount, 12)
-        elif self.isIdle:
-            if self.facingRight:
-                self.idleFrameCount = iterateFrames(self, window, mc_idle_right_frames, self.idleFrameCount, 11)
-            else:
-                self.idleFrameCount = iterateFrames(self, window, mc_idle_left_frames, self.idleFrameCount, 11)
+        if self.iFrames % 2 == 0:
+            if self.isJump:
+                if self.facingRight:
+                    window.blit(mc_jump_right_frames[0], (self.x, self.y))
+                else:
+                    window.blit(mc_jump_left_frames[0], (self.x, self.y))
+            elif self.isRunning:
+                if self.facingRight:
+                    self.runningFrameCount = iterateFrames(self, window, mc_run_right_frames, self.runningFrameCount,
+                                                           12)
+                else:
+                    self.runningFrameCount = iterateFrames(self, window, mc_run_left_frames, self.runningFrameCount, 12)
+            elif self.isIdle:
+                if self.facingRight:
+                    self.idleFrameCount = iterateFrames(self, window, mc_idle_right_frames, self.idleFrameCount, 11)
+                else:
+                    self.idleFrameCount = iterateFrames(self, window, mc_idle_left_frames, self.idleFrameCount, 11)
         self.hitbox = pygame.Rect(self.x, self.y, 30, 35)
         pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
@@ -303,10 +304,10 @@ class Player:
             self.jumpCount = 10
 
     def hit(self):
-        if not self.isInvincible:
+        if not self.isInvincible and self.iFrames == 0:
             self.hp = self.hp - 1
             print("Player hit")
-            self.iFrames = 60
+            self.iFrames = 30
 
     def shoot(self, direction: int):
         if direction == 1 or direction == -1:
@@ -314,3 +315,9 @@ class Player:
                 return FriendlyProjectile(round(self.x + self.width // 2), round(self.y + self.height // 2), direction)
         else:
             raise ValueError('Invalid direction for Player shoot')
+
+    def iFrame(self):
+        if self.iFrames > 0:
+            self.iFrames -= 1
+
+            #print(self.iFrames)

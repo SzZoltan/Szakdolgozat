@@ -107,7 +107,6 @@ class Powerup:
         if isinstance(window, pygame.Surface):
             if self.isVisible:
                 self.frameCount = iterateFrames(self, window, self.frames, self.frameCount, self.maxframes)
-                pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
         else:
             raise TypeError("Invalid Window argument for drawPowerup")
 

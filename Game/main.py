@@ -86,15 +86,14 @@ testgoldblock = GoldBlock(30, 200, Inside.APPLE)
 testbrick = BrickBlock(70, 200)
 teststeel = SteelBlock(110, 200)
 testbrick2 = BrickBlock(190, 290)
-endbrick = BrickBlock(600, 255)
-finish = Finish(190, 150)
+finish = Finish(600, 255)
 
 # shootLimit azért hogy legyen egy kis delay a lövések között
 
 shootLimit = 0
 friendlyProjectiles = []
 enemyProjectiles = []
-blocklist = [testbrick, teststeel, testgoldblock, testbrick2, endbrick, blocker]
+blocklist = [testbrick, teststeel, testgoldblock, testbrick2, blocker]
 poweruplist = [apple, cherry, pineapple, strawberry, finish]
 entitylist = [mc, bunny, plant, plant2, turtle]
 enemylist = [bunny, plant, plant2, turtle]
@@ -205,20 +204,16 @@ while run:
 
     for powerup in poweruplist:
         if mc.hitbox.colliderect(powerup.hitbox) and isinstance(powerup, Strawberry):
-            invincibleTimer = 200
+            mc.iFrames = 100
             powerup.pickUp(mc)
             poweruplist.remove(powerup)
         if mc.hitbox.colliderect(powerup.hitbox) and not isinstance(powerup, Strawberry):
             powerup.pickUp(mc)
             poweruplist.remove(powerup)
 
-    if mc.isInvincible:
-        if invincibleTimer > 0:
-            invincibleTimer -= 1
-            print(f'{invincibleTimer} miliseconds remaining')
-        else:
-            print('no longer invincible')
-            mc.isInvincible = False
+    if mc.isInvincible and mc.iFrames == 0:
+        print('no longer invincible')
+        mc.isInvincible = False
 
     # ==================Enemies==================
 
@@ -248,6 +243,7 @@ while run:
                 mc.bounce()
             else:
                 mc.hit()
+                mc.bounce()
 
     # Enemy-k mozgása
 
@@ -298,7 +294,7 @@ while run:
         # Kamera
 
         if not collision and mc.x != window_width - 30:
-            if mc.x + offset_x > endbrick.x:
+            if mc.x + offset_x > finish.x:
                 mc.move('right')
             elif mc.x == offset_x:
                 for sprites in spritelist:
@@ -330,7 +326,7 @@ while run:
     if shootLimit > 3:
         shootLimit = 0
 
-
+    mc.iFrame()
     redrawGameWindow()
 
 pygame.quit()
