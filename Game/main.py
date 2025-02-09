@@ -72,7 +72,7 @@ pygame.display.set_caption('MyGame')
 
 
 mc = Player(0, 200)
-blocker = BrickBlock(0,255)
+blocker = BrickBlock(0, 255)
 apple = Apple(200, 255)
 cherry = Cherry(250, 255)
 pineapple = Pineapple(150, 255)
@@ -203,17 +203,9 @@ while run:
     # ==================PowerUps==================
 
     for powerup in poweruplist:
-        if mc.hitbox.colliderect(powerup.hitbox) and isinstance(powerup, Strawberry):
-            mc.iFrames = 100
+        if mc.hitbox.colliderect(powerup.hitbox):
             powerup.pickUp(mc)
             poweruplist.remove(powerup)
-        if mc.hitbox.colliderect(powerup.hitbox) and not isinstance(powerup, Strawberry):
-            powerup.pickUp(mc)
-            poweruplist.remove(powerup)
-
-    if mc.isInvincible and mc.iFrames == 0:
-        print('no longer invincible')
-        mc.isInvincible = False
 
     # ==================Enemies==================
 
@@ -289,7 +281,7 @@ while run:
             mc.move('left')
 
     if keys[pygame.K_RIGHT]:
-        collision = collisionchecker(mc,'right')
+        collision = collisionchecker(mc, 'right')
 
         # Kamera
 
@@ -326,7 +318,12 @@ while run:
     if shootLimit > 3:
         shootLimit = 0
 
+    # Iframe és invincibility kezelő
     mc.iFrame()
+    if mc.isInvincible and mc.iFrames == 0:
+        print('no longer invincible')
+        mc.isInvincible = False
+
     redrawGameWindow()
 
 pygame.quit()

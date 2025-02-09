@@ -55,6 +55,15 @@ def iterateFrames(self, window: pygame.Surface, frames: list, f_count: int, m_fr
 save_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/save_btn.png')
 load_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/load_btn.png')
 ok_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/ok_btn.png')
+back_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/back_btn.png')
+muted_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/muted_btn.png')
+unmuted_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/unmuted_btn.png')
+no_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/no_btn.png')
+yes_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/yes_btn.png')
+play_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/play_btn.png')
+quit_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/quit_btn.png')
+create_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/create_btn.png')
+leaderboard_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/leaderboard_btn.png')
 
 # =======================================================Spriteok=======================================================
 

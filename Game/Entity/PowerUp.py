@@ -200,6 +200,7 @@ class Strawberry(Powerup):
             if self.isVisible:
                 self.isVisible = False
                 player.isInvincible = True
+                player.iFrames = 100
                 print('Strawberry picked up, invinciblity for 10 seconds')
         else:
             raise TypeError("Invalid player argument for pickUp")
