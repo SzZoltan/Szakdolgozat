@@ -50,7 +50,15 @@ def iterateFrames(self, window: pygame.Surface, frames: list, f_count: int, m_fr
     return f_count
 
 
-# Gombok
+# ====================================================User Interface====================================================
+
+half_heart_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/Half_Heart.png')
+full_heart_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/Full_Heart.png')
+health_head_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/Health_Head.png')
+pause_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/pause.png')
+unpause_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/unpause.png')
+
+# =======================================================Gombok=======================================================
 
 save_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/save_btn.png')
 load_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/load_btn.png')

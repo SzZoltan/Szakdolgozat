@@ -2,11 +2,12 @@ import sys
 
 import pygame
 
+from Game.Button.Button import Button
 from Game.Entity.Block import Block, GoldBlock, SteelBlock, BrickBlock, Inside
 from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Finish, Powerup)
 from Game.Entity.Player import Player
 from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy, TurtleEnemy, Enemy)
-from Game.Game_Graphics.Graphics_Loader import level1_bg
+from Game.Game_Graphics.Graphics_Loader import level1_bg, pause_pic, unpause_pic
 pygame.init()
 
 
@@ -16,64 +17,18 @@ def game_loop():
     clock = pygame.time.Clock()
     FPS = 20
 
-    # Unit tesztelés extrém tesztesetek
-
-    # A háttér
-
-
-    def drawBackground():
-        for row in range(tiles_down):
-            for col in range(tiles_across):
-                x_pos = col * level1_bg.get_width()
-                y_pos = row * level1_bg.get_height()
-                win.blit(level1_bg, (x_pos, y_pos))
-
-
-    def drawProjectiles():
-        for fproj in friendlyProjectiles:
-            fproj.draw(win)
-        for eproj in enemyProjectiles:
-            eproj.draw(win)
-
-
-    def drawPowerUp():
-        for pup in poweruplist:
-            pup.drawPowerup(win)
-
-
-    def drawBlocks():
-        for blocks in blocklist:
-            blocks.draw(win)
-
-
-    def drawEnemies():
-        for e in enemylist:
-            if e.isVisible:
-                e.drawEnemy(win)
-
-
-    def redrawGameWindow():
-        win.fill((0, 0, 0))
-        drawBackground()
-        mc.drawPlayer(win)
-        drawPowerUp()
-        drawProjectiles()
-        drawEnemies()
-        drawBlocks()
-        pygame.display.update()
-
-
-    # Terv: Az alapokat kifejelszteni:  pályák ,egy főmenü, score system, leaderboard
-
     offset_x = 205
     window_width = 500
     window_height = 500
-    tiles_across = window_width // level1_bg.get_width()+1
-    tiles_down = window_height // level1_bg.get_height()+1
+    tiles_across = window_width // level1_bg.get_width() + 1
+    tiles_down = window_height // level1_bg.get_height() + 1
+    game_paused = False
+
+    pause_btn = Button(window_width - 50, 15, pause_pic, 1)
+    unpause_btn = Button(window_width // 2 - 50, window_height // 2 - 50, unpause_pic, 1)
 
     win = pygame.display.set_mode((window_width, window_height))
     pygame.display.set_caption("Pink Guy's Adventures - Game")
-
 
     mc = Player(0, 200)
     blocker = BrickBlock(0, 255)
@@ -102,8 +57,58 @@ def game_loop():
     entitylist = [mc, bunny, plant, plant2, turtle]
     enemylist = [bunny, plant, plant2, turtle]
     spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
-    run = True
 
+    # Unit tesztelés extrém tesztesetek
+
+    # A háttér
+
+    def drawBackground():
+        for row in range(tiles_down):
+            for col in range(tiles_across):
+                x_pos = col * level1_bg.get_width()
+                y_pos = row * level1_bg.get_height()
+                win.blit(level1_bg, (x_pos, y_pos))
+
+    def drawProjectiles():
+        for fproj in friendlyProjectiles:
+            fproj.draw(win)
+        for eproj in enemyProjectiles:
+            eproj.draw(win)
+
+    def drawPowerUp():
+        for pup in poweruplist:
+            pup.drawPowerup(win)
+
+    def drawBlocks():
+        for blocks in blocklist:
+            blocks.draw(win)
+
+    def drawEnemies():
+        for e in enemylist:
+            if e.isVisible:
+                e.drawEnemy(win)
+
+    def redrawGameWindow():
+        drawBackground()
+        mc.drawPlayer(win)
+        drawPowerUp()
+        drawProjectiles()
+        drawEnemies()
+        drawBlocks()
+
+    def draw_UI():
+        pass
+
+    # PAUSE CRASH
+    def toggle_pause():
+        r = True
+        while r:
+            if unpause_btn.draw(win):
+                r = False
+
+    # Terv: Az alapokat kifejelszteni:  pályák ,egy főmenü, score system, leaderboard
+
+    run = True
 
     # Megnézi hogy az entitás ütközik-e valamelyik bolckal
 
@@ -132,10 +137,10 @@ def game_loop():
         else:
             raise ValueError('entity must be Player or Enemy type')
 
-
     # ==================Mainloop==================
 
     while run:
+        redrawGameWindow()
         clock.tick(FPS)
         spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
         keys = pygame.key.get_pressed()
@@ -275,6 +280,17 @@ def game_loop():
             if event.type == pygame.QUIT:
                 sys.exit()
 
+        if game_paused:
+            if unpause_btn.draw(win):
+                game_paused = not game_paused
+                toggle_pause()
+                print('unpaused')
+        else:
+            if pause_btn.draw(win):
+                game_paused = not game_paused
+                toggle_pause()
+                print('paused')
+
         if keys[pygame.K_ESCAPE]:
             run = False
 
@@ -331,6 +347,6 @@ def game_loop():
             print('no longer invincible')
             mc.isInvincible = False
 
-        redrawGameWindow()
+        pygame.display.update()
 
 

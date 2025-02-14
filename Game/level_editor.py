@@ -80,7 +80,6 @@ def level_edit():
         img = font.render(text, True, text_color)
         surface.blit(img, (x, y))
 
-
     # Csinál egy új felületet amibe kiírja az error üzenetet és egy gomb megnyomásával el lehet tüntetni a felületet
     def error_popup(text):
         popup_width = 500
@@ -117,7 +116,6 @@ def level_edit():
 
             pygame.display.update()
 
-
     def draw_bg():
         window.fill(GREEN)
         if background_id == 1:
@@ -139,7 +137,6 @@ def level_edit():
                     y_pos = rows * level3_bg.get_height()
                     window.blit(level3_bg, (x_pos - scroll, y_pos))
 
-
     def draw_grid():
 
         # v mint vertical
@@ -153,13 +150,11 @@ def level_edit():
         for h in range(ROWS + 1):
             pygame.draw.line(window, WHITE, (0, h * TILE_SIZE), (WINDOW_WIDTH, h * TILE_SIZE), 2)
 
-
     def draw_world():
         for y, rows in enumerate(world_data):
             for x, t in enumerate(rows):
                 if t >= 0:
                     window.blit(map_editor_tile_list[t], (x * TILE_SIZE - scroll, y * TILE_SIZE))
-
 
     def load_map():
         filler_data = {
@@ -180,7 +175,6 @@ def level_edit():
             error_popup(f'Something went wrong: {e}')
             return filler_data
 
-
     def save_map():
         try:
             map_data['world_data'] = world_data
@@ -195,7 +189,6 @@ def level_edit():
             error_popup(f'Something went wrong: {e}')
         finally:
             pickle_out.close()
-
 
     #   Megnézi hogy van-e pontosan 1 Főszereplő és pontosan 1 záró block
 
@@ -222,7 +215,6 @@ def level_edit():
             return False
         else:
             return True
-
 
     # Gombok létrehozása
 
