@@ -1,8 +1,12 @@
+import sys
+
 import pygame
 import pickle
 from Button.Button import Button
 from Game.Game_Graphics.Graphics_Loader import (level1_bg, level3_bg, level2_bg, map_editor_tile_list,
                                                 save_btn_pic, load_btn_pic, ok_btn_pic, back_btn_pic)
+
+
 def level_edit():
     pygame.init()
 
@@ -23,7 +27,7 @@ def level_edit():
     BLACK = (0, 0, 0)
 
     window = pygame.display.set_mode((WINDOW_WIDTH + RIGHT_MARGIN, WINDOW_HEIGHT + BOTTOM_MARGIN))
-    pygame.display.set_caption('Level Editor')
+    pygame.display.set_caption("Pink Guy's Adventures - Level Editor")
 
     # Játékhoz használt változók
     ROWS = 16
@@ -78,7 +82,6 @@ def level_edit():
 
 
     # Csinál egy új felületet amibe kiírja az error üzenetet és egy gomb megnyomásával el lehet tüntetni a felületet
-
     def error_popup(text):
         popup_width = 500
         popup_height = 200
@@ -319,7 +322,7 @@ def level_edit():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                sys.exit()
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
