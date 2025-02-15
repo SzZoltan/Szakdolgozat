@@ -7,7 +7,8 @@ from Game.Entity.Block import Block, GoldBlock, SteelBlock, BrickBlock, Inside
 from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Finish, Powerup)
 from Game.Entity.Player import Player
 from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy, TurtleEnemy, Enemy)
-from Game.Game_Graphics.Graphics_Loader import level1_bg, pause_pic, unpause_pic
+from Game.Game_Graphics.Graphics_Loader import level1_bg, pause_pic, unpause_pic, quit_btn_pic
+
 pygame.init()
 
 
@@ -16,6 +17,9 @@ def game_loop():
 
     clock = pygame.time.Clock()
     FPS = 20
+    WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
+    font = pygame.font.SysFont(None, 50)
 
     offset_x = 205
     window_width = 500
@@ -26,6 +30,7 @@ def game_loop():
 
     pause_btn = Button(window_width - 50, 15, pause_pic, 1)
     unpause_btn = Button(window_width // 2 - 50, window_height // 2 - 50, unpause_pic, 1)
+    quit_btn = Button(window_width // 2 - 70, window_height // 2, quit_btn_pic, 1)
 
     win = pygame.display.set_mode((window_width, window_height))
     pygame.display.set_caption("Pink Guy's Adventures - Game")
@@ -100,11 +105,14 @@ def game_loop():
         pass
 
     # PAUSE CRASH
-    def toggle_pause():
-        r = True
-        while r:
-            if unpause_btn.draw(win):
-                r = False
+    def show_pause_screen():
+        overlay = pygame.Surface((window_width, window_height))
+        overlay.set_alpha(128)
+        overlay.fill(BLACK)
+        win.blit(overlay, (0, 0))
+
+        text = font.render("Paused", True, WHITE)
+        win.blit(text, (window_width // 2 - 85, window_height // 2 - 100))
 
     # Terv: Az alapokat kifejelszteni:  pályák ,egy főmenü, score system, leaderboard
 
@@ -140,213 +148,203 @@ def game_loop():
     # ==================Mainloop==================
 
     while run:
-        redrawGameWindow()
         clock.tick(FPS)
         spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
         keys = pygame.key.get_pressed()
-
-        # ==================Gravitáció==================
-
-        for entity in entitylist:
-            for block in blocklist:
-                if entity.isAlive and entity.hitbox.colliderect(block.hitbox):
-                    if (entity.hitbox.bottom+block.height-10 < block.hitbox.bottom
-                            and block.isVisible and entity.isAlive):
-                        entity.isFalling = False
-                        break
-                elif entity.y+entity.height >= 320:
-                    entity.isFalling = False
-                else:
-                    entity.isFalling = True
-            if entity.isFalling:
-                entity.y += 7
-
-        # ==================Friendly Projectile==================
-
-        for proj in friendlyProjectiles:
-            popped = False
-            if window_width > proj.x > 0:
-                proj.x += proj.vel
-            else:
-                friendlyProjectiles.pop(friendlyProjectiles.index(proj))
-                popped = True
-                break
-            for enemy in enemylist:
-                if popped:
-                    break
-                if proj.hitbox.colliderect(enemy.hitbox) and enemy.isAlive:
-                    enemy.hit()
-                    friendlyProjectiles.pop(friendlyProjectiles.index(proj))
-                    popped = True
-                    break
-            for block in blocklist:
-                if popped:
-                    break
-                if proj.hitbox.colliderect(block.hitbox):
-                    friendlyProjectiles.pop(friendlyProjectiles.index(proj))
-                    popped = True
-                    break
-
-        # ==================Enemy projectiles==================
-
-        for proj in enemyProjectiles:
-            popped = False
-            if window_width > proj.x > 0:
-                proj.x += proj.vel
-            else:
-                enemyProjectiles.pop(enemyProjectiles.index(proj))
-                popped = True
-                break
-            for block in blocklist:
-                if popped:
-                    break
-                if proj.hitbox.colliderect(block.hitbox):
-                    enemyProjectiles.pop(enemyProjectiles.index(proj))
-                    popped = True
-                    break
-            if not popped and proj.hitbox.colliderect(mc.hitbox):
-                mc.hit()
-                enemyProjectiles.pop(enemyProjectiles.index(proj))
-                break
-
-        # ==================PowerUps==================
-
-        for powerup in poweruplist:
-            if mc.hitbox.colliderect(powerup.hitbox):
-                powerup.pickUp(mc)
-                poweruplist.remove(powerup)
-
-        # ==================Enemies==================
-
-        # Enemy-k lövése
-
-        for enemies in enemylist:
-            if enemies.canShoot and enemies.isVisible:
-                if enemies.facingLeft:
-                    proj = enemies.shoot(-1)
-                    if proj is not None:
-                        enemyProjectiles.append(proj)
-                else:
-                    proj = enemies.shoot(1)
-                    if proj is not None:
-                        enemyProjectiles.append(proj)
-
-        # Enemy-k hit detektálása
-
-        for enemies in enemylist:
-            if enemies.x < window_width and enemies.x+enemies.width > 0:
-                enemies.isVisible = True
-            if mc.hitbox.colliderect(enemies.hitbox) and mc.isInvincible and enemies.isAlive:
-                enemies.hit()
-            if mc.hitbox.colliderect(enemies.hitbox) and enemies.isAlive and mc.hp > 0:
-                if enemies.canBeJumped and mc.hitbox.bottom < enemies.hitbox.top + 15:
-                    enemies.hit()
-                    mc.bounce()
-                else:
-                    mc.hit()
-                    mc.bounce()
-
-        # Enemy-k mozgása
-
-        for enemies in enemylist:
-            if enemies.canMove:
-                if enemies.facingLeft:
-                    left_collision = collisionchecker(enemies, 'left')
-                    if left_collision is False:
-                        enemies.move('left')
-                    else:
-                        enemies.move('right')
-                else:
-                    right_collision = collisionchecker(enemies, 'right')
-                    if right_collision is False:
-                        enemies.move('right')
-                    else:
-                        enemies.move('left')
-
-        # ==================Blocks==================
-
-        for block in blocklist:
-            if mc.hitbox.colliderect(block.hitbox) and block.isVisible:
-                if (mc.hitbox.bottom > block.hitbox.bottom and mc.hitbox.left + 25 > block.hitbox.left and
-                        mc.hitbox.right - 25 < block.hitbox.right and mc.isJump):
-                    result = block.destroy()
-                    mc.interruptJump()
-                    if result is not None:
-                        poweruplist.append(result)
-
-        # ==================Gomb lenyomások kezelése==================
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-
         if game_paused:
             if unpause_btn.draw(win):
                 game_paused = not game_paused
-                toggle_pause()
-                print('unpaused')
+            if quit_btn.draw(win):
+                run = False
         else:
+            redrawGameWindow()
             if pause_btn.draw(win):
                 game_paused = not game_paused
-                toggle_pause()
-                print('paused')
+                show_pause_screen()
 
-        if keys[pygame.K_ESCAPE]:
-            run = False
+            # ==================Gravitáció==================
 
-        if not any(keys):
-            mc.isRunning = False
-            mc.isIdle = True
-
-        if keys[pygame.K_LEFT]:
-            collision = collisionchecker(mc, 'left')
-            if not collision and mc.x != 0:
-                mc.move('left')
-
-        if keys[pygame.K_RIGHT]:
-            collision = collisionchecker(mc, 'right')
-
-            # Kamera
-
-            if not collision and mc.x != window_width - 30:
-                if mc.x + offset_x > finish.x:
-                    mc.move('right')
-                elif mc.x == offset_x:
-                    for sprites in spritelist:
-                        sprites.x -= mc.vel
-                    mc.move('right')
-                else:
-                    mc.move('right')
-
-        # Ugrás viselkedés: fél-Parabola megoldás
-
-        if not mc.isJump and not mc.isFalling:
-            if keys[pygame.K_UP]:
-                mc.isJump = True
-        else:
-            mc.jump()
-
-        if keys[pygame.K_SPACE]:
-            mc.isIdle = True
-            if mc.canShoot and shootLimit == 0:
-                if len(friendlyProjectiles) < 5:
-                    if mc.facingRight:
-                        friendlyProjectiles.append(mc.shoot(1))
+            for entity in entitylist:
+                for block in blocklist:
+                    if entity.isAlive and entity.hitbox.colliderect(block.hitbox):
+                        if (entity.hitbox.bottom + block.height - 10 < block.hitbox.bottom
+                                and block.isVisible and entity.isAlive):
+                            entity.isFalling = False
+                            break
+                    elif entity.y + entity.height >= 320:
+                        entity.isFalling = False
                     else:
-                        friendlyProjectiles.append(mc.shoot(-1))
-                    shootLimit = 1
+                        entity.isFalling = True
+                if entity.isFalling:
+                    entity.y += 7
 
-        if shootLimit > 0:
-            shootLimit += 1
-        if shootLimit > 3:
-            shootLimit = 0
+            # ==================Friendly Projectile==================
 
-        # Iframe és invincibility kezelő
-        mc.iFrame()
-        if mc.isInvincible and mc.iFrames == 0:
-            print('no longer invincible')
-            mc.isInvincible = False
+            for proj in friendlyProjectiles:
+                popped = False
+                if window_width > proj.x > 0:
+                    proj.x += proj.vel
+                else:
+                    friendlyProjectiles.pop(friendlyProjectiles.index(proj))
+                    popped = True
+                    break
+                for enemy in enemylist:
+                    if popped:
+                        break
+                    if proj.hitbox.colliderect(enemy.hitbox) and enemy.isAlive:
+                        enemy.hit()
+                        friendlyProjectiles.pop(friendlyProjectiles.index(proj))
+                        popped = True
+                        break
+                for block in blocklist:
+                    if popped:
+                        break
+                    if proj.hitbox.colliderect(block.hitbox):
+                        friendlyProjectiles.pop(friendlyProjectiles.index(proj))
+                        popped = True
+                        break
+
+            # ==================Enemy projectiles==================
+
+            for proj in enemyProjectiles:
+                popped = False
+                if window_width > proj.x > 0:
+                    proj.x += proj.vel
+                else:
+                    enemyProjectiles.pop(enemyProjectiles.index(proj))
+                    popped = True
+                    break
+                for block in blocklist:
+                    if popped:
+                        break
+                    if proj.hitbox.colliderect(block.hitbox):
+                        enemyProjectiles.pop(enemyProjectiles.index(proj))
+                        popped = True
+                        break
+                if not popped and proj.hitbox.colliderect(mc.hitbox):
+                    mc.hit()
+                    enemyProjectiles.pop(enemyProjectiles.index(proj))
+                    break
+
+            # ==================PowerUps==================
+
+            for powerup in poweruplist:
+                if mc.hitbox.colliderect(powerup.hitbox):
+                    powerup.pickUp(mc)
+                    poweruplist.remove(powerup)
+
+            # ==================Enemies==================
+
+            # Enemy-k lövése
+
+            for enemies in enemylist:
+                if enemies.canShoot and enemies.isVisible:
+                    if enemies.facingLeft:
+                        proj = enemies.shoot(-1)
+                        if proj is not None:
+                            enemyProjectiles.append(proj)
+                    else:
+                        proj = enemies.shoot(1)
+                        if proj is not None:
+                            enemyProjectiles.append(proj)
+
+            # Enemy-k hit detektálása
+
+            for enemies in enemylist:
+                if enemies.x < window_width and enemies.x + enemies.width > 0:
+                    enemies.isVisible = True
+                if mc.hitbox.colliderect(enemies.hitbox) and mc.isInvincible and enemies.isAlive:
+                    enemies.hit()
+                if mc.hitbox.colliderect(enemies.hitbox) and enemies.isAlive and mc.hp > 0:
+                    if enemies.canBeJumped and mc.hitbox.bottom < enemies.hitbox.top + 15:
+                        enemies.hit()
+                        mc.bounce()
+                    else:
+                        mc.hit()
+                        mc.bounce()
+
+            # Enemy-k mozgása
+
+            for enemies in enemylist:
+                if enemies.canMove:
+                    if enemies.facingLeft:
+                        left_collision = collisionchecker(enemies, 'left')
+                        if left_collision is False:
+                            enemies.move('left')
+                        else:
+                            enemies.move('right')
+                    else:
+                        right_collision = collisionchecker(enemies, 'right')
+                        if right_collision is False:
+                            enemies.move('right')
+                        else:
+                            enemies.move('left')
+
+            # ==================Blocks==================
+
+            for block in blocklist:
+                if mc.hitbox.colliderect(block.hitbox) and block.isVisible:
+                    if (mc.hitbox.bottom > block.hitbox.bottom and mc.hitbox.left + 25 > block.hitbox.left and
+                            mc.hitbox.right - 25 < block.hitbox.right and mc.isJump):
+                        result = block.destroy()
+                        mc.interruptJump()
+                        if result is not None:
+                            poweruplist.append(result)
+
+            # ==================Gomb lenyomások kezelése==================
+
+            if not any(keys):
+                mc.isRunning = False
+                mc.isIdle = True
+
+            if keys[pygame.K_LEFT]:
+                collision = collisionchecker(mc, 'left')
+                if not collision and mc.x != 0:
+                    mc.move('left')
+
+            if keys[pygame.K_RIGHT]:
+                collision = collisionchecker(mc, 'right')
+                # Kamera
+                if not collision and mc.x != window_width - 30:
+                    if mc.x + offset_x > finish.x:
+                        mc.move('right')
+                    elif mc.x == offset_x:
+                        for sprites in spritelist:
+                            sprites.x -= mc.vel
+                        mc.move('right')
+                    else:
+                        mc.move('right')
+
+            # Ugrás viselkedés: fél-Parabola megoldás
+
+            if not mc.isJump and not mc.isFalling:
+                if keys[pygame.K_UP]:
+                    mc.isJump = True
+            else:
+                mc.jump()
+
+            if keys[pygame.K_SPACE]:
+                mc.isIdle = True
+                if mc.canShoot and shootLimit == 0:
+                    if len(friendlyProjectiles) < 5:
+                        if mc.facingRight:
+                            friendlyProjectiles.append(mc.shoot(1))
+                        else:
+                            friendlyProjectiles.append(mc.shoot(-1))
+                        shootLimit = 1
+
+            if shootLimit > 0:
+                shootLimit += 1
+            if shootLimit > 3:
+                shootLimit = 0
+
+            # Iframe és invincibility kezelő
+            mc.iFrame()
+            if mc.isInvincible and mc.iFrames == 0:
+                print('no longer invincible')
+                mc.isInvincible = False
 
         pygame.display.update()
-
-
