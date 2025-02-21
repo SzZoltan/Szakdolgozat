@@ -17,9 +17,11 @@ def game_loop():
     # Az animációk 20 FPS-re vannak megcsinálva
 
     clock = pygame.time.Clock()
+    second_counter = 20
     FPS = 20
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
+    score = 10000
     font = pygame.font.SysFont(None, 50)
 
     offset_x = 205
@@ -106,6 +108,7 @@ def game_loop():
 
     def draw_UI():
         text = font.render(f"x {mc.lives}", True, WHITE)
+        score_text = font.render(f"{score}", True, WHITE)
         if mc.hp == 1:
             win.blit(half_heart_pic, (10, 15))
         elif mc.hp == 2:
@@ -115,6 +118,7 @@ def game_loop():
 
         win.blit(health_head_pic, (75, 25))
         win.blit(text, (100, 15))
+        win.blit(score_text, (window_width-200, 15))
 
 
     def show_pause_screen():
@@ -208,6 +212,7 @@ def game_loop():
                         break
                     if proj.hitbox.colliderect(enemy.hitbox) and enemy.isAlive:
                         enemy.hit()
+                        score += 200
                         friendlyProjectiles.pop(friendlyProjectiles.index(proj))
                         popped = True
                         break
@@ -245,8 +250,18 @@ def game_loop():
 
             for powerup in poweruplist:
                 if mc.hitbox.colliderect(powerup.hitbox):
-                    powerup.pickUp(mc)
-                    poweruplist.remove(powerup)
+                    if isinstance(powerup, Apple) and mc.hp == 2:
+                        powerup.pickUp(mc)
+                        poweruplist.remove(powerup)
+                        score += 300
+                    elif isinstance(powerup, Finish):
+                        powerup.pickUp(mc)
+                        poweruplist.remove(powerup)
+                        score += 1000
+                    else:
+                        powerup.pickUp(mc)
+                        poweruplist.remove(powerup)
+                        score += 100
 
             # ==================Enemies==================
 
@@ -270,10 +285,12 @@ def game_loop():
                     enemies.isVisible = True
                 if mc.hitbox.colliderect(enemies.hitbox) and mc.isInvincible and enemies.isAlive:
                     enemies.hit()
+                    score += 200
                 if mc.hitbox.colliderect(enemies.hitbox) and enemies.isAlive and mc.hp > 0:
                     if enemies.canBeJumped and mc.hitbox.bottom < enemies.hitbox.top + 15:
                         enemies.hit()
                         mc.bounce()
+                        score += 200
                     else:
                         mc.hit()
                         mc.bounce()
@@ -365,5 +382,13 @@ def game_loop():
             if mc.isInvincible and mc.iFrames == 0:
                 print('no longer invincible')
                 mc.isInvincible = False
+
+            # Pontszám levonó
+            if second_counter == 0:
+                if score > 0:
+                    score -= 10
+                second_counter = 20
+            else:
+                second_counter -= 1
 
         pygame.display.update()
