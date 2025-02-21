@@ -7,7 +7,8 @@ from Game.Entity.Block import Block, GoldBlock, SteelBlock, BrickBlock, Inside
 from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Finish, Powerup)
 from Game.Entity.Player import Player
 from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy, TurtleEnemy, Enemy)
-from Game.Game_Graphics.Graphics_Loader import level1_bg, pause_pic, unpause_pic, quit_btn_pic
+from Game.Game_Graphics.Graphics_Loader import (level1_bg, pause_pic, unpause_pic, quit_btn_pic, full_heart_pic,
+                                                half_heart_pic, empty_heart_pic, health_head_pic)
 
 pygame.init()
 
@@ -35,6 +36,7 @@ def game_loop():
     win = pygame.display.set_mode((window_width, window_height))
     pygame.display.set_caption("Pink Guy's Adventures - Game")
 
+    mc_spawn = 0
     mc = Player(0, 200)
     blocker = BrickBlock(0, 255)
     apple = Apple(200, 255)
@@ -100,11 +102,21 @@ def game_loop():
         drawProjectiles()
         drawEnemies()
         drawBlocks()
+        draw_UI()
 
     def draw_UI():
-        pass
+        text = font.render(f"x {mc.lives}", True, WHITE)
+        if mc.hp == 1:
+            win.blit(half_heart_pic, (10, 15))
+        elif mc.hp == 2:
+            win.blit(full_heart_pic, (10, 15))
+        else:
+            win.blit(empty_heart_pic, (10, 15))
 
-    # PAUSE CRASH
+        win.blit(health_head_pic, (75, 25))
+        win.blit(text, (100, 15))
+
+
     def show_pause_screen():
         overlay = pygame.Surface((window_width, window_height))
         overlay.set_alpha(128)
@@ -314,9 +326,16 @@ def game_loop():
                     elif mc.x == offset_x:
                         for sprites in spritelist:
                             sprites.x -= mc.vel
+                        mc_spawn -= mc.vel
                         mc.move('right')
                     else:
                         mc.move('right')
+            if keys[pygame.K_F1]:
+                print(mc.hp)
+            if keys[pygame.K_F2]:
+                for sprites in spritelist:
+                    sprites.x -= mc_spawn
+                mc_spawn = 0
 
             # Ugrás viselkedés: fél-Parabola megoldás
 

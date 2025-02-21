@@ -54,6 +54,7 @@ def iterateFrames(self, window: pygame.Surface, frames: list, f_count: int, m_fr
 
 half_heart_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/Half_Heart.png')
 full_heart_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/Full_Heart.png')
+empty_heart_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/Empty_Heart.png')
 health_head_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/Health_Head.png')
 pause_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/pause.png')
 unpause_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/unpause.png')

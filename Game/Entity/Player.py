@@ -121,6 +121,8 @@ class Player:
             raise TypeError("hp attribute must be an integer.")
         if value < 0:
             self._hp = 0
+        elif value > 2:
+            self._hp = 2
         else:
             self._hp = value
 
