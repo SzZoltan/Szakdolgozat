@@ -46,6 +46,7 @@ def game_loop():
     pineapple = Pineapple(150, 255)
     strawberry = Strawberry(300, 255)
     bunny = BunnyEnemy(100, 255)
+    offscreen_bunny = BunnyEnemy(550, 255)
     turtle = TurtleEnemy(130, 255)
     plant = PlantEnemy(400, 255)
     plant2 = PlantEnemy(550, 255)
@@ -63,8 +64,8 @@ def game_loop():
     enemyProjectiles = []
     blocklist = [testbrick, teststeel, testgoldblock, testbrick2, blocker]
     poweruplist = [apple, cherry, pineapple, strawberry, finish]
-    entitylist = [mc, bunny, plant, plant2, turtle]
-    enemylist = [bunny, plant, plant2, turtle]
+    entitylist = [mc, bunny, plant, plant2, turtle, offscreen_bunny]
+    enemylist = [bunny, plant, plant2, turtle, offscreen_bunny]
     spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
 
     # Unit tesztelés extrém tesztesetek
@@ -298,7 +299,7 @@ def game_loop():
             # Enemy-k mozgása
 
             for enemies in enemylist:
-                if enemies.canMove:
+                if enemies.canMove and enemies.isVisible:
                     if enemies.facingLeft:
                         left_collision = collisionchecker(enemies, 'left')
                         if left_collision is False:

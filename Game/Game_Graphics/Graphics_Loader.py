@@ -59,7 +59,7 @@ health_head_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/Health_
 pause_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/pause.png')
 unpause_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/unpause.png')
 
-# =======================================================Gombok=======================================================
+# =======================================================Gombok=========================================================
 
 save_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/save_btn.png')
 load_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/load_btn.png')
@@ -73,6 +73,9 @@ play_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/play_btn.png')
 quit_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/quit_btn.png')
 create_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/create_btn.png')
 leaderboard_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/leaderboard_btn.png')
+left_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/left_btn.png')
+right_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/right_btn.png')
+start_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/start_btn.png')
 
 # =======================================================Spriteok=======================================================
 
@@ -136,7 +139,7 @@ for x in range(MAP_EDITOR_TILE_TYPES):
     img = pygame.image.load(f'{GRAPHICS_LOCATION}/Editor Tiles/{x}.png')
     map_editor_tile_list.append(img)
 
-# ======================================================Frame-ek======================================================
+# ======================================================Frame-ek========================================================
 
 # Főszereplő
 
