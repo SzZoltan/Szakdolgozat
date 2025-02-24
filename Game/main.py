@@ -8,7 +8,8 @@ from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Finish, P
 from Game.Entity.Player import Player
 from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy, TurtleEnemy, Enemy)
 from Game.Game_Graphics.Graphics_Loader import (level1_bg, pause_pic, unpause_pic, quit_btn_pic, full_heart_pic,
-                                                half_heart_pic, empty_heart_pic, health_head_pic)
+                                                half_heart_pic, empty_heart_pic, health_head_pic, again_btn_pic,
+                                                yes_btn_pic, no_btn_pic, save_btn_pic)
 
 pygame.init()
 
@@ -108,7 +109,7 @@ def game_loop():
         draw_UI()
 
     def draw_UI():
-        text = font.render(f"x {mc.lives}", True, WHITE)
+        paused_txt = font.render(f"x {mc.lives}", True, WHITE)
         score_text = font.render(f"{score}", True, WHITE)
         if mc.hp == 1:
             win.blit(half_heart_pic, (10, 15))
@@ -118,11 +119,10 @@ def game_loop():
             win.blit(empty_heart_pic, (10, 15))
 
         win.blit(health_head_pic, (75, 25))
-        win.blit(text, (100, 15))
+        win.blit(paused_txt, (100, 15))
         win.blit(score_text, (window_width-200, 15))
 
-
-    def show_pause_screen():
+    def draw_pause_screen():
         overlay = pygame.Surface((window_width, window_height))
         overlay.set_alpha(128)
         overlay.fill(BLACK)
@@ -131,7 +131,142 @@ def game_loop():
         text = font.render("Paused", True, WHITE)
         win.blit(text, (window_width // 2 - 85, window_height // 2 - 100))
 
-    # Terv: Az alapokat kifejelszteni:  pályák ,egy főmenü, score system, leaderboard
+    def draw_death_screen():
+        run = True
+        fade = pygame.Surface((window_width, window_height))
+        fade.fill(BLACK)
+
+        for alpha in range(0, 255):
+            fade.set_alpha(alpha)
+            win.blit(fade, (0, 0))
+            pygame.display.update()
+            pygame.time.delay(2)
+
+        mc.lives -= 1
+        death_txt = font.render("You Died", True, WHITE)
+        lives_txt = font.render(f"x {mc.lives}", True, WHITE)
+        continue_txt = font.render("Press Space to continue", True, WHITE)
+
+        win.blit(death_txt, (window_width // 2 - 85, window_height // 2 - 100))
+        win.blit(lives_txt, (window_width // 2 - 20, window_height // 2 - 50))
+        win.blit(health_head_pic, (window_width // 2 - 45, window_height // 2 - 40))
+        win.blit(continue_txt, (window_width // 2 - 200, window_height // 2))
+
+        while run:
+            keys = pygame.key.get_pressed()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            if keys[pygame.K_SPACE]:
+                run = False
+
+            pygame.display.update()
+    pygame.time.delay(100)
+
+    def draw_game_over_screen():
+        overlay = pygame.Surface((window_width, window_height))
+        overlay.fill(BLACK)
+
+        game_continue = False
+
+        game_over_txt = font.render("Game Over", True, WHITE)
+        again_btn = Button(window_width // 2 + 30, window_height // 2 - 50, again_btn_pic, 1)
+        game_over_quit_btn = Button(window_width // 2 - 135, window_height // 2 - 50, quit_btn_pic, 1)
+
+        win.blit(overlay, (0, 0))
+        win.blit(game_over_txt, (window_width // 2 - game_over_txt.get_width() // 2, window_height // 2 - 100))
+
+        run = True
+        while run:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            if again_btn.draw(win):
+                game_continue = True
+                run = False
+
+            if game_over_quit_btn.draw(win):
+                game_continue = False
+                run = False
+
+            pygame.display.update()
+
+        pygame.time.delay(100)
+        return game_continue
+
+    def draw_victory_screen():
+
+        def draw_leaderboard_entry():
+            run = True
+            win.fill(BLACK)
+            player_name_txt = font.render("Write down your name", True, WHITE)
+            textbox_name = ""
+
+            save_score_btn = Button(window_width // 2 - save_btn_pic.get_width(), window_height // 2 + 100,
+                                    save_btn_pic, 1)
+            quit_leadearboard_btn = Button (window_width // 2 - quit_btn_pic.get_width() + 100,
+                                            window_height // 2 + 100, quit_btn_pic, 1)
+
+            win.blit(player_name_txt, (window_width // 2 - player_name_txt.get_width() // 2, window_height // 2 - 200))
+
+            while run:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+
+                if save_score_btn.draw(win):
+                    run = False
+
+                if quit_leadearboard_btn.draw(win):
+                    run = False
+
+                pygame.display.update()
+
+        run = True
+        fade = pygame.Surface((window_width, window_height))
+        fade.fill(BLACK)
+
+        for alpha in range(0, 255):
+            fade.set_alpha(alpha)
+            win.blit(fade, (0, 0))
+            pygame.display.update()
+            pygame.time.delay(2)
+
+        victory_txt = font.render("Congratulations, You won!", True, WHITE)
+        score_txt = font.render(f"Your final score: {score}", True, WHITE)
+        leaderboard_txt = font.render("Want to publish your score?", True, WHITE)
+
+        yes_btn = Button(window_width // 2 - yes_btn_pic.get_width(), window_height // 2 + 100, yes_btn_pic, 1)
+        no_btn = Button(window_width // 2 - no_btn_pic.get_width() + 100, window_height // 2 + 100, no_btn_pic, 1)
+
+        win.blit(victory_txt, (window_width // 2 - victory_txt.get_width() // 2, window_height // 2 - 200))
+        win.blit(score_txt, (window_width // 2 - score_txt.get_width() // 2, window_height // 2 - 100))
+        win.blit(leaderboard_txt, (window_width // 2 - leaderboard_txt.get_width() // 2, window_height // 2))
+
+        while run:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            if no_btn.draw(win):
+                run = False
+
+            if yes_btn.draw(win):
+                pygame.time.delay(100)
+                draw_leaderboard_entry()
+                run = False
+
+
+            pygame.display.update()
+
+        pygame.time.delay(100)
 
     run = True
 
@@ -180,7 +315,7 @@ def game_loop():
             redrawGameWindow()
             if pause_btn.draw(win):
                 game_paused = not game_paused
-                show_pause_screen()
+                draw_pause_screen()
 
             # ==================Gravitáció==================
 
@@ -259,6 +394,8 @@ def game_loop():
                         powerup.pickUp(mc)
                         poweruplist.remove(powerup)
                         score += 1000
+                        draw_victory_screen()
+                        run = False
                     else:
                         powerup.pickUp(mc)
                         poweruplist.remove(powerup)
@@ -324,6 +461,26 @@ def game_loop():
                         if result is not None:
                             poweruplist.append(result)
 
+            # ============================== Halál, Respawn és Game Over ==============================
+
+            if mc.hp == 0:
+                draw_death_screen()
+                if mc.lives != 0:
+                    # Respawn majd később pálya újratöltés
+                    mc.hp = 1
+                    mc.clear_effects()
+                else:
+                    if not draw_game_over_screen():
+                        run = False
+                    else:
+                        print("map reload here #400")
+
+                for sprites in spritelist:
+                    sprites.x -= mc_spawn
+                mc_spawn = 0
+                mc.x = 0
+                mc.y = 200
+
             # ==================Gomb lenyomások kezelése==================
 
             if not any(keys):
@@ -348,12 +505,6 @@ def game_loop():
                         mc.move('right')
                     else:
                         mc.move('right')
-            if keys[pygame.K_F1]:
-                print(mc.hp)
-            if keys[pygame.K_F2]:
-                for sprites in spritelist:
-                    sprites.x -= mc_spawn
-                mc_spawn = 0
 
             # Ugrás viselkedés: fél-Parabola megoldás
 
@@ -373,18 +524,29 @@ def game_loop():
                             friendlyProjectiles.append(mc.shoot(-1))
                         shootLimit = 1
 
+            if keys[pygame.K_F2]:
+                if not draw_game_over_screen():
+                    run = False
+                else:
+                    print("reload map here #452")
+
+            if keys[pygame.K_F1]:
+                draw_victory_screen()
+
             if shootLimit > 0:
                 shootLimit += 1
             if shootLimit > 3:
                 shootLimit = 0
 
             # Iframe és invincibility kezelő
+
             mc.iFrame()
             if mc.isInvincible and mc.iFrames == 0:
                 print('no longer invincible')
                 mc.isInvincible = False
 
             # Pontszám levonó
+
             if second_counter == 0:
                 if score > 0:
                     score -= 10

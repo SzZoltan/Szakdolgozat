@@ -76,6 +76,7 @@ leaderboard_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/leaderboar
 left_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/left_btn.png')
 right_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/right_btn.png')
 start_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/start_btn.png')
+again_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/again_btn.png')
 
 # =======================================================Spriteok=======================================================
 

@@ -311,6 +311,9 @@ class Player:
             print("Player hit")
             self.iFrames = 30
 
+    def kill(self):
+        self.hp = 0
+
     def shoot(self, direction: int):
         if direction == 1 or direction == -1:
             if self.canShoot:
@@ -322,4 +325,14 @@ class Player:
         if self.iFrames > 0:
             self.iFrames -= 1
 
-            #print(self.iFrames)
+    def clear_effects(self):
+        self.iFrames = 0
+        self.isAlive = True
+        self.isInvincible = False
+        self.canShoot = False
+        self.isFalling = False
+        self.isJump = False
+        self.isIdle = True
+        self.facingLeft = False
+        self.facingRight = True
+        self.isRunning = False
