@@ -327,6 +327,7 @@ class Player:
 
     def clear_effects(self):
         self.iFrames = 0
+        self.jumpCount = 10
         self.isAlive = True
         self.isInvincible = False
         self.canShoot = False

@@ -206,19 +206,40 @@ def game_loop():
             win.fill(BLACK)
             player_name_txt = font.render("Write down your name", True, WHITE)
             textbox_name = ""
+            color_passive_bad = pygame.Color("red")
+            color_passive_good = pygame.Color("green")
+            color_active = pygame.Color("lightblue")
+
+            input_rect = pygame.Rect(215, 245, 100, 40)
+            active = True
 
             save_score_btn = Button(window_width // 2 - save_btn_pic.get_width(), window_height // 2 + 100,
                                     save_btn_pic, 1)
             quit_leadearboard_btn = Button (window_width // 2 - quit_btn_pic.get_width() + 100,
                                             window_height // 2 + 100, quit_btn_pic, 1)
 
-            win.blit(player_name_txt, (window_width // 2 - player_name_txt.get_width() // 2, window_height // 2 - 200))
-
             while run:
+                win.fill(BLACK)
+                keys = pygame.key.get_pressed()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         sys.exit()
+
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if input_rect.collidepoint(event.pos):
+                            active = True
+
+                    if keys[pygame.K_RETURN]:
+                        active = False
+
+                    if active:
+                        if event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_BACKSPACE:
+                                textbox_name = textbox_name[:-1]
+                            elif len(textbox_name) < 3 and event.unicode.isalpha():
+                                textbox_name += event.unicode
+                                textbox_name = textbox_name.upper()
 
                 if save_score_btn.draw(win):
                     run = False
@@ -226,6 +247,18 @@ def game_loop():
                 if quit_leadearboard_btn.draw(win):
                     run = False
 
+                if active:
+                    color = color_active
+                elif len(textbox_name) == 3:
+                    color = color_passive_good
+                else:
+                    color = color_passive_bad
+
+                pygame.draw.rect(win, color, input_rect)
+                usr_name = font.render(textbox_name, True, WHITE)
+                win.blit(usr_name, (window_width // 2 - 25, window_height // 2))
+                win.blit(player_name_txt,
+                         (window_width // 2 - player_name_txt.get_width() // 2, window_height // 2 - 200))
                 pygame.display.update()
 
         run = True
@@ -471,6 +504,7 @@ def game_loop():
                     mc.clear_effects()
                 else:
                     if not draw_game_over_screen():
+                        pygame.time.delay(100)
                         run = False
                     else:
                         print("map reload here #400")

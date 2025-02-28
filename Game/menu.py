@@ -46,7 +46,7 @@ def draw_audio_toggle():
             audio = False
             wait = 2
     else:
-        if muted_btn.draw(window)and wait == 0:
+        if muted_btn.draw(window) and wait == 0:
             audio = True
             wait = 2
 
@@ -187,14 +187,17 @@ while run:
     # ==================Gombok==================
 
     if create_btn.draw(window):
+        pygame.time.delay(100)
         level_edit()
         remake_main_menu()
 
     if play_btn.draw(window):
+        pygame.time.delay(100)
         show_level_selection()
         remake_main_menu()
 
     if leaderboard_btn.draw(window):
+        pygame.time.delay(100)
         show_leaderboard()
 
     if quit_btn.draw(window):
