@@ -1,20 +1,28 @@
+import pickle
 import sys
 
 import pygame
 
 from Game.Button.Button import Button
-from Game.Entity.Block import Block, GoldBlock, SteelBlock, BrickBlock, Inside
-from Game.Entity.PowerUp import (Apple, Pineapple, Strawberry, Cherry, Finish, Powerup)
+from Game.Entity.Block import GoldBlock, SteelBlock, BrickBlock, Inside
+from Game.Entity.PowerUp import (Apple, Finish)
 from Game.Entity.Player import Player
 from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy, TurtleEnemy, Enemy)
-from Game.Game_Graphics.Graphics_Loader import (level1_bg, pause_pic, unpause_pic, quit_btn_pic, full_heart_pic,
-                                                half_heart_pic, empty_heart_pic, health_head_pic, again_btn_pic,
-                                                yes_btn_pic, no_btn_pic, save_btn_pic)
+from Game.Game_Graphics.Graphics_Loader import (level1_bg, level2_bg, level3_bg, pause_pic, unpause_pic, quit_btn_pic,
+                                                full_heart_pic, half_heart_pic, empty_heart_pic, health_head_pic,
+                                                again_btn_pic, yes_btn_pic, no_btn_pic, save_btn_pic)
 
 pygame.init()
 
+background_id = 1
+mcx_spawn = 0
+mcy_spawn = 0
+mc = Player(0, 200)
+finish = Finish(600, 255)
 
-def game_loop():
+
+def game_loop(level: int):
+    global mc, finish, mcx_spawn, mcy_spawn, background_id
     # Az animációk 20 FPS-re vannak megcsinálva
 
     clock = pygame.time.Clock()
@@ -26,8 +34,9 @@ def game_loop():
     font = pygame.font.SysFont(None, 50)
 
     offset_x = 205
-    window_width = 500
-    window_height = 500
+    window_width = 1000
+    window_height = 640
+    map_data = {}
     tiles_across = window_width // level1_bg.get_width() + 1
     tiles_down = window_height // level1_bg.get_height() + 1
     game_paused = False
@@ -39,46 +48,97 @@ def game_loop():
     win = pygame.display.set_mode((window_width, window_height))
     pygame.display.set_caption("Pink Guy's Adventures - Game")
 
-    mc_spawn = 0
-    mc = Player(0, 200)
-    blocker = BrickBlock(0, 255)
-    apple = Apple(200, 255)
-    cherry = Cherry(250, 255)
-    pineapple = Pineapple(150, 255)
-    strawberry = Strawberry(300, 255)
-    bunny = BunnyEnemy(100, 255)
-    offscreen_bunny = BunnyEnemy(550, 255)
-    turtle = TurtleEnemy(130, 255)
-    plant = PlantEnemy(400, 255)
-    plant2 = PlantEnemy(550, 255)
     invincibleTimer = 0
-    testgoldblock = GoldBlock(30, 200, Inside.APPLE)
-    testbrick = BrickBlock(70, 200)
-    teststeel = SteelBlock(110, 200)
-    testbrick2 = BrickBlock(190, 290)
-    finish = Finish(600, 255)
 
     # shootLimit azért hogy legyen egy kis delay a lövések között
 
     shootLimit = 0
     friendlyProjectiles = []
     enemyProjectiles = []
-    blocklist = [testbrick, teststeel, testgoldblock, testbrick2, blocker]
-    poweruplist = [apple, cherry, pineapple, strawberry, finish]
-    entitylist = [mc, bunny, plant, plant2, turtle, offscreen_bunny]
-    enemylist = [bunny, plant, plant2, turtle, offscreen_bunny]
+    blocklist = []
+    poweruplist = []
+    enemylist = []
+    entitylist = []
     spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
 
     # Unit tesztelés extrém tesztesetek
 
+    def load_level():
+        global background_id
+        try:
+            with open(f'Maps/level_{level}_data', 'rb') as pickle_in:
+                data = pickle.load(pickle_in)
+                return data
+        except FileNotFoundError as fnfe:
+            print(f'Map not found error: {fnfe}')
+        except pickle.UnpicklingError as upe:
+            print(f'Map unpickling error: {upe}')
+        except Exception as e:
+            print(f'Something went wrong: {e}')
+
+    map_data = load_level()
+    background_id = map_data['background']
+    map_data = map_data['world_data']
+
+    def place_entities(declaremc: bool):
+        global mc, mcx_spawn, mcy_spawn, finish
+
+        for y in range(len(map_data)):
+            for x in range(len(map_data[y])):
+                if map_data[y][x] == -1:
+                    continue
+                elif map_data[y][x] == 0:
+                    blocklist.append(BrickBlock(x*40, y*40))
+                elif map_data[y][x] == 1:
+                    blocklist.append(GoldBlock(x*40, y*40, Inside.APPLE))
+                elif map_data[y][x] == 2:
+                    blocklist.append(GoldBlock(x*40, y*40, Inside.PINEAPPLE))
+                elif map_data[y][x] == 3:
+                    blocklist.append(GoldBlock(x*40, y*40, Inside.CHERRY))
+                elif map_data[y][x] == 4:
+                    blocklist.append(GoldBlock(x*40, y*40, Inside.STRAWBERRY))
+                elif map_data[y][x] == 5:
+                    blocklist.append(SteelBlock(x*40, y*40))
+                elif map_data[y][x] == 6 and declaremc:
+                    mc = Player(x*40, y*40)
+                    mcx_spawn = x*40
+                    mcy_spawn = y*40
+                    entitylist.append(mc)
+                elif map_data[y][x] == 7:
+                    enemylist.append(BunnyEnemy(x*40, y*40-10))
+                elif map_data[y][x] == 8:
+                    enemylist.append(PlantEnemy(x*40, y*40-10))
+                elif map_data[y][x] == 9:
+                    enemylist.append(TurtleEnemy(x*40, y*40-5))
+                elif map_data[y][x] == 10:
+                    finish = Finish(x*40, y*40-25)
+                    poweruplist.append(finish)
+
+    place_entities(True)
+    entitylist = enemylist.copy()
+    entitylist.append(mc)
+    distance = mcx_spawn
     # A háttér
 
     def drawBackground():
-        for row in range(tiles_down):
-            for col in range(tiles_across):
-                x_pos = col * level1_bg.get_width()
-                y_pos = row * level1_bg.get_height()
-                win.blit(level1_bg, (x_pos, y_pos))
+        if background_id == 1:
+            for row in range(tiles_down):
+                for col in range(tiles_across):
+                    x_pos = col * level1_bg.get_width()
+                    y_pos = row * level1_bg.get_height()
+                    win.blit(level1_bg, (x_pos, y_pos))
+        elif background_id == 2:
+            for row in range(tiles_down):
+                for col in range(tiles_across):
+                    x_pos = col * level1_bg.get_width()
+                    y_pos = row * level1_bg.get_height()
+                    win.blit(level2_bg, (x_pos, y_pos))
+        else:
+            for row in range(tiles_down):
+                for col in range(tiles_across):
+                    x_pos = col * level1_bg.get_width()
+                    y_pos = row * level1_bg.get_height()
+                    win.blit(level3_bg, (x_pos, y_pos))
 
     def drawProjectiles():
         for fproj in friendlyProjectiles:
@@ -243,9 +303,11 @@ def game_loop():
 
                 if save_score_btn.draw(win):
                     run = False
+                    pygame.time.delay(100)
 
                 if quit_leadearboard_btn.draw(win):
                     run = False
+                    pygame.time.delay(100)
 
                 if active:
                     color = color_active
@@ -292,7 +354,6 @@ def game_loop():
                 run = False
 
             if yes_btn.draw(win):
-                pygame.time.delay(100)
                 draw_leaderboard_entry()
                 run = False
 
@@ -359,8 +420,12 @@ def game_loop():
                                 and block.isVisible and entity.isAlive):
                             entity.isFalling = False
                             break
-                    elif entity.y + entity.height >= 320:
+                    elif entity.y + entity.height >= 640:
                         entity.isFalling = False
+                        if isinstance(entity, Enemy):
+                            entity.hit()
+                        elif isinstance(entity, Player):
+                            entity.kill()
                     else:
                         entity.isFalling = True
                 if entity.isFalling:
@@ -499,21 +564,39 @@ def game_loop():
             if mc.hp == 0:
                 draw_death_screen()
                 if mc.lives != 0:
-                    # Respawn majd később pálya újratöltés
                     mc.hp = 1
                     mc.clear_effects()
+                    friendlyProjectiles = []
+                    enemyProjectiles = []
+                    blocklist = []
+                    poweruplist = []
+                    enemylist = []
+                    entitylist = []
+                    place_entities(False)
+                    entitylist = enemylist.copy()
+                    entitylist.append(mc)
+                    spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
                 else:
                     if not draw_game_over_screen():
-                        pygame.time.delay(100)
                         run = False
                     else:
-                        print("map reload here #400")
+                        friendlyProjectiles = []
+                        enemyProjectiles = []
+                        blocklist = []
+                        poweruplist = []
+                        enemylist = []
+                        entitylist = []
+                        place_entities(True)
+                        entitylist = enemylist.copy()
+                        entitylist.append(mc)
+                        spritelist = blocklist + poweruplist + entitylist + friendlyProjectiles + enemyProjectiles
 
-                for sprites in spritelist:
-                    sprites.x -= mc_spawn
-                mc_spawn = 0
-                mc.x = 0
-                mc.y = 200
+                if distance > offset_x:
+                    for sprites in spritelist:
+                        sprites.x -= distance
+                distance = mcx_spawn
+                mc.x = mcx_spawn
+                mc.y = mcy_spawn
 
             # ==================Gomb lenyomások kezelése==================
 
@@ -535,7 +618,7 @@ def game_loop():
                     elif mc.x == offset_x:
                         for sprites in spritelist:
                             sprites.x -= mc.vel
-                        mc_spawn -= mc.vel
+                        distance -= mc.vel
                         mc.move('right')
                     else:
                         mc.move('right')
@@ -557,15 +640,6 @@ def game_loop():
                         else:
                             friendlyProjectiles.append(mc.shoot(-1))
                         shootLimit = 1
-
-            if keys[pygame.K_F2]:
-                if not draw_game_over_screen():
-                    run = False
-                else:
-                    print("reload map here #452")
-
-            if keys[pygame.K_F1]:
-                draw_victory_screen()
 
             if shootLimit > 0:
                 shootLimit += 1
@@ -589,3 +663,6 @@ def game_loop():
                 second_counter -= 1
 
         pygame.display.update()
+
+
+pygame.time.delay(100)

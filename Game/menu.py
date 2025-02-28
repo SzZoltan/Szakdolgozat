@@ -143,7 +143,7 @@ def show_level_selection():
             r = False
 
         if start_btn.draw(window):
-            game_loop()
+            game_loop(level)
             r = False
 
         if left_btn.draw(window) or keys[pygame.K_LEFT]:
