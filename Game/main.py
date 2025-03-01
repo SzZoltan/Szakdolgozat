@@ -10,7 +10,7 @@ from Game.Entity.Player import Player
 from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy, TurtleEnemy, Enemy)
 from Game.Game_Graphics.Graphics_Loader import (level1_bg, level2_bg, level3_bg, pause_pic, unpause_pic, quit_btn_pic,
                                                 full_heart_pic, half_heart_pic, empty_heart_pic, health_head_pic,
-                                                again_btn_pic, yes_btn_pic, no_btn_pic, save_btn_pic)
+                                                again_btn_pic, yes_btn_pic, no_btn_pic, save_btn_pic, cherries_pic)
 
 pygame.init()
 
@@ -176,7 +176,8 @@ def game_loop(level: int):
             win.blit(full_heart_pic, (10, 15))
         else:
             win.blit(empty_heart_pic, (10, 15))
-
+        if mc.canShoot:
+            win.blit(cherries_pic, (145, 5))
         win.blit(health_head_pic, (75, 25))
         win.blit(paused_txt, (100, 15))
         win.blit(score_text, (window_width-200, 15))

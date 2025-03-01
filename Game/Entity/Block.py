@@ -127,7 +127,7 @@ class Block:
         if self.isVisible:
             self.hitbox = pygame.Rect(self.x, self.y, 40, 40)
             window.blit(brick_frame[0],(self.x,self.y))
-            pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+
 
 # Átalgos tégla, törhető, de nincs benne semmi
 class BrickBlock(Block):
@@ -144,8 +144,7 @@ class BrickBlock(Block):
     def draw(self, window: pygame.Surface):
         if self.isVisible:
             self.hitbox = pygame.Rect(self.x, self.y, 40, 40)
-            window.blit(brick_frame[0],(self.x,self.y))
-            pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+            window.blit(brick_frame[0],(self.x, self.y))
 
 
 # Vasblock, törhetetlen
@@ -164,7 +163,7 @@ class SteelBlock(Block):
         if self.isVisible:
             self.hitbox = pygame.Rect(self.x, self.y, 40, 40)
             window.blit(steel_frame[0],(self.x,self.y))
-            pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
+
 
 # Aranyblock, törhető és van benne PowerUp
 class GoldBlock(Block):
@@ -182,4 +181,3 @@ class GoldBlock(Block):
         if self.isVisible:
             self.hitbox = pygame.Rect(self.x, self.y, 40, 40)
             window.blit(gold_frame[0],(self.x,self.y))
-            pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)

@@ -267,7 +267,6 @@ class Enemy:
                     else:
                         self.idleFrameCount = iterateFrames(self, window, mc_idle_left_frames, self.idleFrameCount, 11)
                 self.hitbox = pygame.Rect(self.x, self.y, 30, 40)
-                pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
         else:
             raise TypeError('Invalid window argument for drawEnemy')
 
@@ -330,7 +329,6 @@ class BunnyEnemy(Enemy):
                         self.idleFrameCount = iterateFrames(self, window, bunny_idle_left_frames,
                                                             self.idleFrameCount, 8)
                 self.hitbox = pygame.Rect(self.x, self.y + 3, 30, 40)
-                pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
         else:
             raise TypeError('Invalid window argument Bunny drawEnemy')
 
@@ -373,7 +371,6 @@ class PlantEnemy(Enemy):
                     self.hitbox = pygame.Rect(self.x+5, self.y, 40, 45)
                 elif self.facingRight:
                     self.hitbox = pygame.Rect(self.x, self.y, 40, 45)
-                pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
         else:
             raise TypeError('Invalid window argument Plant drawEnemy')
 
@@ -455,7 +452,6 @@ class TurtleEnemy(Enemy):
                             self.idleFrameCount = iterateFrames(self, window, turtle_idle_unspiked_frames,
                                                                 self.idleFrameCount, 14)
                 self.hitbox = pygame.Rect(self.x+3, self.y, 40, 25)
-                pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
         else:
             raise TypeError('Invalid window argument Turtle drawEnemy')

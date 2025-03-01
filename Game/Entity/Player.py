@@ -264,7 +264,6 @@ class Player:
                 else:
                     self.idleFrameCount = iterateFrames(self, window, mc_idle_left_frames, self.idleFrameCount, 11)
         self.hitbox = pygame.Rect(self.x, self.y, 30, 35)
-        pygame.draw.rect(window, (0, 0, 255), self.hitbox, 2)
 
     def move(self, direction: str):
         if direction == 'left':
@@ -307,7 +306,10 @@ class Player:
 
     def hit(self):
         if not self.isInvincible and self.iFrames == 0:
-            self.hp = self.hp - 1
+            if self.canShoot:
+                self.canShoot = False
+            else:
+                self.hp = self.hp - 1
             print("Player hit")
             self.iFrames = 30
 
