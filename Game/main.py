@@ -156,8 +156,7 @@ def game_loop(level: int):
 
     def drawEnemies():
         for e in enemylist:
-            if e.isVisible:
-                e.drawEnemy(win)
+            e.drawEnemy(win)
 
     def redrawGameWindow():
         drawBackground()
@@ -270,7 +269,7 @@ def game_loop(level: int):
             color_passive_good = pygame.Color("green")
             color_active = pygame.Color("lightblue")
 
-            input_rect = pygame.Rect(215, 245, 100, 40)
+            input_rect = pygame.Rect(window_width // 2 - 35, window_height // 2-5, 100, 40)
             active = True
 
             save_score_btn = Button(window_width // 2 - save_btn_pic.get_width(), window_height // 2 + 100,
@@ -302,8 +301,9 @@ def game_loop(level: int):
                                 textbox_name = textbox_name.upper()
 
                 if save_score_btn.draw(win):
-                    run = False
-                    pygame.time.delay(100)
+                    if len(textbox_name) == 3:
+                        run = False
+                        pygame.time.delay(100)
 
                 if quit_leadearboard_btn.draw(win):
                     run = False
@@ -353,7 +353,9 @@ def game_loop(level: int):
             if no_btn.draw(win):
                 run = False
 
+
             if yes_btn.draw(win):
+                pygame.time.delay(100)
                 draw_leaderboard_entry()
                 run = False
 
@@ -405,6 +407,7 @@ def game_loop(level: int):
                 game_paused = not game_paused
             if quit_btn.draw(win):
                 run = False
+                pygame.time.delay(100)
         else:
             redrawGameWindow()
             if pause_btn.draw(win):
@@ -417,7 +420,7 @@ def game_loop(level: int):
                 for block in blocklist:
                     if entity.isAlive and entity.hitbox.colliderect(block.hitbox):
                         if (entity.hitbox.bottom + block.height - 10 < block.hitbox.bottom
-                                and block.isVisible and entity.isAlive):
+                                and block.isVisible):
                             entity.isFalling = False
                             break
                     elif entity.y + entity.height >= 640:
@@ -453,7 +456,7 @@ def game_loop(level: int):
                 for block in blocklist:
                     if popped:
                         break
-                    if proj.hitbox.colliderect(block.hitbox):
+                    if proj.hitbox.colliderect(block.hitbox) and block.isVisible:
                         friendlyProjectiles.pop(friendlyProjectiles.index(proj))
                         popped = True
                         break
@@ -471,7 +474,7 @@ def game_loop(level: int):
                 for block in blocklist:
                     if popped:
                         break
-                    if proj.hitbox.colliderect(block.hitbox):
+                    if proj.hitbox.colliderect(block.hitbox) and block.isVisible:
                         enemyProjectiles.pop(enemyProjectiles.index(proj))
                         popped = True
                         break
@@ -564,6 +567,7 @@ def game_loop(level: int):
             if mc.hp == 0:
                 draw_death_screen()
                 if mc.lives != 0:
+                    score = 10000
                     mc.hp = 1
                     mc.clear_effects()
                     friendlyProjectiles = []
@@ -580,6 +584,7 @@ def game_loop(level: int):
                     if not draw_game_over_screen():
                         run = False
                     else:
+                        score = 10000
                         friendlyProjectiles = []
                         enemyProjectiles = []
                         blocklist = []
@@ -615,7 +620,7 @@ def game_loop(level: int):
                 if not collision and mc.x != window_width - 30:
                     if mc.x + offset_x > finish.x:
                         mc.move('right')
-                    elif mc.x == offset_x:
+                    elif mc.x >= offset_x:
                         for sprites in spritelist:
                             sprites.x -= mc.vel
                         distance -= mc.vel

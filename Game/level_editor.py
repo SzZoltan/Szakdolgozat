@@ -31,7 +31,7 @@ def level_edit():
 
     # Játékhoz használt változók
     ROWS = 16
-    MAX_COLS = 150
+    MAX_COLS = 400
     TILE_SIZE = WINDOW_HEIGHT // ROWS
     font = pygame.font.SysFont('Futura', 30)
     level = 0
@@ -49,7 +49,7 @@ def level_edit():
 
     # Rajzoló metódusok és hozzájuk tartózó változók
 
-    tiles_across = WINDOW_WIDTH * 5 // level1_bg.get_width()
+    tiles_across = WINDOW_WIDTH * 14 // level1_bg.get_width()
     tiles_down = WINDOW_HEIGHT // level1_bg.get_height()
     MAP_WIDTH = level1_bg.get_width() * tiles_across
     current_tile = 0

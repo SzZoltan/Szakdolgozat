@@ -15,7 +15,7 @@ class Player:
         self._height = 32
         self._lives = 3
         self._hitbox = pygame.Rect(self.x, self.y, 30, 35)
-        self._vel = 5
+        self._vel = 7
         self._jumpCount = 10
         self._idleFrameCount = 0
         self._runningFrameCount = 0
