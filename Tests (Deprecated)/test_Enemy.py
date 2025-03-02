@@ -96,6 +96,8 @@ def test_enemy_methods(mock_defenemy_frames, setup_pygame):
         enemy.shoot(1.4)
     with pytest.raises(ValueError):
         enemy.shoot('str')
+    with pytest.raises(ValueError):
+        enemy.shoot('-1')
 
     del enemy
         # Helyes innit, de nem tud lőni

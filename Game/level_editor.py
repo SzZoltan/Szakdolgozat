@@ -8,6 +8,9 @@ from Game.Game_Graphics.Graphics_Loader import (level1_bg, level3_bg, level2_bg,
 
 
 def level_edit():
+    """
+    Megvalósítsa a Pályaszerkesztőt
+    """
     pygame.init()
 
     # 20 FPS-re cappelt óra
@@ -73,15 +76,26 @@ def level_edit():
     world_data[ROWS-2][0] = 6
     world_data[ROWS-2][9] = 10
 
-    # Szöveg kiírására szolgáló metódus
-
-
     def draw_txt(text, font, text_color, x, y, surface):
+        """
+        Szöveg kiírására szolgáló metódus
+
+        :param text: string, a szöveg amit felrajzol
+        :param font: pygame.F, a stílus amibe felrajzolja
+        :param text_color: tuple RGB, a szöveg színe
+        :param x: int, x koordináta
+        :param y: int, y koordináta
+        :param surface: pygame.Surface, a felület amire rajzolunk
+        """
         img = font.render(text, True, text_color)
         surface.blit(img, (x, y))
 
-    # Csinál egy új felületet amibe kiírja az error üzenetet és egy gomb megnyomásával el lehet tüntetni a felületet
     def error_popup(text):
+        """
+        Csinál egy új felületet amibe kiírja az error üzenetet és egy gomb megnyomásával el lehet tüntetni a felületet
+
+        :param text: string, a hibaüzenet
+        """
         popup_width = 500
         popup_height = 200
         popup_surface = pygame.Surface((popup_width, popup_height))
@@ -117,6 +131,9 @@ def level_edit():
             pygame.display.update()
 
     def draw_bg():
+        """
+        Megrajzolja a hátteret a background_id változó alapján
+        """
         window.fill(GREEN)
         if background_id == 1:
             for rows in range(tiles_down):
@@ -138,7 +155,9 @@ def level_edit():
                     window.blit(level3_bg, (x_pos - scroll, y_pos))
 
     def draw_grid():
-
+        """
+        A rácsokat megrajzolja a zónába ahova lehet tenni, játék entitásait
+        """
         # v mint vertical
 
         for v in range(MAX_COLS + 1):
@@ -151,12 +170,20 @@ def level_edit():
             pygame.draw.line(window, WHITE, (0, h * TILE_SIZE), (WINDOW_WIDTH, h * TILE_SIZE), 2)
 
     def draw_world():
+        """
+        Felrajzolja a lerakott játék entitásait a rácsokba
+        """
         for y, rows in enumerate(world_data):
             for x, t in enumerate(rows):
                 if t >= 0:
                     window.blit(map_editor_tile_list[t], (x * TILE_SIZE - scroll, y * TILE_SIZE))
 
     def load_map():
+        """
+        Betölti a pályát Pickle segítségével, ha hibát talál akkor error_popup-ot meghívja és kiír egy üzenetet
+
+        :return: a betöltött pálya objektum
+        """
         filler_data = {
             'world_data': world_data,
             'background': background_id
@@ -176,6 +203,9 @@ def level_edit():
             return filler_data
 
     def save_map():
+        """
+        Elmenti az eddig elkészített pályát Pickle segítségével és kiírja a Maps fájlba, hiba esetén error_popup-ot hív
+        """
         try:
             map_data['world_data'] = world_data
             map_data['background'] = background_id
@@ -193,6 +223,10 @@ def level_edit():
     #   Megnézi hogy van-e pontosan 1 Főszereplő és pontosan 1 záró block
 
     def check_map_validity():
+        """
+        Ellenőrzi, hogy a pálya valid-e, akkor valid ha 1 Játékos és 1 Kupa el van helyezve a páylán, különben
+        error_popup
+        """
         mc_count = 0
         endtile_count = 0
         error_builder = ''

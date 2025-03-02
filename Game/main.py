@@ -22,6 +22,10 @@ finish = Finish(600, 255)
 
 
 def game_loop(level: int):
+    """
+    A játék képernyőjét valósítsa meg
+    :param level: int, amelyik pályát szeretnénk betölteni
+    """
     global mc, finish, mcx_spawn, mcy_spawn, background_id
     # Az animációk 20 FPS-re vannak megcsinálva
 
@@ -64,7 +68,10 @@ def game_loop(level: int):
     # Unit tesztelés extrém tesztesetek
 
     def load_level():
-        global background_id
+        """
+        Betölti a megadott pályát Pickle segítségével
+        :return: a betöltött pálya adatai és a háttér amelyik be kell tölteni
+        """
         try:
             with open(f'Maps/level_{level}_data', 'rb') as pickle_in:
                 data = pickle.load(pickle_in)
@@ -81,6 +88,10 @@ def game_loop(level: int):
     map_data = map_data['world_data']
 
     def place_entities(declaremc: bool):
+        """
+        Elhelyezi az entitásokat a pályán a beolvasott adatok alapján
+        :param declaremc: bool, a Játékost deklarálja-e vagy nem
+        """
         global mc, mcx_spawn, mcy_spawn, finish
 
         for y in range(len(map_data)):
@@ -121,6 +132,9 @@ def game_loop(level: int):
     # A háttér
 
     def drawBackground():
+        """
+        A háttér felrajzolásáért felelős a bakcground_id alapján cselekszik
+        """
         if background_id == 1:
             for row in range(tiles_down):
                 for col in range(tiles_across):
@@ -141,24 +155,39 @@ def game_loop(level: int):
                     win.blit(level3_bg, (x_pos, y_pos))
 
     def drawProjectiles():
+        """
+        Felrajzolja a Projectile-okat a képernyőre
+        """
         for fproj in friendlyProjectiles:
             fproj.draw(win)
         for eproj in enemyProjectiles:
             eproj.draw(win)
 
     def drawPowerUp():
+        """
+        Felrajzolja a PowerUp-okat a képernyőre
+        """
         for pup in poweruplist:
             pup.drawPowerup(win)
 
     def drawBlocks():
+        """
+        Felrajzolja a Block-okat a képernyőre
+        """
         for blocks in blocklist:
             blocks.draw(win)
 
     def drawEnemies():
+        """
+        Felrajzolja a Enemy-ket a képernyőre
+        """
         for e in enemylist:
             e.drawEnemy(win)
 
     def redrawGameWindow():
+        """
+        Mindent újrarajzól, meghívja az összes eddigi rajzoló metódust
+        """
         drawBackground()
         mc.drawPlayer(win)
         drawPowerUp()
@@ -168,6 +197,9 @@ def game_loop(level: int):
         draw_UI()
 
     def draw_UI():
+        """
+        Felrajzolja a felhasználói felületet ami változik a Játékos státusza alapján
+        """
         paused_txt = font.render(f"x {mc.lives}", True, WHITE)
         score_text = font.render(f"{score}", True, WHITE)
         if mc.hp == 1:
@@ -183,6 +215,9 @@ def game_loop(level: int):
         win.blit(score_text, (window_width-200, 15))
 
     def draw_pause_screen():
+        """
+        Felrajzolja azt a képernyőt amikor a játék meg van álltva és a két gombot amivel ki lehet lépni vagy folytatni
+        """
         overlay = pygame.Surface((window_width, window_height))
         overlay.set_alpha(128)
         overlay.fill(BLACK)
@@ -192,6 +227,9 @@ def game_loop(level: int):
         win.blit(text, (window_width // 2 - 85, window_height // 2 - 100))
 
     def draw_death_screen():
+        """
+        Felrajzolja azt a képernyőt amikor a játékos meghal de még van élete, tudja folytatni, vagy kilép innen
+        """
         run = True
         fade = pygame.Surface((window_width, window_height))
         fade.fill(BLACK)
@@ -224,9 +262,13 @@ def game_loop(level: int):
                 run = False
 
             pygame.display.update()
-    pygame.time.delay(100)
+        pygame.time.delay(100)
 
     def draw_game_over_screen():
+        """
+        Felrajzolja azt a képernyőt amikor a játékos meghal és nincs több élete, ki tud lépni vagy újrapróbálja innen
+        :return: bool, a játékos döntése, True megpróbálja mégegyszer, False kilép
+        """
         overlay = pygame.Surface((window_width, window_height))
         overlay.fill(BLACK)
 
@@ -260,8 +302,15 @@ def game_loop(level: int):
         return game_continue
 
     def draw_victory_screen():
+        """
+        Megrajzolja azt a képernyőt amikor felvette a Trófeát és nyer a Játékos, hozzátudja tenni a pontszámát a
+        toplistához, vagy csak kilép
+        """
 
         def draw_leaderboard_entry():
+            """
+            Megrajzolja azt a felület ahol beírja a Játékos a nevét és elmentheti a pontszámát ha úgy dönt
+            """
             run = True
             win.fill(BLACK)
             player_name_txt = font.render("Write down your name", True, WHITE)
@@ -369,7 +418,15 @@ def game_loop(level: int):
 
     # Megnézi hogy az entitás ütközik-e valamelyik bolckal
 
-    def collisionchecker(entity, direction):
+    def collisionchecker(entity: Player or Enemy, direction: str):
+        """
+        Ellenőrzi, hogy a beadott entitás ütközik-e valamelyik Block-al
+
+        :param entity:Player vagy Enemy az entitás amit ellenőrzünk
+        :param direction: string, 'left', ha az entitás balra megy, 'right' ha jobbra
+
+        :return: bool, True ütközik, False nem ütközik
+        """
         if isinstance(entity, Player) or isinstance(entity, Enemy):
             if direction == 'left':
                 col = False

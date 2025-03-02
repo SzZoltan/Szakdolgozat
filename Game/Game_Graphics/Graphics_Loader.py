@@ -5,11 +5,15 @@ GRAPHICS_LOCATION = 'Graphics'
 
 
 def getSprite(sheet: pygame.Surface, f_width: int, f_height: int, x: int, y: int):
-    # kiszed 1 frame-et a sprite-sheetből
-    # f_width: frame széle
-    # f_height: frame hossza
-    # x: x kezdő koordináta a frame-en
-    # y: y kezdő koordináta a frame-en
+    """
+    A spritesheetből kiszed 1 frame-et és visszadja
+    :param sheet: pygame.Surface, a Spritesheet
+    :param f_width: int, frame szélessége
+    :param f_height: int, fram magassága
+    :param x: int, a frame kezdő x koordinátája
+    :param y: int, a frame kezdő y koordinátája
+    :return: pygame.Surface, a frame amit kivágott a spritesheetből
+    """
 
     if (not isinstance(sheet, pygame.Surface) or not isinstance(f_width, int) or
             not isinstance(f_height, int) or not isinstance(x, int) or not isinstance(y, int)):
@@ -22,6 +26,15 @@ def getSprite(sheet: pygame.Surface, f_width: int, f_height: int, x: int, y: int
 
 # Kiszedjük a frame-eket egy listába:
 def frameToList(width: int, height: int, rows: int, collums: int, spritesheet: pygame.Surface):
+    """
+    Készít egy listát a beolvasott spritesheetből
+    :param width: int, az egyes frame-ek szélessége
+    :param height: int, az egyes frame-ek magassága
+    :param rows: int, a spritesheet sorainak száma
+    :param collums: int, a spritesheet oszlopainak száma
+    :param spritesheet: pygame.Surface, a sprite sheet
+    :return: pygame.Surface list, a különböző frame-ekből álló lista
+    """
     if (not isinstance(width, int) or not isinstance(height, int) or not isinstance(rows, int) or
             not isinstance(collums, int) or not isinstance(spritesheet, pygame.Surface)):
         raise TypeError('Invalid Argument type for frameToList')
@@ -35,6 +48,17 @@ def frameToList(width: int, height: int, rows: int, collums: int, spritesheet: p
 
 # Frame iteráló
 def iterateFrames(self, window: pygame.Surface, frames: list, f_count: int, m_frames: int):
+    """
+    Végigiterál egy frame-ek listáján ez rajzól mindent a képernyőre
+
+    :param self: maga az objektum ami alkalmazni fogja ezt a metódust
+    :param window: pygame.Surface, a felület amire felrajzolják
+    :param frames: pygame.Surface list, a lista amin iterálunk
+    :param f_count: int, a jelenlegi frame mutatója
+    :param m_frames: int, a maximális frame-ek száma a listában
+
+    :return: f_count, a mutató
+    """
     if (not isinstance(window, pygame.Surface) or not isinstance(frames, list) or
             not isinstance(f_count, int) or not isinstance(m_frames, int)):
         raise TypeError('Invalid Argument type for iterateFrames')

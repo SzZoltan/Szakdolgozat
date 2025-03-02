@@ -26,11 +26,17 @@ tiles_down = WINDOW_HEIGHT // level1_bg.get_height() + 1
 
 
 def remake_main_menu():
+    """
+    Újraméretezi a Főmenü ablakot és beállítja a nevét
+    """
     window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     pygame.display.set_caption("Pink Guy's Adventures - Main Menu")
 
 
 def draw_background():
+    """
+    Megrajzólja a Főmenü hátterét
+    """
     for row in range(tiles_down):
         for col in range(tiles_across):
             x_pos = col * level1_bg.get_width()
@@ -39,6 +45,9 @@ def draw_background():
 
 
 def draw_audio_toggle():
+    """
+    Megrajzolja az audio némító és hangosító gombokat, itt változik az audio érték is
+    """
     global audio, wait
 
     if audio:
@@ -57,6 +66,9 @@ def draw_audio_toggle():
 
 
 def show_leaderboard():
+    """
+    Megrajzolja a Toplista ablakot
+    """
     r = True
 
     LB_WIDTH = 600
@@ -113,6 +125,9 @@ def show_leaderboard():
 
 
 def show_level_selection():
+    """
+    Megrajzólja a pálya szelekciós ablakot
+    """
     r = True
 
     level = 1
