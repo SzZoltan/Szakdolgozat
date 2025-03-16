@@ -416,13 +416,11 @@ def game_loop(level: int):
 
     run = True
 
-    # Megnézi hogy az entitás ütközik-e valamelyik bolckal
-
     def collisionchecker(entity: Player or Enemy, direction: str):
         """
         Ellenőrzi, hogy a beadott entitás ütközik-e valamelyik Block-al
 
-        :param entity:Player vagy Enemy az entitás amit ellenőrzünk
+        :param entity: Player vagy Enemy az entitás amit ellenőrzünk
         :param direction: string, 'left', ha az entitás balra megy, 'right' ha jobbra
 
         :return: bool, True ütközik, False nem ütközik

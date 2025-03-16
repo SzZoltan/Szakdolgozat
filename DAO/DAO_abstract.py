@@ -18,7 +18,7 @@ class DAO(ABC):
         pass
 
     @abstractmethod
-    def insert(self, data):
+    def insert(self, name:str, score:str, level:int):
         """Beilleszt adatot az adatbázisba"""
         pass
 
@@ -28,6 +28,6 @@ class DAO(ABC):
         pass
 
     @abstractmethod
-    def get_all(self):
-        """Kilistázza az összes elemet"""
+    def get_all(self, level:int):
+        """Kilistázza az összes elemet a megadott szinthez"""
         pass

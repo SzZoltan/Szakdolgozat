@@ -7,6 +7,7 @@ from Game_Graphics.Graphics_Loader import (create_btn_pic, play_btn_pic, quit_bt
                                            start_btn_pic)
 from level_editor import level_edit
 from main import game_loop
+from DAO.DAO_sqlite import SQLiteDAO
 pygame.init()
 
 WINDOW_WIDTH = 800
@@ -16,6 +17,8 @@ WHITE = (255, 255, 255)
 
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Pink Guy's Adventures - Main Menu")
+
+DAO = SQLiteDAO('leaderboard.db')
 
 audio = True
 wait = 0
