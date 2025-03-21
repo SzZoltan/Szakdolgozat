@@ -11,7 +11,7 @@ from Game.Entity.Enemy import (BunnyEnemy, PlantEnemy, TurtleEnemy, Enemy)
 from Game.Game_Graphics.Graphics_Loader import (level1_bg, level2_bg, level3_bg, pause_pic, unpause_pic, quit_btn_pic,
                                                 full_heart_pic, half_heart_pic, empty_heart_pic, health_head_pic,
                                                 again_btn_pic, yes_btn_pic, no_btn_pic, save_btn_pic, cherries_pic)
-
+from DAO.DAO_sqlite import SQLiteDAO
 pygame.init()
 
 background_id = 1
@@ -19,6 +19,7 @@ mcx_spawn = 0
 mcy_spawn = 0
 mc = Player(0, 200)
 finish = Finish(600, 255)
+DAO = SQLiteDAO('leaderboard.db')
 
 
 def game_loop(level: int):
@@ -26,7 +27,7 @@ def game_loop(level: int):
     A játék képernyőjét valósítsa meg
     :param level: int, amelyik pályát szeretnénk betölteni
     """
-    global mc, finish, mcx_spawn, mcy_spawn, background_id
+    global mc, finish, mcx_spawn, mcy_spawn, background_id, DAO
     # Az animációk 20 FPS-re vannak megcsinálva
 
     clock = pygame.time.Clock()
@@ -50,7 +51,7 @@ def game_loop(level: int):
     quit_btn = Button(window_width // 2 - 70, window_height // 2, quit_btn_pic, 1)
 
     win = pygame.display.set_mode((window_width, window_height))
-    pygame.display.set_caption("Pink Guy's Adventures - Game")
+    pygame.display.set_caption(f"Pink Guy's Adventures - Level: {level}")
 
     invincibleTimer = 0
 
@@ -353,6 +354,8 @@ def game_loop(level: int):
                 if save_score_btn.draw(win):
                     if len(textbox_name) == 3:
                         run = False
+                        with DAO:
+                            DAO.insert(textbox_name, score, level)
                         pygame.time.delay(100)
 
                 if quit_leadearboard_btn.draw(win):

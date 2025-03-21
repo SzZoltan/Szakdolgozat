@@ -18,8 +18,12 @@ class DAO(ABC):
         pass
 
     @abstractmethod
-    def insert(self, name:str, score:str, level:int):
-        """Beilleszt adatot az adatbázisba"""
+    def insert(self, name: str, score: int, level: int):
+        """Beilleszt adatot az adatbázisba
+        :param name: a játékos neve
+        :param score: a játékos pontja
+        :param level: a szint
+        :returns: True ha sikerült a beillesztés, False ha nem"""
         pass
 
     @abstractmethod
@@ -29,5 +33,7 @@ class DAO(ABC):
 
     @abstractmethod
     def get_all(self, level:int):
-        """Kilistázza az összes elemet a megadott szinthez"""
+        """Visszadja az összes játékost a megadott szinthez, pontszám szerint csökkenő sorrendbe
+        :param level: a szint amit kilistáznánk
+        :returns: lista amibe a név és a pont objektum van"""
         pass

@@ -72,37 +72,56 @@ def show_leaderboard():
     """
     Megrajzolja a Toplista ablakot
     """
-    r = True
+    def draw_leaderboard_entries_window():
+        """
+        Megrajzolja magát a toplistát
+        """
 
-    LB_WIDTH = 600
-    LB_HEIGHT = 400
+        lb_surface = pygame.Rect(WINDOW_WIDTH//8, WINDOW_HEIGHT//6, LB_WIDTH, LB_HEIGHT)
+        pygame.draw.rect(window, (255, 0, 0), lb_surface, -1)
+
+        for i in range(scroll_offset, min(scroll_offset + max_visible_scores, len(lb_entries))):
+            name, score = lb_entries[i]
+            text = font.render(f"{i+1}. {name}: {score}", True, WHITE)
+            window.blit(text, (lb_surface.x + LB_WIDTH//3, lb_surface.y + 15 + (i - scroll_offset) * 30))
+
+    r = True
 
     level = 1
     left_pressed = False
     right_pressed = False
 
-    leaderboard_level_txt = font.render(f"Our top performers for level: ", True, WHITE)
+    with DAO:
+        lb_entries = DAO.get_all(level)
 
-    lb_surface = pygame.Surface((LB_WIDTH, LB_HEIGHT))
-    lb_surface.fill((255, 0, 0))
+    LB_WIDTH = 600
+    LB_HEIGHT = 400
+    max_visible_scores = LB_HEIGHT // 31
+    scroll_offset = 0
 
     back_btn = Button(WINDOW_WIDTH-150, WINDOW_HEIGHT-90, back_btn_pic, 1)
     left_btn = Button(80 - left_btn_pic.get_width(), WINDOW_HEIGHT-325, left_btn_pic, 1)
     right_btn = Button(WINDOW_WIDTH-80, WINDOW_HEIGHT-325, right_btn_pic, 1)
 
     while r:
-        lvl_txt = font.render(f"{level}", True, WHITE)
+        leaderboard_level_txt = font.render(f"Our top performers for level: {level}", True, WHITE)
 
         draw_background()
-        window.blit(lb_surface, (100, 100))
+        draw_leaderboard_entries_window()
         window.blit(leaderboard_level_txt, (150, 60))
-        window.blit(lvl_txt, (WINDOW_WIDTH - 170, 60))
 
         keys = pygame.key.get_pressed()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 4:
+                    if scroll_offset > 0:
+                        scroll_offset -= 1
+                elif event.button == 5:
+                    if scroll_offset + max_visible_scores < len(lb_entries):
+                        scroll_offset += 1
 
         if back_btn.draw(window) or keys[pygame.K_ESCAPE]:
             r = False
@@ -110,11 +129,15 @@ def show_leaderboard():
         if left_btn.draw(window) or keys[pygame.K_LEFT]:
             if level > 1 and not left_pressed:
                 level -= 1
+                with DAO:
+                    lb_entries = DAO.get_all(level)
                 left_pressed = True
 
         if right_btn.draw(window) or keys[pygame.K_RIGHT]:
             if level < MAX_LEVEL and not right_pressed:
                 level += 1
+                with DAO:
+                    lb_entries = DAO.get_all(level)
                 right_pressed = True
 
         if not keys[pygame.K_LEFT]:

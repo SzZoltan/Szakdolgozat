@@ -31,7 +31,6 @@ class SQLiteDAO(DAO, ContextDecorator):
                     Score INTEGER NOT NULL,
                     Level INTEGER NOT NULL
                 )''')
-                print("Table created if it didn't exist")
         except sqlite3.Error as e:
             print(f"Error creating table: {e}")
 
