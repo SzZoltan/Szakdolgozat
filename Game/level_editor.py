@@ -4,7 +4,7 @@ import pygame
 import pickle
 from Button.Button import Button
 from Game.Game_Graphics.Graphics_Loader import (level1_bg, level3_bg, level2_bg, map_editor_tile_list,
-                                                save_btn_pic, load_btn_pic, ok_btn_pic, back_btn_pic)
+                                                save_btn_pic, load_btn_pic, ok_btn_pic, back_btn_pic, health_head_pic)
 
 
 def level_edit():
@@ -31,6 +31,7 @@ def level_edit():
 
     window = pygame.display.set_mode((WINDOW_WIDTH + RIGHT_MARGIN, WINDOW_HEIGHT + BOTTOM_MARGIN))
     pygame.display.set_caption("Pink Guy's Adventures - Level Editor")
+    pygame.display.set_icon(health_head_pic)
 
     # Játékhoz használt változók
     ROWS = 16

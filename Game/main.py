@@ -52,6 +52,7 @@ def game_loop(level: int):
 
     win = pygame.display.set_mode((window_width, window_height))
     pygame.display.set_caption(f"Pink Guy's Adventures - Level: {level}")
+    pygame.display.set_icon(health_head_pic)
 
     invincibleTimer = 0
 

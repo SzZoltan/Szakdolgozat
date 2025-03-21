@@ -4,7 +4,7 @@ import pygame
 from Button.Button import Button
 from Game_Graphics.Graphics_Loader import (create_btn_pic, play_btn_pic, quit_btn_pic, muted_btn_pic, unmuted_btn_pic,
                                            level1_bg, leaderboard_btn_pic, back_btn_pic, left_btn_pic, right_btn_pic,
-                                           start_btn_pic)
+                                           start_btn_pic, health_head_pic)
 from level_editor import level_edit
 from main import game_loop
 from DAO.DAO_sqlite import SQLiteDAO
@@ -17,6 +17,7 @@ WHITE = (255, 255, 255)
 
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Pink Guy's Adventures - Main Menu")
+pygame.display.set_icon(health_head_pic)
 
 DAO = SQLiteDAO('leaderboard.db')
 
