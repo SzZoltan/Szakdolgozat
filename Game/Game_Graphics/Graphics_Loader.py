@@ -84,6 +84,13 @@ pause_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/pause.png')
 unpause_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/unpause.png')
 cherries_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/User Interface/Cherries.png')
 
+# ====================================================Map Previews======================================================
+
+lvl1_preview_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Map_previews/Lvl1_preview.png')
+lvl2_preview_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Map_previews/Lvl2_preview.png')
+lvl3_preview_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Map_previews/Lvl3_preview.png')
+lvl4_preview_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Map_previews/Lvl4_preview.png')
+
 # =======================================================Gombok=========================================================
 
 save_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/save_btn.png')

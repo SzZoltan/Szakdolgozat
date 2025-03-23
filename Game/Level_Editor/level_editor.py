@@ -2,9 +2,9 @@ import sys
 
 import pygame
 import pickle
-from Button.Button import Button
+from Game.Button.Button import Button
 from Game.Game_Graphics.Graphics_Loader import (level1_bg, level3_bg, level2_bg, map_editor_tile_list,
-                                                save_btn_pic, load_btn_pic, ok_btn_pic, back_btn_pic, health_head_pic)
+                                                save_btn_pic, load_btn_pic, ok_btn_pic, back_btn_pic)
 
 
 def level_edit():
@@ -22,6 +22,7 @@ def level_edit():
     WINDOW_HEIGHT = 640
     BOTTOM_MARGIN = 140
     RIGHT_MARGIN = 300
+    MAX_LEVEL = 4
 
     GREEN = (144, 201, 120)
     WHITE = (255, 255, 255)
@@ -31,7 +32,6 @@ def level_edit():
 
     window = pygame.display.set_mode((WINDOW_WIDTH + RIGHT_MARGIN, WINDOW_HEIGHT + BOTTOM_MARGIN))
     pygame.display.set_caption("Pink Guy's Adventures - Level Editor")
-    pygame.display.set_icon(health_head_pic)
 
     # Játékhoz használt változók
     ROWS = 16
@@ -293,7 +293,10 @@ def level_edit():
 
         if save_btn.draw(window):
             if check_map_validity():
-                save_map()
+                if level == 1 or level == 2 or level == 3:
+                    error_popup("Can't overwrite Develper maps!")
+                else:
+                    save_map()
 
         # Pálya betöltés
 
@@ -358,7 +361,7 @@ def level_edit():
                     scroll_right = True
                 if event.key == pygame.K_RSHIFT:
                     scroll_speed = 5
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP and level < MAX_LEVEL:
                     level += 1
                 if event.key == pygame.K_DOWN and level > 0:
                     level -= 1
