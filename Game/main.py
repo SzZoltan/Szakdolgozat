@@ -7,6 +7,7 @@ from Game_Graphics.Graphics_Loader import (create_btn_pic, play_btn_pic, quit_bt
                                            start_btn_pic, health_head_pic, lvl1_preview_pic, lvl2_preview_pic,
                                            lvl3_preview_pic, lvl4_preview_pic)
 from Game.Level_Editor.level_editor import level_edit
+from pygame import mixer
 from Game.Game_loop.game_loop import game_loop
 from DAO.DAO_sqlite import SQLiteDAO
 pygame.init()
@@ -25,6 +26,19 @@ LEVEL_PICTURES = [
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Pink Guy's Adventures - Main Menu")
 pygame.display.set_icon(health_head_pic)
+
+# Háttérzenék
+
+menu_background_music = mixer.Sound('./Audio/Menu_theme.mp3')
+menu_background_music.set_volume(0.05)
+
+game_music = mixer.Sound('./Audio/Game_theme.mp3')
+game_music.set_volume(0.05)
+
+level_editor_music = mixer.Sound('./Audio/Level_Editor_theme.mp3')
+level_editor_music.set_volume(0.05)
+
+menu_background_music.play(-1)
 
 DAO = SQLiteDAO('./Database/leaderboard.db')
 
@@ -63,10 +77,12 @@ def draw_audio_toggle():
 
     if audio:
         if unmuted_btn.draw(window) and wait == 0:
+            menu_background_music.stop()
             audio = False
             wait = 2
     else:
         if muted_btn.draw(window) and wait == 0:
+            menu_background_music.play(-1)
             audio = True
             wait = 2
 
@@ -205,7 +221,13 @@ def show_level_selection():
             r = False
 
         if start_btn.draw(window):
+            menu_background_music.stop()
+            if audio:
+                game_music.play(-1)
             game_loop(level)
+            if audio:
+                game_music.stop()
+                menu_background_music.play(-1)
             r = False
 
         if left_btn.draw(window) or keys[pygame.K_LEFT]:
@@ -250,7 +272,14 @@ while run:
 
     if create_btn.draw(window):
         pygame.time.delay(100)
+        menu_background_music.stop()
+        if audio:
+            level_editor_music.play(-1)
         level_edit()
+        if audio:
+            level_editor_music.stop()
+            menu_background_music.play(-1)
+
         remake_main_menu()
 
     if play_btn.draw(window):

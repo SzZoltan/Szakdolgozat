@@ -294,7 +294,7 @@ def level_edit():
         if save_btn.draw(window):
             if check_map_validity():
                 if level == 1 or level == 2 or level == 3:
-                    error_popup("Can't overwrite Develper maps!")
+                    error_popup("Can't overwrite Developer maps!")
                 else:
                     save_map()
 
