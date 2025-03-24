@@ -107,6 +107,8 @@ create_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/create_btn.png'
 leaderboard_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/leaderboard_btn.png')
 left_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/left_btn.png')
 right_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/right_btn.png')
+up_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/up_btn.png')
+down_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/down_btn.png')
 start_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/start_btn.png')
 again_btn_pic = pygame.image.load(f'{GRAPHICS_LOCATION}/Buttons/again_btn.png')
 

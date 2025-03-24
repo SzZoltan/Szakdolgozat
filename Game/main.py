@@ -4,8 +4,8 @@ import pygame
 from Button.Button import Button
 from Game_Graphics.Graphics_Loader import (create_btn_pic, play_btn_pic, quit_btn_pic, muted_btn_pic, unmuted_btn_pic,
                                            level1_bg, leaderboard_btn_pic, back_btn_pic, left_btn_pic, right_btn_pic,
-                                           start_btn_pic, health_head_pic, lvl1_preview_pic, lvl2_preview_pic,
-                                           lvl3_preview_pic, lvl4_preview_pic)
+                                           up_btn_pic, down_btn_pic, start_btn_pic, health_head_pic, lvl1_preview_pic,
+                                           lvl2_preview_pic, lvl3_preview_pic, lvl4_preview_pic)
 from Game.Level_Editor.level_editor import level_edit
 from pygame import mixer
 from Game.Game_loop.game_loop import game_loop
@@ -114,6 +114,8 @@ def show_leaderboard():
     level = 1
     left_pressed = False
     right_pressed = False
+    up_pressed = False
+    down_pressed = False
 
     with DAO:
         lb_entries = DAO.get_all(level)
@@ -124,8 +126,10 @@ def show_leaderboard():
     scroll_offset = 0
 
     back_btn = Button(WINDOW_WIDTH-150, WINDOW_HEIGHT-90, back_btn_pic, 1)
-    left_btn = Button(80 - left_btn_pic.get_width(), WINDOW_HEIGHT-325, left_btn_pic, 1)
-    right_btn = Button(WINDOW_WIDTH-80, WINDOW_HEIGHT-325, right_btn_pic, 1)
+    left_btn = Button(80 - left_btn_pic.get_width(), WINDOW_HEIGHT - 325, left_btn_pic, 1)
+    right_btn = Button(WINDOW_WIDTH-80, WINDOW_HEIGHT - 325, right_btn_pic, 1)
+    up_btn = Button(WINDOW_WIDTH - 200, WINDOW_HEIGHT - 490, up_btn_pic, 1)
+    down_btn = Button(WINDOW_WIDTH - 200, WINDOW_HEIGHT - 150, down_btn_pic, 1)
 
     while r:
         leaderboard_level_txt = font.render(f"Our top performers for level: {level}", True, WHITE)
@@ -139,13 +143,6 @@ def show_leaderboard():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 4:
-                    if scroll_offset > 0:
-                        scroll_offset -= 1
-                elif event.button == 5:
-                    if scroll_offset + max_visible_scores < len(lb_entries):
-                        scroll_offset += 1
 
         if back_btn.draw(window) or keys[pygame.K_ESCAPE]:
             r = False
@@ -164,11 +161,26 @@ def show_leaderboard():
                     lb_entries = DAO.get_all(level)
                 right_pressed = True
 
+        if up_btn.draw(window) or keys[pygame.K_UP]:
+            if scroll_offset > 0 and not up_pressed:
+                scroll_offset -= 1
+                up_pressed = True
+        if down_btn.draw(window) or keys[pygame.K_DOWN]:
+            if scroll_offset + max_visible_scores < len(lb_entries) and not down_pressed:
+                scroll_offset += 1
+                down_pressed = True
+
         if not keys[pygame.K_LEFT]:
             left_pressed = False
 
         if not keys[pygame.K_RIGHT]:
             right_pressed = False
+
+        if not keys[pygame.K_UP]:
+            up_pressed = False
+
+        if not keys[pygame.K_DOWN]:
+            down_pressed = False
 
         draw_audio_toggle()
         pygame.display.update()
