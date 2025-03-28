@@ -18,24 +18,20 @@ def test_enemy_initialization(mock_defenemy_frames, setup_pygame):
     mock_defenemy_frames.return_value = [pygame.Surface((50, 50))]
     # Helytelen innit
     with pytest.raises(TypeError):
-        Enemy('not int', 50 ,50, 50)
+        Enemy('not int', 50, 'l')
     with pytest.raises(TypeError):
-        Enemy(50, 'not int', 50, 50)
-    with pytest.raises(TypeError):
-        Enemy(50, 50, 'not int', 50)
-    with pytest.raises(TypeError):
-        Enemy(50, 50, 50, 'not int')
-    with pytest.raises(TypeError):
-        Enemy(50, 50, 50, 50.5)
-    with pytest.raises(TypeError):
-        Enemy(50, 50, 50.5, 50)
+        Enemy(50, 'not int', 'l')
+    with pytest.raises(ValueError):
+        Enemy(50, 50, 50)
+    with pytest.raises(ValueError):
+        Enemy(50, 50, 'asd')
 
     # Helyes innit
-    enemy = Enemy(51, 52, 53, 54)
+    enemy = Enemy(51, 52, 'l')
     assert enemy.x == 51
     assert enemy.y == 52
-    assert enemy.width == 53
-    assert enemy.height == 54
+    assert enemy.width == 32
+    assert enemy.height == 32
     assert enemy._vel == 5
     assert enemy.health == 1
     assert not enemy.canShoot
@@ -57,12 +53,12 @@ def test_enemy_methods(mock_defenemy_frames, setup_pygame):
     mock_defenemy_frames.return_value = [pygame.Surface((50, 50))]
 
     # <editor-fold desc="Enemy hit">
-    enemy = Enemy(51, 52, 53, 54)
+    enemy = Enemy(51, 52, 'l')
     enemy.hit()
     assert enemy.x == 51
     assert enemy.y == 52
-    assert enemy.width == 53
-    assert enemy.height == 54
+    assert enemy.width == 32
+    assert enemy.height == 32
     assert enemy._vel == 5
     assert enemy.health == 0
     assert not enemy.canShoot
@@ -86,7 +82,7 @@ def test_enemy_methods(mock_defenemy_frames, setup_pygame):
     # <editor-fold desc="Enemy shoot">
 
         # Rossz innit
-    enemy = Enemy(51,52,53,54)
+    enemy = Enemy(51,52,'l')
     enemy.canShoot = True
     with pytest.raises(ValueError):
         enemy.shoot(2)
@@ -101,7 +97,7 @@ def test_enemy_methods(mock_defenemy_frames, setup_pygame):
 
     del enemy
         # Helyes innit, de nem tud lőni
-    enemy = Enemy(51,52,53,54)
+    enemy = Enemy(51,52,'l')
 
     assert enemy.shoot(1) is None
     assert enemy.shoot(-1) is None
@@ -125,7 +121,7 @@ def test_enemy_methods(mock_defenemy_frames, setup_pygame):
     # </editor-fold>
 
     # <editor-fold desc="Enemy move">
-    enemy = Enemy(51,52,53,54)
+    enemy = Enemy(51,52,'l')
 
     # Helytelen argumentumok
     with pytest.raises(ValueError):
@@ -143,8 +139,8 @@ def test_enemy_methods(mock_defenemy_frames, setup_pygame):
 
     assert enemy.x == 51
     assert enemy.y == 52
-    assert enemy.width == 53
-    assert enemy.height == 54
+    assert enemy.width == 32
+    assert enemy.height == 32
     assert enemy._vel == 5
     assert enemy.health == 1
     assert not enemy.canShoot
@@ -165,14 +161,14 @@ def test_enemy_methods(mock_defenemy_frames, setup_pygame):
 
     # Helyes argumentumok és tud is mozogni
 
-    enemy = Enemy(51, 52, 53, 54)
+    enemy = Enemy(51, 52, 'l')
     enemy.canMove = True
     enemy.move('left')
 
     assert enemy.x == 46
     assert enemy.y == 52
-    assert enemy.width == 53
-    assert enemy.height == 54
+    assert enemy.width == 32
+    assert enemy.height == 32
     assert enemy._vel == 5
     assert enemy.health == 1
     assert not enemy.canShoot

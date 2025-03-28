@@ -27,6 +27,9 @@ class Block:
         :param y: int vagy float, y koordináta
         :param inside: Inside enum egyik tagja, alapértelmezetten üres
         """
+        if not isinstance(x, (int or float)) or not isinstance(y, (int or float)) or not isinstance(inside, Inside):
+            raise TypeError("Invalid innit attributes: x and y must be int or float and inside has "
+                            "to be of the Inside enum")
         self.x = x
         self.y = y
         self.width = 40
@@ -198,6 +201,8 @@ class Block:
         Megrajzolja a Block-ot, ha látható
         :param window: pygame.Surface, a képernyő amire rajzoljuk
         """
+        if not isinstance(window, pygame.Surface):
+            raise TypeError("window must be pygame.Surface")
         if self.isVisible:
             self.hitbox = pygame.Rect(self.x, self.y, 40, 40)
             window.blit(brick_frame[0], (self.x, self.y))
@@ -231,6 +236,8 @@ class BrickBlock(Block):
         Felrajzolja a megadott felületre a Brick-et
         :param window: pygame.Surface, amire rajzoljuk
         """
+        if not isinstance(window, pygame.Surface):
+            raise TypeError("window must be pygame.Surface")
         if self.isVisible:
             self.hitbox = pygame.Rect(self.x, self.y, 40, 40)
             window.blit(brick_frame[0], (self.x, self.y))
@@ -264,6 +271,8 @@ class SteelBlock(Block):
         Felrajzolja a megadott felületre a SteelBlock-ot
         :param window: pygame.Surface, amire rajzoljuk
         """
+        if not isinstance(window, pygame.Surface):
+            raise TypeError("window must be pygame.Surface")
         if self.isVisible:
             self.hitbox = pygame.Rect(self.x, self.y, 40, 40)
             window.blit(steel_frame[0], (self.x, self.y))
@@ -298,6 +307,8 @@ class GoldBlock(Block):
         Felrajzolja a GoldBlock-ot a felületre
         :param window: pygame.Surface, a felület amire rajzoljuk
         """
+        if not isinstance(window, pygame.Surface):
+            raise TypeError("window must be pygame.Surface")
         if self.isVisible:
             self.hitbox = pygame.Rect(self.x, self.y, 40, 40)
             window.blit(gold_frame[0], (self.x, self.y))
