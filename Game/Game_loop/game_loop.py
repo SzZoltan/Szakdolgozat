@@ -315,18 +315,21 @@ def game_loop(level: int):
             run = True
             win.fill(BLACK)
             player_name_txt = font.render("Write down your name", True, WHITE)
+            enter_guide_txt = font.render("Press the Enter key to check if your name is valid", True, WHITE)
+            click_back_txt = font.render("Click on the box to start typing", True, WHITE)
             textbox_name = ""
             color_passive_bad = pygame.Color("red")
             color_passive_good = pygame.Color("green")
             color_active = pygame.Color("lightblue")
+            delay = 0
 
             input_rect = pygame.Rect(window_width // 2 - 35, window_height // 2-5, 100, 40)
             active = True
 
             save_score_btn = Button(window_width // 2 - save_btn_pic.get_width(), window_height // 2 + 100,
                                     save_btn_pic, 1)
-            quit_leadearboard_btn = Button (window_width // 2 - quit_btn_pic.get_width() + 100,
-                                            window_height // 2 + 100, quit_btn_pic, 1)
+            quit_leadearboard_btn = Button(window_width // 2 - quit_btn_pic.get_width() + 100, window_height // 2 + 100,
+                                           quit_btn_pic, 1)
 
             while run:
                 win.fill(BLACK)
@@ -369,11 +372,23 @@ def game_loop(level: int):
                 else:
                     color = color_passive_bad
 
-                pygame.draw.rect(win, color, input_rect)
+                if len(textbox_name) == 0:
+                    if delay > 1200:
+                        delay = 0
+                    else:
+                        pygame.draw.rect(win, color, input_rect)
+                else:
+                    pygame.draw.rect(win, color, input_rect)
+                delay += clock.tick(FPS)
+
                 usr_name = font.render(textbox_name, True, WHITE)
                 win.blit(usr_name, (window_width // 2 - 25, window_height // 2))
                 win.blit(player_name_txt,
                          (window_width // 2 - player_name_txt.get_width() // 2, window_height // 2 - 200))
+                win.blit(click_back_txt,
+                         (window_width // 2 - click_back_txt.get_width() // 2, window_height // 2 - 100))
+                win.blit(enter_guide_txt,
+                         (window_width // 2 - enter_guide_txt.get_width() // 2, window_height // 2 - 150))
                 pygame.display.update()
 
         run = True
@@ -406,12 +421,10 @@ def game_loop(level: int):
             if no_btn.draw(win):
                 run = False
 
-
             if yes_btn.draw(win):
                 pygame.time.delay(100)
                 draw_leaderboard_entry()
                 run = False
-
 
             pygame.display.update()
 
