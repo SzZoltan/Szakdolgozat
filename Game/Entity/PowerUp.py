@@ -188,7 +188,6 @@ class Powerup:
         """
         if isinstance(player, Player):
             if self.isVisible:
-                print('Item picked up')
                 self.isVisible = False
         else:
             raise TypeError("Invalid player argument for pickUp")
@@ -225,10 +224,7 @@ class Apple(Powerup):
         if isinstance(player, Player):
             if self.isVisible:
                 self.isVisible = False
-                print('Apple picked up, health increased')
-                print(f'current: {player.hp} hp')
                 player.hp = player.hp + 1
-                print(f'current: {player.hp} hp')
         else:
             raise TypeError("Invalid player argument for pickUp")
 
@@ -264,8 +260,6 @@ class Cherry(Powerup):
         if isinstance(player, Player):
             if self.isVisible:
                 self.isVisible = False
-                print('Cherry picked up, shooting unlocked')
-                print(f'current: {player.canShoot} ')
                 player.canShoot = True
         else:
             raise TypeError("Invalid player argument for pickUp")
@@ -302,10 +296,7 @@ class Pineapple(Powerup):
         if isinstance(player, Player):
             if self.isVisible:
                 self.isVisible = False
-                print('Pineapple picked up, number of lives increased')
-                print(f'current: {player.lives} lives')
                 player.lives = player.lives + 1
-                print(f'current: {player.lives} lives')
         else:
             raise TypeError("Invalid player argument for pickUp")
 
@@ -343,7 +334,6 @@ class Strawberry(Powerup):
                 self.isVisible = False
                 player.isInvincible = True
                 player.iFrames = 100
-                print('Strawberry picked up, invinciblity for 10 seconds')
         else:
             raise TypeError("Invalid player argument for pickUp")
 
@@ -380,6 +370,6 @@ class Finish(Powerup):
         """
         if isinstance(player, Player):
             if self.isVisible:
-                print('Trophy picked up, Game Won!')
+                pass
         else:
             raise TypeError("Invalid player argument for pickUp")

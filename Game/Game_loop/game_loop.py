@@ -727,7 +727,6 @@ def game_loop(level: int):
 
             mc.iFrame()
             if mc.isInvincible and mc.iFrames == 0:
-                print('no longer invincible')
                 mc.isInvincible = False
 
             # Pontszám levonó

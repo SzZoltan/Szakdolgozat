@@ -503,7 +503,6 @@ class Player:
                 self.canShoot = False
             else:
                 self.hp = self.hp - 1
-            print("Player hit")
             self.iFrames = 30
 
     def kill(self):
