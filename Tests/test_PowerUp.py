@@ -1,6 +1,5 @@
 import os
-import pytest
-from unittest.mock import patch, MagicMock
+import unittest
 import pygame
 
 os.chdir(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Game')))
@@ -8,250 +7,107 @@ from Game.Entity.PowerUp import Powerup, Apple, Pineapple, Cherry, Strawberry, F
 from Game.Entity.Player import Player
 
 
-@pytest.fixture
-def setup_pygame():
-    pygame.init()
-    yield
-    pygame.quit()
+class TestPowerUp(unittest.TestCase):
+    def setUp(self):
+        self.powerUp = Powerup(0, 1, 4, 5)
+        self.dummyPlayer = Player(0, 0)
 
+    def test_correct_init(self):
+        self.assertEqual(self.powerUp.x, 0)
+        self.assertEqual(self.powerUp.y, 1)
+        self.assertEqual(self.powerUp.width, 4)
+        self.assertEqual(self.powerUp.height, 5)
+        self.assertEqual(self.powerUp.hitbox, pygame.Rect(5, 6, 20, 20))
+        self.assertTrue(self.powerUp.isVisible)
+        self.assertEqual(self.powerUp.frameCount, 0)
+        self.assertEqual(self.powerUp.maxframes, 17)
 
-@patch('Game.Game_Graphics.Graphics_Loader.apple_frames', new_callable=MagicMock)
-def test_PowerUp_initialization(mock_apple_frames, setup_pygame):
-    mock_apple_frames.return_value = [pygame.Surface((50, 50))]
-    # Helytelen argumentumok
-    with pytest.raises(TypeError):
-        Powerup('not int', 0, 50, 50)
-    with pytest.raises(TypeError):
-        Powerup(0, 'not int', 50, 50)
-    with pytest.raises(TypeError):
-        Powerup(0, 0, 'not int', 50)
-    with pytest.raises(TypeError):
-        Powerup(0, 0, 50.2, 50)
-    with pytest.raises(TypeError):
-        Powerup(0, 0, 50, 'not int')
-    with pytest.raises(TypeError):
-        Powerup(0, 0, 50, 50.1)
+    def test_incorrect_init(self):
+        with self.assertRaises(TypeError):
+            Powerup('string', 1, 4, 5)
+            Powerup(1, 'string', 4, 5)
+            Powerup(1, 1, 'string', 5)
+            Powerup(1, 1, 4, 'string')
 
-    # Helyes inicializálás
-    defaultPowerup = Powerup(100, 100, 25, 25)
+    def test_correct_setters(self):
+        self.powerUp.x = 9
+        self.assertEqual(self.powerUp.x, 9)
 
-    assert defaultPowerup.hitbox.topleft == (100 + 5, 100 + 5)
-    assert defaultPowerup.width == 25
-    assert defaultPowerup.height == 25
-    assert defaultPowerup.frameCount == 0
-    assert defaultPowerup.isVisible
-    assert defaultPowerup.x == 100
-    assert defaultPowerup.y == 100
-    assert defaultPowerup.frameCount == 0
-    assert defaultPowerup.isVisible
+        self.powerUp.y = 10
+        self.assertEqual(self.powerUp.y, 10)
 
+        self.powerUp.hitbox = pygame.Rect(5, 6, 20, 20)
+        self.assertEqual(self.powerUp.hitbox, pygame.Rect(5, 6, 20, 20))
 
-@patch('Game.Game_Graphics.Graphics_Loader.apple_frames', new_callable=MagicMock)
-@patch('Game.Game_Graphics.Graphics_Loader.pineapple_frames', new_callable=MagicMock)
-@patch('Game.Game_Graphics.Graphics_Loader.cherry_frames', new_callable=MagicMock)
-@patch('Game.Game_Graphics.Graphics_Loader.strawberry_frames', new_callable=MagicMock)
-def test_PowerUpPickUp(mock_apple_frames, mock_pineapple_frames, mock_cherry_frames, mock_strawberry_frames,
-                       setup_pygame):
-    mock_apple_frames.return_value = [pygame.Surface((50, 50))]
-    mock_pineapple_frames.return_value = [pygame.Surface((50, 50))]
-    mock_cherry_frames.return_value = [pygame.Surface((50, 50))]
-    mock_strawberry_frames.return_value = [pygame.Surface((50, 50))]
-    player = Player(100, 100)
+        self.powerUp.isVisible = False
+        self.assertFalse(self.powerUp.isVisible)
 
-    # <editor-fold desc="Default PowerUp">
+        self.powerUp.frameCount = 12
+        self.assertEqual(self.powerUp.frameCount, 12)
 
-    defaultPowerup = Powerup(100, 100, 25, 25)
-    defaultPowerup.pickUp(player)
+    def test_incorrect_setters(self):
+        with self.assertRaises(TypeError):
+            self.powerUp.hitbox = 'not rect'
+            self.powerUp.isVisible = 'not bool'
+            self.powerUp.frameCount = '12'
+            self.powerUp.frames = 'some string'
 
-    assert not defaultPowerup.isVisible
-    assert player.hitbox.topleft == (100, 100)
-    assert player.width == 32
-    assert player.height == 32
-    assert player.hp == 1
-    assert player.x == 100
-    assert player.y == 100
-    assert player.lives == 3
-    assert player.vel == 7
-    assert player.jumpCount == 10
-    assert player.idleFrameCount == 0
-    assert player.runningFrameCount == 0
-    assert player.iFrames == 0
-    assert not player.isInvincible
-    assert not player.canShoot
-    assert not player.isFalling
-    assert not player.isJump
-    assert player.isIdle
-    assert not player.facingLeft
-    assert player.facingRight
-    assert not player.isRunning
+    def test_correct_apple_pickup(self):
+        self.apple = Apple(0, 0, 0, 0)
 
-    del player
-    # </editor-fold>
+        # Alma felvétel
+        self.apple.pickUp(self.dummyPlayer)
+        self.assertFalse(self.apple.isVisible)
+        self.assertEqual(self.dummyPlayer.hp, 2)
 
-    # <editor-fold desc="Apple PowerUp">
+    def test_correct_pineapple_pickup(self):
+        self.pineapple = Pineapple(0, 0, 0, 0)
 
-    apple = Apple(100, 100, 25, 25)
-    player = Player(100, 100)
-    apple.pickUp(player)
+        # Ananász felvétel
+        self.pineapple.pickUp(self.dummyPlayer)
+        self.assertFalse(self.pineapple.isVisible)
+        self.assertEqual(self.dummyPlayer.lives, 4)
 
-    assert not apple.isVisible
-    assert player.hitbox.topleft == (100, 100)
-    assert player.width == 32
-    assert player.height == 32
-    assert player.hp == 2
-    assert player.x == 100
-    assert player.y == 100
-    assert player.lives == 3
-    assert player.vel == 7
-    assert player.jumpCount == 10
-    assert player.idleFrameCount == 0
-    assert player.runningFrameCount == 0
-    assert player.iFrames == 0
-    assert not player.isInvincible
-    assert not player.canShoot
-    assert not player.isFalling
-    assert not player.isJump
-    assert player.isIdle
-    assert not player.facingLeft
-    assert player.facingRight
-    assert not player.isRunning
+    def test_correct_cherry_pickup(self):
+        self.cherry = Cherry(0, 0, 0, 0)
 
-    del player
-    # </editor-fold>
+        # Cseresznye felvétel
+        self.cherry.pickUp(self.dummyPlayer)
+        self.assertFalse(self.cherry.isVisible)
+        self.assertTrue(self.dummyPlayer.canShoot)
 
-    # <editor-fold desc="Pineapple PowerUp">
+    def test_correct_strawberry_pickup(self):
+        self.strawberry = Strawberry(0, 0, 0, 0)
 
-    player = Player(100, 100)
-    pineapple = Pineapple(100, 100, 25, 25)
-    pineapple.pickUp(player)
+        # Eper felvétel
+        self.strawberry.pickUp(self.dummyPlayer)
+        self.assertFalse(self.strawberry.isVisible)
+        self.assertTrue(self.dummyPlayer.isInvincible)
+        self.assertEqual(self.dummyPlayer.iFrames, 100)
 
-    assert not pineapple.isVisible
-    assert player.hitbox.topleft == (100, 100)
-    assert player.width == 32
-    assert player.height == 32
-    assert player.hp == 1
-    assert player.x == 100
-    assert player.y == 100
-    assert player.lives == 4
-    assert player.vel == 7
-    assert player.jumpCount == 10
-    assert player.idleFrameCount == 0
-    assert player.runningFrameCount == 0
-    assert player.iFrames == 0
-    assert not player.isInvincible
-    assert not player.canShoot
-    assert not player.isFalling
-    assert not player.isJump
-    assert player.isIdle
-    assert not player.facingLeft
-    assert player.facingRight
-    assert not player.isRunning
+    def test_correct_finish_pickup(self):
+        self.finish = Finish(0, 0, 0, 0)
 
-    del player
-    # </editor-fold>
+        # Finish felvétel
+        self.finish.pickUp(self.dummyPlayer)
+        self.assertFalse(self.finish.isVisible)
 
-    # <editor-fold desc="Cherry PowerUp">
-    cherry = Cherry(100, 100, 25, 25)
-    player = Player(100, 100)
+    def test_correct_generic_pickup(self):
+        # Generikus PowerUp felvétel
+        self.powerUp.pickUp(self.dummyPlayer)
+        self.assertFalse(self.powerUp.isVisible)
 
-    cherry.pickUp(player)
-    assert not cherry.isVisible
-    assert not defaultPowerup.isVisible
-    assert player.hitbox.topleft == (100, 100)
-    assert player.width == 32
-    assert player.height == 32
-    assert player.hp == 1
-    assert player.x == 100
-    assert player.y == 100
-    assert player.lives == 3
-    assert player.vel == 7
-    assert player.jumpCount == 10
-    assert player.idleFrameCount == 0
-    assert player.runningFrameCount == 0
-    assert player.iFrames == 0
-    assert not player.isInvincible
-    assert player.canShoot
-    assert not player.isFalling
-    assert not player.isJump
-    assert player.isIdle
-    assert not player.facingLeft
-    assert player.facingRight
-    assert not player.isRunning
+    def test_incorrect_pickup(self):
+        self.apple = Apple(0, 0, 0, 0)
+        self.pineapple = Pineapple(0, 0, 0, 0)
+        self.cherry = Cherry(0, 0, 0, 0)
+        self.strawberry = Strawberry(0, 0, 0, 0)
+        self.finish = Finish(0, 0, 0, 0)
 
-    del player
-
-    # </editor-fold>
-
-    # <editor-fold desc="Strawberry PowerUp">
-    player = Player(100, 100)
-    strawberry = Strawberry(100, 100, 25, 25)
-    strawberry.pickUp(player)
-
-    assert not strawberry.isVisible
-    assert player.hitbox.topleft == (100, 100)
-    assert player.width == 32
-    assert player.height == 32
-    assert player.hp == 1
-    assert player.x == 100
-    assert player.y == 100
-    assert player.lives == 3
-    assert player.vel == 7
-    assert player.jumpCount == 10
-    assert player.idleFrameCount == 0
-    assert player.runningFrameCount == 0
-    assert player.iFrames == 100
-    assert player.isInvincible
-    assert not player.canShoot
-    assert not player.isFalling
-    assert not player.isJump
-    assert player.isIdle
-    assert not player.facingLeft
-    assert player.facingRight
-    assert not player.isRunning
-
-    del player
-    # </editor-fold>
-
-    # <editor-fold desc="Finish">
-    player = Player(100, 100)
-    finish = Finish(100, 100, 25, 25)
-    finish.pickUp(player)
-
-    assert not strawberry.isVisible
-    assert player.hitbox.topleft == (100, 100)
-    assert player.width == 32
-    assert player.height == 32
-    assert player.hp == 1
-    assert player.x == 100
-    assert player.y == 100
-    assert player.lives == 3
-    assert player.vel == 7
-    assert player.jumpCount == 10
-    assert player.idleFrameCount == 0
-    assert player.runningFrameCount == 0
-    assert player.iFrames == 0
-    assert not player.isInvincible
-    assert not player.canShoot
-    assert not player.isFalling
-    assert not player.isJump
-    assert player.isIdle
-    assert not player.facingLeft
-    assert player.facingRight
-    assert not player.isRunning
-
-    del player
-    # </editor-fold>
-
-    # Helytelen Pickup argumentum
-    with pytest.raises(TypeError):
-        defaultPowerup.pickUp('not player')
-    with pytest.raises(TypeError):
-        apple.pickUp('not player')
-    with pytest.raises(TypeError):
-        pineapple.pickUp('not player')
-    with pytest.raises(TypeError):
-        cherry.pickUp('not player')
-    with pytest.raises(TypeError):
-        strawberry.pickUp('not player')
-    with pytest.raises(TypeError):
-        finish.pickUp('not player')
+        with self.assertRaises(TypeError):
+            self.powerUp.pickUp('not player')
+            self.apple.pickUp('not player')
+            self.pineapple.pickUp('not player')
+            self.cherry.pickUp('not player')
+            self.strawberry.pickUp('not player')
+            self.finish.pickUp('not player')

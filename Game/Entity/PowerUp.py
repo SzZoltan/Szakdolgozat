@@ -370,6 +370,7 @@ class Finish(Powerup):
         """
         if isinstance(player, Player):
             if self.isVisible:
+                self.isVisible = False
                 pass
         else:
             raise TypeError("Invalid player argument for pickUp")
